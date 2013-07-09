@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>groupMess</key>
+	<dict/>
+	<key>groups</key>
+	<array/>
+	<key>nameDict</key>
+	<dict/>
+	<key>nameNumber</key>
+	<dict>
+		<key>Alin</key>
+		<string>1</string>
+		<key>Ankit</key>
+		<string>2</string>
+		<key>Nidhi</key>
+		<string>3</string>
+	</dict>
+	<key>namesForGroup</key>
+	<array/>
+	<key>selectedGroupName</key>
+	<string>Create a new group</string>
+	<key>userName</key>
+	<string>Ajan</string>
+</dict>
+</plist>

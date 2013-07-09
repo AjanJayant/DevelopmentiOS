@@ -10,18 +10,148 @@
 
 @implementation AppDelegate
 
+NSMutableDictionary *dictionary;
+
 @synthesize managedObjectContext = _managedObjectContext;
 @synthesize managedObjectModel = _managedObjectModel;
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    // The following line is commented out to allow the first controller
+    // to be the initial controller
+    // self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
-    self.window.backgroundColor = [UIColor whiteColor];
+    //self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
+    
+    [PubNub setDelegate:self];
+    
+    // Messaging server setup
+    [PubNub setConfiguration:[PNConfiguration configurationForOrigin:@"pubsub.pubnub.com"
+                                                          publishKey:@"pub-c-15eaba1b-1f85-4b28-98c3-52ad653f0747"
+                                                          subscribeKey:@"sub-c-4db30200-d92b-11e2-b1b2-02ee2ddab7fe"
+                                                           secretKey:@"sec-c-YzRmNTE5M2MtYWYyMC00M2FjLWEyMDctMjMyYzc4YjI1OTgy"]];
+    
+    [PubNub connect];
+    
+    // Code for implemnting storing of messages
+    NSString *plistPath;
+    NSString *rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
+                                                              NSUserDomainMask, YES) objectAtIndex:0];
+    plistPath = [rootPath stringByAppendingPathComponent:@"Data.plist"];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:plistPath]) {
+        plistPath = [[NSBundle mainBundle] pathForResource:@"Data" ofType:@"plist"];
+    }
+    dictionary = [NSMutableDictionary dictionaryWithContentsOfFile:plistPath];
+    
+    [[Globals sharedInstance] setUserName:[dictionary objectForKey:@"userName"]];
+
+    [[Globals sharedInstance] setGroups: [dictionary objectForKey:@"groups"]];
+
+    [[Globals sharedInstance] setSelectedGroupName:[dictionary objectForKey:@"selectedGroupName"]];
+
+    [[Globals sharedInstance] setNameDict:[dictionary objectForKey:@"nameDict"]];
+
+    [[Globals sharedInstance] setGroupMess: [dictionary objectForKey:@"groupMess"]];
+    [[Globals sharedInstance] setNameNumber: [dictionary objectForKey:@"nameNumber"]];
+
+    
+    //[[Globals sharedInstance] setUserNumber: [dictionary objectForKey:@"userNumber"]];
+    
+    // Following code sets inital view controller based on whether he's added himself or not
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
+    ViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:@"root view controller"];
+    TableViewController *tableViewController = [storyboard instantiateViewControllerWithIdentifier:@"first"];
+    if([[[Globals sharedInstance] userName] isEqualToString: @""])
+        self.window.rootViewController = viewController;
+    else
+        self.window.rootViewController = tableViewController;
+
     return YES;
 }
+
+//////////////////////////////////
+// ->                           //
+//////////////////////////////////
+- (void)pubnubClient:(PubNub *)client didReceiveMessage:(PNMessage *)message {
+
+    NSMutableDictionary *groupMessages = [[NSMutableDictionary alloc] init];
+    [groupMessages setDictionary: [[Globals sharedInstance] groupMess]];
+    
+    NSMutableDictionary *nameDict = [[NSMutableDictionary alloc] init];
+    [nameDict setDictionary: [[Globals sharedInstance] nameDict]];
+
+    NSMutableString *groupName = [[NSMutableString alloc] init];
+    
+    NSString* text = [[message.message allKeys] objectAtIndex:0];
+    NSString* group = [message.message objectForKey: text];
+    NSString* member = @"";   // So we know who sent message
+    bool isFound = false;
+    
+    // When checking, we append the name of the group to the name of
+    // the group member, and then compare
+    // This is done for added security. See (IBAction) sendButton in
+    // ViewController for more details
+    for(id key in nameDict) {
+        id value = [nameDict objectForKey: key];
+        for(id name in value) {
+            if([group isEqual: [key stringByAppendingString: name]]){
+                groupName = [NSMutableString stringWithString: key];
+                isFound = true;
+                member = name; // So we know who sent message
+
+                break;
+            }
+        }
+    }
+    if(!isFound)
+        return;
+    
+    NSString *str = [PNJSONSerialization stringFromJSONObject: text];
+    str = [str substringWithRange:NSMakeRange(1, [str length] - 2)];
+    //str = [str stringByAppendingString: member]; So we know who sent message Not need because now  using dict->array->dict
+    
+    // Changes _>
+    NSMutableArray *arr = [groupMessages valueForKey: groupName];
+    NSArray *dateSender = [[NSArray alloc] initWithObjects: [NSDate dateWithTimeIntervalSinceNow:0], member, nil];
+    NSMutableDictionary *msgDate = [[NSMutableDictionary alloc] init];
+    [msgDate setObject: dateSender forKey: str];
+    [arr addObject: msgDate];
+    // Changes end _>
+    
+    [groupMessages removeObjectForKey: groupName];
+    [groupMessages setObject: arr forKey: groupName];
+    [[Globals sharedInstance] setGroupMess: groupMessages];
+    
+    // Implemented saving to plist; code repeated in many places
+    // Functions implemnting will have ->
+    NSString *error;
+    
+    NSDictionary *plistDict = [NSDictionary dictionaryWithObjects:
+                               [NSArray arrayWithObjects:
+                                [[Globals sharedInstance] userName],
+                                [[Globals sharedInstance] groups],
+                                [[Globals sharedInstance] selectedGroupName],
+                                [[Globals sharedInstance] nameDict],
+                                [[Globals sharedInstance] groupMess],
+                                [[Globals sharedInstance] namesForGroup],
+                                [[Globals sharedInstance] nameNumber],
+                                nil]
+                                                          forKeys:[NSArray arrayWithObjects: @"userName",                                                                        @"groups",
+                                                                   @"selectedGroupName",
+                                                                   @"nameDict",
+                                                                   @"groupMess",
+                                                                   @"namesForGroup",
+                                                                   @"nameNumber",
+                                                                   nil]];
+    NSData *plistData = [NSPropertyListSerialization dataFromPropertyList:plistDict
+                                                                   format:NSPropertyListXMLFormat_v1_0
+                                                         errorDescription:&error];
+    [plistData writeToFile:@"/Users/ajanjayant/Code/projects/GMv2/GMv2/Data.plist"  atomically:YES];
+}
+
+
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
