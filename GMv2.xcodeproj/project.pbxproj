@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5E5850AE1784F3D700C03258 /* Data.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5E5850AD1784F3D600C03258 /* Data.plist */; };
-		5EEB9549178C85440002FB20 /* GMv2.app in Resources */ = {isa = PBXBuildFile; fileRef = 5EFB6185177C303000895A14 /* GMv2.app */; };
+		5E1CE30C178DD9EC00EF64D2 /* BugFixes.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 5E1CE30B178DD9EB00EF64D2 /* BugFixes.rtf */; };
+		5E1CE310178DE33800EF64D2 /* Data.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5E1CE30F178DE33800EF64D2 /* Data.plist */; };
+		5E1CE312178E072B00EF64D2 /* delete-32.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E1CE311178E072B00EF64D2 /* delete-32.png */; };
 		5EFB6189177C303000895A14 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EFB6188177C303000895A14 /* UIKit.framework */; };
 		5EFB618B177C303000895A14 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EFB618A177C303000895A14 /* Foundation.framework */; };
 		5EFB618D177C303000895A14 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EFB618C177C303000895A14 /* CoreGraphics.framework */; };
@@ -99,7 +100,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5E5850AD1784F3D600C03258 /* Data.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Data.plist; sourceTree = "<group>"; };
+		5E1CE30B178DD9EB00EF64D2 /* BugFixes.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = BugFixes.rtf; sourceTree = "<group>"; };
+		5E1CE30F178DE33800EF64D2 /* Data.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Data.plist; sourceTree = "<group>"; };
+		5E1CE311178E072B00EF64D2 /* delete-32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "delete-32.png"; path = "../libs/delete-32.png"; sourceTree = "<group>"; };
 		5EFB6185177C303000895A14 /* GMv2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GMv2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5EFB6188177C303000895A14 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5EFB618A177C303000895A14 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -367,6 +370,7 @@
 				5EFB6294177CB62800895A14 /* images */,
 				5EFB629F177CB62900895A14 /* src */,
 				5EFB6191177C303000895A14 /* Supporting Files */,
+				5E1CE30B178DD9EB00EF64D2 /* BugFixes.rtf */,
 			);
 			path = GMv2;
 			sourceTree = "<group>";
@@ -374,7 +378,7 @@
 		5EFB6191177C303000895A14 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				5E5850AD1784F3D600C03258 /* Data.plist */,
+				5E1CE30F178DE33800EF64D2 /* Data.plist */,
 				5EFB6192177C303000895A14 /* GMv2-Info.plist */,
 				5EFB6193177C303000895A14 /* InfoPlist.strings */,
 				5EFB6196177C303000895A14 /* main.m */,
@@ -658,6 +662,7 @@
 		5EFB6294177CB62800895A14 /* images */ = {
 			isa = PBXGroup;
 			children = (
+				5E1CE311178E072B00EF64D2 /* delete-32.png */,
 				5EFB6295177CB62900895A14 /* bubbleMine.png */,
 				5EFB6296177CB62900895A14 /* bubbleMine@2x.png */,
 				5EFB6297177CB62900895A14 /* bubbleSomeone.png */,
@@ -756,8 +761,9 @@
 				5EFB62B2177CB62A00895A14 /* typingMine@2x.png in Resources */,
 				5EFB62B3177CB62A00895A14 /* typingSomeone.png in Resources */,
 				5EFB62B4177CB62A00895A14 /* typingSomeone@2x.png in Resources */,
-				5E5850AE1784F3D700C03258 /* Data.plist in Resources */,
-				5EEB9549178C85440002FB20 /* GMv2.app in Resources */,
+				5E1CE30C178DD9EC00EF64D2 /* BugFixes.rtf in Resources */,
+				5E1CE310178DE33800EF64D2 /* Data.plist in Resources */,
+				5E1CE312178E072B00EF64D2 /* delete-32.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -862,7 +868,8 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Stephen Blum (4G3RZ3V94T)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Stephen Blum (4G3RZ3V94T)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -877,6 +884,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE = "81C2D71C-E979-48F1-B23E-F54DA3D87DEF";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "81C2D71C-E979-48F1-B23E-F54DA3D87DEF";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -893,7 +902,8 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Stephen Blum (4G3RZ3V94T)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Stephen Blum (4G3RZ3V94T)";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -901,6 +911,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PROVISIONING_PROFILE = "81C2D71C-E979-48F1-B23E-F54DA3D87DEF";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "81C2D71C-E979-48F1-B23E-F54DA3D87DEF";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -909,12 +921,16 @@
 		5EFB61A8177C303100895A14 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Stephen Blum (Y9X42V6EK7)";
+				"CODE_SIGN_ENTITLEMENTS[sdk=*]" = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GMv2/GMv2-Prefix.pch";
 				INFOPLIST_FILE = "GMv2/GMv2-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -922,12 +938,15 @@
 		5EFB61A9177C303100895A14 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Stephen Blum (Y9X42V6EK7)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GMv2/GMv2-Prefix.pch";
 				INFOPLIST_FILE = "GMv2/GMv2-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

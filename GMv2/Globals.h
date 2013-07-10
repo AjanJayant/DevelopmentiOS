@@ -14,7 +14,7 @@
 
 @property (strong, nonatomic) NSString * userName;
 
-//@property (strong, nonatomic) NSString * userNumber;
+@property (strong, nonatomic) NSString * userNumber;
 
 @property (strong, nonatomic) NSMutableArray * groups;
 
@@ -29,13 +29,15 @@
 @property (strong, nonatomic) NSMutableArray * namesForGroup;
 ;
 
+@property (strong, nonatomic) NSDictionary * isoToCountry;
+
 + (Globals *)sharedInstance;
 
 // Setters follow
 
 -(void)setUserName : (NSString *) str;
 
-//-(void)setUserNumber : (NSString *) num;
+-(void)setUserNumber : (NSString *) num;
 
 -(void)setGroups : (NSMutableArray *) str;
 
@@ -47,6 +49,12 @@
 
 -(void)setNameNumber : (NSMutableDictionary *) dict;
 
+-(void)setIsoToCountry : (NSDictionary *) dict;
+
 -(void)setNamesForGroup : (NSMutableArray *) arr;
+
+// Save all the preeceding variables
+
+-(void) saveVariables;
 
 @end

@@ -2,26 +2,50 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>userNumber</key>
+	<string></string>
 	<key>groupMess</key>
-	<dict/>
+	<dict>
+		<key>F</key>
+		<array/>
+	</dict>
 	<key>groups</key>
-	<array/>
+	<array>
+		<string>F</string>
+	</array>
 	<key>nameDict</key>
-	<dict/>
+	<dict>
+		<key>F</key>
+		<array>
+			<string>Ajan</string>
+			<string>A</string>
+			<string>Ankit</string>
+		</array>
+	</dict>
 	<key>nameNumber</key>
 	<dict>
+		<key>A</key>
+		<string>1</string>
+		<key>Ajan</key>
+		<string>1</string>
 		<key>Alin</key>
 		<string>1</string>
 		<key>Ankit</key>
 		<string>2</string>
+		<key>B</key>
+		<string>2</string>
+		<key>C</key>
+		<string>3</string>
 		<key>Nidhi</key>
 		<string>3</string>
+		<key>Stephen</key>
+		<string>1</string>
 	</dict>
 	<key>namesForGroup</key>
 	<array/>
 	<key>selectedGroupName</key>
-	<string>Create a new group</string>
+	<string>F</string>
 	<key>userName</key>
-	<string>Ajan</string>
+	<string>Stephen</string>
 </dict>
 </plist>

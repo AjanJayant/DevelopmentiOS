@@ -12,10 +12,9 @@
 
 @interface TableViewCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UILabel *groupName;
-
-@property (weak, nonatomic) IBOutlet UILabel *memberNamelabel;
-
 @property (weak, nonatomic) IBOutlet UILabel *memberNumber;
+
+@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
+
 
 @end

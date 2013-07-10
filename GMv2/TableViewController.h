@@ -30,6 +30,7 @@
 - (IBAction)deleteGroupsDeleteButton:(id)sender;
 
 - (IBAction)selectContactsToAddBarButton:(id)sender;
+
 @property (strong, nonatomic) IBOutlet UITableView *deleteTable;
 
 @end

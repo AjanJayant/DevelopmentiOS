@@ -56,8 +56,6 @@
 
 @synthesize warnLabel;
 
-//_> Changes
-
 @synthesize selectContacts;
 
 @synthesize addPhoneNumber;
@@ -67,9 +65,6 @@
 @synthesize showMembers;
 
 @synthesize nameTable;
-
-// Changes _>
-
 
 // Tells compiler to create setters and getters for vc that allows users to edit and view groups
 
@@ -87,13 +82,14 @@
 
 NSMutableArray * namesForRemoval;
 
-
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
     }
+    // Also to allow us to select table name
+
     return self;
 }
 
@@ -101,6 +97,15 @@ NSMutableArray * namesForRemoval;
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    // Delegate views to self; done so we can customize table behaviour
+    
+    memberView.DataSource = self;
+    memberView.delegate = self;
+    nameTable.DataSource = self;
+    nameTable.delegate = self;
+    
+    // For adding users
     
     // Add User name label
     adduserNameLabel.text = @"Type your name and number!";
@@ -117,19 +122,13 @@ NSMutableArray * namesForRemoval;
     
     [self.view endEditing:YES];
     
-    // Send controller setup
-    [sendButton setTitle:@"Send" forState:UIControlStateNormal];
-    
-    sendNavBar.topItem.backBarButtonItem = backButton;
-    backButton.title = @"Back";
-    viewEditButton.title = @"View/Edit";
-    
-    sendNavBar.topItem.title = [[Globals sharedInstance] selectedGroupName];
-
-    // Do addGroup setup
+    // For adding groups
     
     addGroupNavBar.topItem.backBarButtonItem = addGroupBackButton;
     addGroupBackButton.title = @"Back";
+    
+    // Only do so if empty
+
     addGroupNavBar.topItem.title = @"New group";
     warnLabel.text = @"";
     
@@ -152,12 +151,39 @@ NSMutableArray * namesForRemoval;
     if(![[Globals sharedInstance] namesForGroup].count)
         showMembers.hidden = YES;
     
-    nameTable.DataSource = self;
-    nameTable.delegate = self;
     nameTable.layer.cornerRadius = 7;
-
     
-    //////////////////////////////////////
+    // For sending messages
+    
+    [sendButton setTitle:@"Send" forState:UIControlStateNormal];
+    
+    sendNavBar.topItem.backBarButtonItem = backButton;
+    backButton.title = @"Back";
+    viewEditButton.title = @"View/Edit";
+    
+    sendNavBar.topItem.title = [[Globals sharedInstance] selectedGroupName];
+    
+    // For view edit page
+    viewEditNavBar.topItem.backBarButtonItem = backToSendButton;
+    backToSendButton.title = @"Back";
+    viewEditNavBar.topItem.title = [[Globals sharedInstance] selectedGroupName];
+    [addNameView setHolder: @"Add someone here!"];
+    
+    // Names to be removed
+    namesForRemoval = [[NSMutableArray alloc] init];
+    
+    // No delete button if no names present
+    
+    NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
+    [dict setDictionary: [[Globals sharedInstance] nameDict]];
+    NSMutableArray *arr = [dict objectForKey: [[Globals sharedInstance] selectedGroupName]];
+    if([arr count] == 0)
+        deleteNamesButton.customView = [[UIView alloc] init];
+
+    [addNameButton setTitle: @"Add!" forState:UIControlStateNormal];
+
+    // Helper code
+    
     // Following code setups bubble table
 
     bubbleData = [[[Globals sharedInstance] groupMess]  objectForKey:[[Globals sharedInstance] selectedGroupName]];
@@ -177,24 +203,9 @@ NSMutableArray * namesForRemoval;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWasShown:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillBeHidden:) name:UIKeyboardWillHideNotification object:nil];
     
-    // Change view/edit page
-    // Also to allow us to select table name
-    memberView.DataSource = self;
-    memberView.delegate = self;
-    
-    viewEditNavBar.topItem.backBarButtonItem = backToSendButton;
-    backToSendButton.title = @"Back";
-    viewEditNavBar.topItem.title = [[Globals sharedInstance] selectedGroupName];
-    [addNameView setHolder: @"Add someone here!"];
-    
-    // Names to be removed
-    namesForRemoval = [[NSMutableArray alloc] init];
-    [deleteNamesButton setTitle: @"Delete"];
-    [addNameButton setTitle: @"Add!" forState:UIControlStateNormal];
-    
     // V. Imp! Makes sure timer fires every 0.05 s so new table data can beloaded
     [NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(reloadTable) userInfo:nil repeats:YES];
-    }
+}
 
 - (void)didReceiveMemoryWarning
 {
@@ -202,9 +213,11 @@ NSMutableArray * namesForRemoval;
     // Dispose of any resources that can be recreated.
 }
 
-////////////////////////////////////////////////////////////////////////////
-// Following functions implement the view controller where we add users ->//
-////////////////////////////////////////////////////////////////////////////
+#pragma mark - Button implementation
+
+//////////////////////////////////////////////////////////////////////////
+// Following functions implement the view controller where we add users //
+//////////////////////////////////////////////////////////////////////////
 
 - (IBAction)addUserNameButton:(id)sender {
     if([addUsernameField.text isEqualToString: @""])
@@ -212,42 +225,20 @@ NSMutableArray * namesForRemoval;
     else
     {
         [[Globals sharedInstance] setUserName : addUsernameField.text];
-//        [[Globals sharedInstance] setUserNumber : addUserNumberField.text];
+        [[Globals sharedInstance] setUserNumber : addUserNumberField.text];
+        [self sanitizeUserNumber];
 
-        // Implemented saving to plist; code repeated in many places
-        // Functions implemnting will have ->
-        NSString *error;
-        
-        NSDictionary *plistDict = [NSDictionary dictionaryWithObjects:
-                                   [NSArray arrayWithObjects:
-                                    [[Globals sharedInstance] userName],
-                                    [[Globals sharedInstance] groups],
-                                    [[Globals sharedInstance] selectedGroupName],
-                                    [[Globals sharedInstance] nameDict],
-                                    [[Globals sharedInstance] groupMess],
-                                    [[Globals sharedInstance] namesForGroup],
-                                    [[Globals sharedInstance] nameNumber],
-nil]
-                                                              forKeys:[NSArray arrayWithObjects: @"userName",                                                                        @"groups",
-                                                                       @"selectedGroupName",
-                                                                       @"nameDict",
-                                                                       @"groupMess",
-                                                                       @"namesForGroup",
-                                                                       @"nameNumber",
-
-                                                                       nil]];
-        NSData *plistData = [NSPropertyListSerialization dataFromPropertyList:plistDict
-                                                                       format:NSPropertyListXMLFormat_v1_0
-                                                             errorDescription:&error];
-        [plistData writeToFile:@"/Users/ajanjayant/Code/projects/GMv2/GMv2/Data.plist"  atomically:YES];
+        // Save variables
+        [[Globals sharedInstance] saveVariables];
         
         // Segue
         [self performSegueWithIdentifier: @"addToFirst" sender: self];
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////// Following functions implement the view controller where we send messages ->//
-////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+// Following functions implement the view controller where we send messages //
+//////////////////////////////////////////////////////////////////////////////
 
 -(IBAction)sendButton:(id)sender {
     
@@ -266,13 +257,13 @@ nil]
     PNChannel *channels[[names count]];
     
     // Set dictionary: Value is channel, key is msg.
-    // The value is actually the name of the group, with the name of the meber append on
+    // The value is actually the name of the group, with the name of the member append on
     // For added security.
     // Suppose someone sends a message to "Family" and they mistakenly add you to that group
     // You will get the message, though that person is not part of your group!
     // Thus we append names on the back for added security
     NSMutableDictionary *msg = [[NSMutableDictionary alloc] init];
-    [msg setValue:[[[Globals sharedInstance] selectedGroupName] stringByAppendingString: [[Globals sharedInstance] userName]] forKey:message.text];
+    [msg setValue:[[[Globals sharedInstance] selectedGroupName] stringByAppendingString: [[Globals sharedInstance] userNumber]] forKey:message.text];
     
     for(int j = 0; j < [names count]; j++) {
         PNChannel *c = [PNChannel channelWithName: names[j] shouldObservePresence:YES];
@@ -284,18 +275,12 @@ nil]
     [msgDict setDictionary: [[Globals sharedInstance] groupMess]];
     NSMutableArray *temp = [[NSMutableArray alloc] init];
     temp = [msgDict valueForKey: [[Globals sharedInstance] selectedGroupName]] ;
-    
-    //[temp addObject: sayBubble];
-    
-    //_> Changes
-    
+        
     NSArray *dateSender = [[NSArray alloc] initWithObjects: [NSDate dateWithTimeIntervalSinceNow:0], @"Me", nil];
     NSMutableDictionary *msgDate = [[NSMutableDictionary alloc] init];
     [msgDate setObject: dateSender forKey: message.text];
     [temp addObject: msgDate];
-    
-    // Changes _>
-    
+        
     [msgDict removeObjectForKey: [[Globals sharedInstance] selectedGroupName]];
     [msgDict setObject: temp forKey: [[Globals sharedInstance] selectedGroupName]];
     [[Globals sharedInstance] setGroupMess: msgDict];
@@ -306,37 +291,14 @@ nil]
     message.text = @"";
     [message resignFirstResponder];
     
-    // Implemented saving to plist; code repeated in many places
-    // Functions implemnting will have ->
-    NSString *error;
-    
-    NSDictionary *plistDict = [NSDictionary dictionaryWithObjects:
-                               [NSArray arrayWithObjects:
-                                [[Globals sharedInstance] userName],
-                                [[Globals sharedInstance] groups],
-                                [[Globals sharedInstance] selectedGroupName],
-                                [[Globals sharedInstance] nameDict],
-                                [[Globals sharedInstance] groupMess],
-                                [[Globals sharedInstance] namesForGroup],
-                                [[Globals sharedInstance] nameNumber],
-                                nil]
-                                                          forKeys:[NSArray arrayWithObjects: @"userName",                                                                        @"groups",
-                                                                   @"selectedGroupName",
-                                                                   @"nameDict",
-                                                                   @"groupMess",
-                                                                   @"namesForGroup",
-                                                                   @"nameNumber",
-                                                                   
-                                                                   nil]];
-    NSData *plistData = [NSPropertyListSerialization dataFromPropertyList:plistDict
-                                                                   format:NSPropertyListXMLFormat_v1_0
-                                                         errorDescription:&error];
-    [plistData writeToFile:@"/Users/ajanjayant/Code/projects/GMv2/GMv2/Data.plist"  atomically:YES];
+    // Save variables
+    [[Globals sharedInstance] saveVariables];
+
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// Following functions implement the view controller where we add groups ->//
-/////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+// Following functions implement the view controller where we add groups //
+///////////////////////////////////////////////////////////////////////////
 
 - (IBAction)addButton:(id)sender {
     
@@ -381,40 +343,13 @@ nil]
             [msgDict setDictionary:[[Globals sharedInstance] groupMess]];
             [msgDict setObject: [[NSMutableArray alloc] init] forKey: addGroup.text];
             [[Globals sharedInstance] setGroupMess: msgDict];
-        
-            // Call segue to  go to next screen
-            
-            // Implemented saving to plist; code repeated in many places
-            // Functions implemnting will have ->
-            
+    
             addGroup.text = @"";
             [[Globals sharedInstance] setNamesForGroup: [[NSMutableArray alloc] init]];
             [nameTable reloadData];
             
-            NSString *error;
-            
-            NSDictionary *plistDict = [NSDictionary dictionaryWithObjects:
-                                       [NSArray arrayWithObjects:
-                                        [[Globals sharedInstance] userName],
-                                        [[Globals sharedInstance] groups],
-                                        [[Globals sharedInstance] selectedGroupName],
-                                        [[Globals sharedInstance] nameDict],
-                                        [[Globals sharedInstance] groupMess],
-                                        [[Globals sharedInstance] namesForGroup],
-                                        [[Globals sharedInstance] nameNumber],
-                                        nil]
-                                                                  forKeys:[NSArray arrayWithObjects: @"userName",                                                                        @"groups",
-                                                                           @"selectedGroupName",
-                                                                           @"nameDict",
-                                                                           @"groupMess",
-                                                                           @"namesForGroup",
-                                                                           @"nameNumber",
-                                                                           
-                                                                           nil]];
-            NSData *plistData = [NSPropertyListSerialization dataFromPropertyList:plistDict
-                                                                           format:NSPropertyListXMLFormat_v1_0
-                                                                 errorDescription:&error];
-            [plistData writeToFile:@"/Users/ajanjayant/Code/projects/GMv2/GMv2/Data.plist"  atomically:YES];
+            // Save variables
+            [[Globals sharedInstance] saveVariables];
             
         }
     }
@@ -461,9 +396,13 @@ nil]
     return;
 }
 
-///////////////////////////////////////////////////////////////////////////
-// Following functions implement the view controller where we view and edit groups ->//
-///////////////////////////////////////////////////////////////////////////
+- (IBAction)selectContacts:(id)sender {
+    [self performSegueWithIdentifier: @"addGroupsToSelect" sender: self];
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Following functions implement the view controller where we view and edit groups //
+/////////////////////////////////////////////////////////////////////////////////////
 
 - (IBAction)addNameButton:(id)sender {
     if([addNameView.text isEqualToString: @""]) {
@@ -515,48 +454,14 @@ nil]
         deleteNamesButton.customView = [[UIView alloc] init];
     }
     
-    // Implemented saving to plist; code repeated in many places
-    // Functions implemnting will have ->
-    NSString *error;
-    
-    NSDictionary *plistDict = [NSDictionary dictionaryWithObjects:
-                               [NSArray arrayWithObjects:
-                                [[Globals sharedInstance] userName],
-                                [[Globals sharedInstance] groups],
-                                [[Globals sharedInstance] selectedGroupName],
-                                [[Globals sharedInstance] nameDict],
-                                [[Globals sharedInstance] groupMess],
-                                [[Globals sharedInstance] namesForGroup],
-                                [[Globals sharedInstance] nameNumber],
-                                nil]
-                                                          forKeys:[NSArray arrayWithObjects: @"userName",                                                                        @"groups",
-                                                                   @"selectedGroupName",
-                                                                   @"nameDict",
-                                                                   @"groupMess",
-                                                                   @"namesForGroup",
-                                                                   @"nameNumber",
-                                                                   
-                                                                   nil]];
-    NSData *plistData = [NSPropertyListSerialization dataFromPropertyList:plistDict
-                                                                   format:NSPropertyListXMLFormat_v1_0
-                                                         errorDescription:&error];
-    [plistData writeToFile:@"/Users/ajanjayant/Code/projects/GMv2/GMv2/Data.plist"  atomically:YES];
+    // Save variables
+    [[Globals sharedInstance] saveVariables];
+
 }
 
 ///////////////////////
 // Helper functions //
 /////////////////////
-
-// Separate names based on lines
-- (NSMutableArray *) separateNames
-{
-    NSMutableArray * arr = [[NSMutableArray alloc] init];
-    NSString *str = [NSString stringWithString: addMembers.text];
-    NSArray *temp = [NSArray arrayWithArray:arr];
-    temp = [str componentsSeparatedByString : @"\n"];
-    arr = [NSMutableArray arrayWithArray:temp];
-    return arr;
-}
 
 // Used to make sure keyboard appears on load
 
@@ -581,14 +486,27 @@ nil]
     return YES;
 }
 
+- (void) sanitizeUserNumber {
+    NSString * num = [[Globals sharedInstance] userNumber];
+    NSCharacterSet *doNotWant = [NSCharacterSet characterSetWithCharactersInString:@"()- "];
+    num = [[num componentsSeparatedByCharactersInSet: doNotWant] componentsJoinedByString: @""];
+    NSLocale *currentLocale = [NSLocale currentLocale];  // get the current locale.
+    NSString *isoCode = [currentLocale objectForKey:NSLocaleCountryCode];
+    NSString *countryCode =  [[[Globals sharedInstance] isoToCountry] objectForKey:isoCode];
+    
+    NSString * userNum = [countryCode stringByAppendingString:num];
+    [[Globals sharedInstance] setUserNumber: userNum];
+}
+
 // BubbleTable Code
+
+#pragma mark - UIBubbleTableViewDataSource implementation
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
 
-#pragma mark - UIBubbleTableViewDataSource implementation
 
 - (NSInteger)rowsForBubbleTable:(UIBubbleTableView *)tableView
 {
@@ -691,7 +609,6 @@ nil]
     return 1;
 }
 
-
 // Customize the number of rows in the table view.
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSMutableArray * arr = [[NSMutableArray alloc] init];
@@ -703,7 +620,6 @@ nil]
 
     return [arr count];
 }
-
 
 // Customize the appearance of table view cells.
 - (TableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -722,12 +638,13 @@ nil]
         arr = [[Globals sharedInstance] namesForGroup];
 
     }
-    cell.memberNamelabel.text = [arr objectAtIndex: indexPath.row];
+    cell.nameLabel.text = [arr objectAtIndex: indexPath.row];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;  // Turn off blue highlight
+    [tableView deselectRowAtIndexPath:indexPath animated:YES]; // Deselect each row
+    cell.accessoryType = UITableViewCellAccessoryNone; // Make sure reloaded data is not selected
 
     return cell;
 }
-
 
 // For view edit text selection
 
@@ -738,13 +655,13 @@ nil]
         if(cell.accessoryType == UITableViewCellAccessoryCheckmark) {
             cell.accessoryType = UITableViewCellAccessoryNone;
             for(int i = 0; i < [namesForRemoval count]; i++){
-                if([namesForRemoval[i] isEqualToString: cell.memberNamelabel.text])
+                if([namesForRemoval[i] isEqualToString: cell.nameLabel.text])
                 [namesForRemoval removeObject:namesForRemoval[i]];
             }
         }
         else {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
-            [namesForRemoval addObject: cell.memberNamelabel.text];
+            [namesForRemoval addObject: cell.nameLabel.text];
         }
     }
 }

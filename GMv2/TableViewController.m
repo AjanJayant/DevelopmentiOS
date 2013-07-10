@@ -55,7 +55,7 @@ NSMutableArray * namesToBeAdded;
     
     // For first table view controller
     firstNavBar.topItem.title = @"Select a group";
-    editGroups.title = @"Delete";
+    // editGroups.title = @"Delete";
     // hacky way of hiding button if no groups
     if([[[Globals sharedInstance] groups] count] == 0) {
         editGroups.customView = [[UIView alloc] init];
@@ -63,12 +63,12 @@ NSMutableArray * namesToBeAdded;
     // For delete groups
     deleteGroupsBackButton.title = @"Back";
     
-    deleteGroupsDeleteButton.title = @"Delete";
+    // deleteGroupsDeleteButton.title = @"Delete";
     deleteGroupsNavBar.topItem.title = @"Select to delete";
     
     // For select contacts
     selectContactsNavBar.topItem.title = @"Click to select";
-    selectContactsToAddBarButton.title = @"Add!";
+    selectContactsToAddBarButton.title = @"Back";
     
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -96,7 +96,7 @@ NSMutableArray * namesToBeAdded;
 {
     // Return the number of rows in the section.
     if([[self title] isEqual: @"first"])
-        return ([[[Globals sharedInstance] groups] count] + 1);
+        return ([[[Globals sharedInstance] groups] count]);
     else if(tableView.tag == 1)
         return [[[Globals sharedInstance] groups] count];
     else if(tableView.tag == 2)
@@ -112,26 +112,16 @@ NSMutableArray * namesToBeAdded;
     // Two different types of cells used, so different identifiers
     TableViewCell *cell;
     NSString *CellIdentifier = [[NSString alloc] init];
-    if([[self title] isEqual: @"first"]) {
-        bool isLast = false;
-        if(indexPath.row == [[[Globals sharedInstance] groups] count]) {
-            CellIdentifier = @"AddCell";
-            isLast = true;
-        }
-        else
-            CellIdentifier = @"Cell";
-    
+    if(tableView.tag == 0) {
+        CellIdentifier = @"Cell";
+
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
         // Configure the cell...
-        if(isLast)
-            cell.groupName.text= @"Create a new group";
-        else
-            cell.groupName.text= [[Globals sharedInstance] groups][indexPath.row];
+        cell.nameLabel.text= [[Globals sharedInstance] groups][indexPath.row];
         
         // Resets names for groups every time
         [[Globals sharedInstance] setNamesForGroup: [[NSMutableArray alloc] init]];
-        return cell;
     }
     // Delete groups controller has tag == 1
     else if(tableView.tag == 1){
@@ -139,30 +129,32 @@ NSMutableArray * namesToBeAdded;
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
         
         // Configure the cell...
-        cell.groupName.text= [[Globals sharedInstance] groups][indexPath.row];
-        return cell;
+        cell.accessoryType = UITableViewCellAccessoryNone; // Make sure reloaded data is not selected
+        cell.nameLabel.text= [[Globals sharedInstance] groups][indexPath.row];
     }
     else if(tableView.tag == 2){
         NSString *CellIdentifier = @"Cell";
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
         
         // Configure the cell...
+        cell.accessoryType = UITableViewCellAccessoryNone; // Make sure reloaded data is not selected
+
         NSArray *allKeys = [[[Globals sharedInstance] nameNumber] allKeys];
-        cell.memberNamelabel.text= allKeys[indexPath.row];
-        cell.memberNamelabel.textColor = [UIColor purpleColor];
+        cell.nameLabel.text= allKeys[indexPath.row];
+        cell.nameLabel.textColor = [UIColor purpleColor];
         
         cell.memberNumber.text = [[[Globals sharedInstance] nameNumber] objectForKey: allKeys[indexPath.row]];
         cell.memberNumber.textColor = [UIColor redColor];
 
-        return cell;
     }
     else {
         NSString *CellIdentifier = @"Cell";
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-        
+
         // Configure cell
-        return cell;
+        cell.accessoryType = UITableViewCellAccessoryNone; // Make sure reloaded data is not selected
     }
+    return cell;
 }
 
 /*
@@ -220,26 +212,26 @@ NSMutableArray * namesToBeAdded;
         if(cell.accessoryType == UITableViewCellAccessoryCheckmark) {
             cell.accessoryType = UITableViewCellAccessoryNone;
             for(int i = 0; i < [groupsForRemoval count]; i++){
-                if([groupsForRemoval[i] isEqualToString: cell.groupName.text])
+                if([groupsForRemoval[i] isEqualToString: cell.nameLabel.text])
                     [groupsForRemoval removeObject:groupsForRemoval[i]];
             }
         }
         else {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
-            [groupsForRemoval addObject: cell.groupName.text];
+            [groupsForRemoval addObject: cell.nameLabel.text];
         }
     }
     else if(tableView.tag == 2) {
         if(cell.accessoryType == UITableViewCellAccessoryCheckmark) {
             cell.accessoryType = UITableViewCellAccessoryNone;
             for(int i = 0; i < namesToBeAdded.count; i++){
-                if([namesToBeAdded[i] isEqualToString: cell.memberNamelabel.text])
+                if([namesToBeAdded[i] isEqualToString: cell.nameLabel.text])
                     [namesToBeAdded removeObject:namesToBeAdded[i]];
             }
         }
         else {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
-            [namesToBeAdded addObject: cell.memberNamelabel.text];
+            [namesToBeAdded addObject: cell.nameLabel.text];
         }
 
     }
@@ -260,30 +252,9 @@ NSMutableArray * namesToBeAdded;
         deleteGroupsDeleteButton.customView = [[UIView alloc] init];
     }
     
-    // Implemented saving to plist; code repeated in many places
-    // Functions implemnting will have ->
-    NSString *error;
-    
-    NSDictionary *plistDict = [NSDictionary dictionaryWithObjects:
-                               [NSArray arrayWithObjects:
-                                [[Globals sharedInstance] userName],
-                                [[Globals sharedInstance] groups],
-                                [[Globals sharedInstance] selectedGroupName],
-                                [[Globals sharedInstance] nameDict],
-                                [[Globals sharedInstance] groupMess],
-                                [[Globals sharedInstance] namesForGroup],
-                                [[Globals sharedInstance] nameNumber],
-                                nil]
-                                                          forKeys:[NSArray arrayWithObjects: @"userName",                                                                        @"groups",         @"selectedGroupName",
-                                                        @"nameDict",
-                                                        @"groupMess",
-                                                        @"namesForGroup",
-                                                                   @"nameNumber",
-                                                                   nil]];
-    NSData *plistData = [NSPropertyListSerialization dataFromPropertyList:plistDict
-                                                                   format:NSPropertyListXMLFormat_v1_0
-                                                         errorDescription:&error];
-    [plistData writeToFile:@"/Users/ajanjayant/Code/projects/GMv2/GMv2/Data.plist"  atomically:YES];
+    // Save variables
+    [[Globals sharedInstance] saveVariables];
+
 
 }
 

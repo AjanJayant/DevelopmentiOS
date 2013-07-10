@@ -36,6 +36,9 @@ NSMutableDictionary *dictionary;
     [PubNub connect];
     
     // Code for implemnting storing of messages
+    
+    // Making changes to save to iphone
+
     NSString *plistPath;
     NSString *rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
                                                               NSUserDomainMask, YES) objectAtIndex:0];
@@ -46,24 +49,26 @@ NSMutableDictionary *dictionary;
     dictionary = [NSMutableDictionary dictionaryWithContentsOfFile:plistPath];
     
     [[Globals sharedInstance] setUserName:[dictionary objectForKey:@"userName"]];
+    [[Globals sharedInstance] setUserNumber:[dictionary objectForKey:@"userNumber"]];
 
     [[Globals sharedInstance] setGroups: [dictionary objectForKey:@"groups"]];
+
+    [[Globals sharedInstance] setIsoToCountry: [dictionary objectForKey:@"isoToCountry"]];
 
     [[Globals sharedInstance] setSelectedGroupName:[dictionary objectForKey:@"selectedGroupName"]];
 
     [[Globals sharedInstance] setNameDict:[dictionary objectForKey:@"nameDict"]];
 
     [[Globals sharedInstance] setGroupMess: [dictionary objectForKey:@"groupMess"]];
+    
     [[Globals sharedInstance] setNameNumber: [dictionary objectForKey:@"nameNumber"]];
 
-    
-    //[[Globals sharedInstance] setUserNumber: [dictionary objectForKey:@"userNumber"]];
-    
+        
     // Following code sets inital view controller based on whether he's added himself or not
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
     ViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:@"root view controller"];
     TableViewController *tableViewController = [storyboard instantiateViewControllerWithIdentifier:@"first"];
-    if([[[Globals sharedInstance] userName] isEqualToString: @""])
+    if([[[Globals sharedInstance] userName] isEqualToString: @""] || [[[Globals sharedInstance] userNumber] isEqualToString: @""])
         self.window.rootViewController = viewController;
     else
         self.window.rootViewController = tableViewController;
@@ -71,9 +76,10 @@ NSMutableDictionary *dictionary;
     return YES;
 }
 
-//////////////////////////////////
-// ->                           //
-//////////////////////////////////
+////////////////////////////////////////////////////////////////
+// Checks if client has receivedmessage, and stores if he has //
+////////////////////////////////////////////////////////////////
+
 - (void)pubnubClient:(PubNub *)client didReceiveMessage:(PNMessage *)message {
 
     NSMutableDictionary *groupMessages = [[NSMutableDictionary alloc] init];
@@ -96,7 +102,8 @@ NSMutableDictionary *dictionary;
     for(id key in nameDict) {
         id value = [nameDict objectForKey: key];
         for(id name in value) {
-            if([group isEqual: [key stringByAppendingString: name]]){
+            id num = [[[Globals sharedInstance] nameNumber] objectForKey: name];
+            if([group isEqual: [key stringByAppendingString: num]]){
                 groupName = [NSMutableString stringWithString: key];
                 isFound = true;
                 member = name; // So we know who sent message
@@ -110,45 +117,21 @@ NSMutableDictionary *dictionary;
     
     NSString *str = [PNJSONSerialization stringFromJSONObject: text];
     str = [str substringWithRange:NSMakeRange(1, [str length] - 2)];
-    //str = [str stringByAppendingString: member]; So we know who sent message Not need because now  using dict->array->dict
+    //str = [str stringByAppendingString: member]; So we know who sent message No need because now  using dict->array->dict
     
-    // Changes _>
     NSMutableArray *arr = [groupMessages valueForKey: groupName];
     NSArray *dateSender = [[NSArray alloc] initWithObjects: [NSDate dateWithTimeIntervalSinceNow:0], member, nil];
     NSMutableDictionary *msgDate = [[NSMutableDictionary alloc] init];
     [msgDate setObject: dateSender forKey: str];
     [arr addObject: msgDate];
-    // Changes end _>
     
     [groupMessages removeObjectForKey: groupName];
     [groupMessages setObject: arr forKey: groupName];
     [[Globals sharedInstance] setGroupMess: groupMessages];
     
-    // Implemented saving to plist; code repeated in many places
-    // Functions implemnting will have ->
-    NSString *error;
-    
-    NSDictionary *plistDict = [NSDictionary dictionaryWithObjects:
-                               [NSArray arrayWithObjects:
-                                [[Globals sharedInstance] userName],
-                                [[Globals sharedInstance] groups],
-                                [[Globals sharedInstance] selectedGroupName],
-                                [[Globals sharedInstance] nameDict],
-                                [[Globals sharedInstance] groupMess],
-                                [[Globals sharedInstance] namesForGroup],
-                                [[Globals sharedInstance] nameNumber],
-                                nil]
-                                                          forKeys:[NSArray arrayWithObjects: @"userName",                                                                        @"groups",
-                                                                   @"selectedGroupName",
-                                                                   @"nameDict",
-                                                                   @"groupMess",
-                                                                   @"namesForGroup",
-                                                                   @"nameNumber",
-                                                                   nil]];
-    NSData *plistData = [NSPropertyListSerialization dataFromPropertyList:plistDict
-                                                                   format:NSPropertyListXMLFormat_v1_0
-                                                         errorDescription:&error];
-    [plistData writeToFile:@"/Users/ajanjayant/Code/projects/GMv2/GMv2/Data.plist"  atomically:YES];
+    // Save variables
+    [[Globals sharedInstance] saveVariables];
+
 }
 
 
