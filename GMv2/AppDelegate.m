@@ -10,23 +10,25 @@
 
 @implementation AppDelegate
 
-NSMutableDictionary *dictionary;
-
 @synthesize managedObjectContext = _managedObjectContext;
 @synthesize managedObjectModel = _managedObjectModel;
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    NSLog(@"Hello");
+
     // The following line is commented out to allow the first controller
     // to be the initial controller
     // self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     //self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
-    
+    NSLog(@"Hello2");
+
     [PubNub setDelegate:self];
     
+
     // Messaging server setup
     [PubNub setConfiguration:[PNConfiguration configurationForOrigin:@"pubsub.pubnub.com"
                                                           publishKey:@"pub-c-15eaba1b-1f85-4b28-98c3-52ad653f0747"
@@ -34,37 +36,14 @@ NSMutableDictionary *dictionary;
                                                            secretKey:@"sec-c-YzRmNTE5M2MtYWYyMC00M2FjLWEyMDctMjMyYzc4YjI1OTgy"]];
     
     [PubNub connect];
-    
+    NSLog(@"Hello3");
+
     // Code for implemnting storing of messages
     
     // Making changes to save to iphone
 
-    NSString *plistPath;
-    NSString *rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
-                                                              NSUserDomainMask, YES) objectAtIndex:0];
-    plistPath = [rootPath stringByAppendingPathComponent:@"Data.plist"];
-    if (![[NSFileManager defaultManager] fileExistsAtPath:plistPath]) {
-        plistPath = [[NSBundle mainBundle] pathForResource:@"Data" ofType:@"plist"];
-    }
-    dictionary = [NSMutableDictionary dictionaryWithContentsOfFile:plistPath];
+    [[Globals sharedInstance] loadVariables];
     
-    [[Globals sharedInstance] setUserName:[dictionary objectForKey:@"userName"]];
-    [[Globals sharedInstance] setUserNumber:[dictionary objectForKey:@"userNumber"]];
-
-    [[Globals sharedInstance] setGroups: [dictionary objectForKey:@"groups"]];
-
-    [[Globals sharedInstance] setIsoToCountry: [dictionary objectForKey:@"isoToCountry"]];
-
-    [[Globals sharedInstance] setSelectedGroupName:[dictionary objectForKey:@"selectedGroupName"]];
-
-    [[Globals sharedInstance] setNameDict:[dictionary objectForKey:@"nameDict"]];
-
-    [[Globals sharedInstance] setGroupMess: [dictionary objectForKey:@"groupMess"]];
-    
-    [[Globals sharedInstance] setNameNumber: [dictionary objectForKey:@"nameNumber"]];
-
-        
-    // Following code sets inital view controller based on whether he's added himself or not
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
     ViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:@"root view controller"];
     TableViewController *tableViewController = [storyboard instantiateViewControllerWithIdentifier:@"first"];
@@ -72,7 +51,6 @@ NSMutableDictionary *dictionary;
         self.window.rootViewController = viewController;
     else
         self.window.rootViewController = tableViewController;
-
     return YES;
 }
 

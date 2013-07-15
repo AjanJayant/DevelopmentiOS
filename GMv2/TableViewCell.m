@@ -26,8 +26,6 @@
     [super setSelected:selected animated:animated];
 
     // Configure the view for the selected state
-    if([self tag] == 1)
-        [[Globals sharedInstance] setSelectedGroupName: [NSString stringWithString: nameLabel.text]];
 }
 
 @end

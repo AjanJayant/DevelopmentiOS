@@ -92,6 +92,35 @@
     namesForGroup = [NSMutableArray arrayWithArray:arr];
 }
 
+-(void) loadVariables {
+    
+    NSMutableDictionary *dictionary;
+
+    NSString *plistPath;
+    NSString *rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
+                                                              NSUserDomainMask, YES) objectAtIndex:0];
+    plistPath = [rootPath stringByAppendingPathComponent:@"Data.plist"];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:plistPath]) {
+        plistPath = [[NSBundle mainBundle] pathForResource:@"Data" ofType:@"plist"];
+    }
+    dictionary = [NSMutableDictionary dictionaryWithContentsOfFile:plistPath];
+    
+    [[Globals sharedInstance] setUserName:[dictionary objectForKey:@"userName"]];
+    [[Globals sharedInstance] setUserNumber:[dictionary objectForKey:@"userNumber"]];
+    
+    [[Globals sharedInstance] setGroups: [dictionary objectForKey:@"groups"]];
+    
+    [[Globals sharedInstance] setIsoToCountry: [dictionary objectForKey:@"isoToCountry"]];
+    
+    [[Globals sharedInstance] setSelectedGroupName:[dictionary objectForKey:@"selectedGroupName"]];
+    
+    [[Globals sharedInstance] setNameDict:[dictionary objectForKey:@"nameDict"]];
+    
+    [[Globals sharedInstance] setGroupMess: [dictionary objectForKey:@"groupMess"]];
+    
+    [[Globals sharedInstance] setNameNumber: [dictionary objectForKey:@"nameNumber"]];
+}
+
 -(void) saveVariables {
     NSString *error;
     NSString *rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];

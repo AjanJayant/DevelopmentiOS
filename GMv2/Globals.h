@@ -57,4 +57,6 @@
 
 -(void) saveVariables;
 
+-(void) loadVariables;
+
 @end

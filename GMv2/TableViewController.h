@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "TableViewCell.h"
+#import "ViewController.h"
 #import "Globals.h"
 #import "Constants.h"
 
@@ -23,13 +24,7 @@
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *deleteGroupsDeleteButton;
 
-@property (weak, nonatomic) IBOutlet UINavigationBar *selectContactsNavBar;
-
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *selectContactsToAddBarButton;
-
 - (IBAction)deleteGroupsDeleteButton:(id)sender;
-
-- (IBAction)selectContactsToAddBarButton:(id)sender;
 
 @property (strong, nonatomic) IBOutlet UITableView *deleteTable;
 

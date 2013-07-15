@@ -12,7 +12,6 @@
 
 @interface TableViewCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UILabel *memberNumber;
 
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 

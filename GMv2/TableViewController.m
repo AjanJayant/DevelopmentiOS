@@ -26,10 +26,6 @@
 
 @synthesize deleteTable;
 
-@synthesize selectContactsNavBar;
-
-@synthesize selectContactsToAddBarButton;
-
 NSMutableArray * groupsForRemoval;
 
 NSMutableArray * namesToBeAdded;
@@ -65,17 +61,11 @@ NSMutableArray * namesToBeAdded;
     
     // deleteGroupsDeleteButton.title = @"Delete";
     deleteGroupsNavBar.topItem.title = @"Select to delete";
-    
-    // For select contacts
-    selectContactsNavBar.topItem.title = @"Click to select";
-    selectContactsToAddBarButton.title = @"Back";
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
+
+    [[Globals sharedInstance] setSelectedGroupName: @""];
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-    [self.tableView reloadData];
+    //[self.tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning
@@ -95,7 +85,7 @@ NSMutableArray * namesToBeAdded;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    if([[self title] isEqual: @"first"])
+    if(tableView.tag == 0)
         return ([[[Globals sharedInstance] groups] count]);
     else if(tableView.tag == 1)
         return [[[Globals sharedInstance] groups] count];
@@ -114,12 +104,12 @@ NSMutableArray * namesToBeAdded;
     NSString *CellIdentifier = [[NSString alloc] init];
     if(tableView.tag == 0) {
         CellIdentifier = @"Cell";
-
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
         // Configure the cell...
         cell.nameLabel.text= [[Globals sharedInstance] groups][indexPath.row];
-        
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+
         // Resets names for groups every time
         [[Globals sharedInstance] setNamesForGroup: [[NSMutableArray alloc] init]];
     }
@@ -130,22 +120,8 @@ NSMutableArray * namesToBeAdded;
         
         // Configure the cell...
         cell.accessoryType = UITableViewCellAccessoryNone; // Make sure reloaded data is not selected
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.nameLabel.text= [[Globals sharedInstance] groups][indexPath.row];
-    }
-    else if(tableView.tag == 2){
-        NSString *CellIdentifier = @"Cell";
-        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-        
-        // Configure the cell...
-        cell.accessoryType = UITableViewCellAccessoryNone; // Make sure reloaded data is not selected
-
-        NSArray *allKeys = [[[Globals sharedInstance] nameNumber] allKeys];
-        cell.nameLabel.text= allKeys[indexPath.row];
-        cell.nameLabel.textColor = [UIColor purpleColor];
-        
-        cell.memberNumber.text = [[[Globals sharedInstance] nameNumber] objectForKey: allKeys[indexPath.row]];
-        cell.memberNumber.textColor = [UIColor redColor];
-
     }
     else {
         NSString *CellIdentifier = @"Cell";
@@ -153,6 +129,8 @@ NSMutableArray * namesToBeAdded;
 
         // Configure cell
         cell.accessoryType = UITableViewCellAccessoryNone; // Make sure reloaded data is not selected
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+
     }
     return cell;
 }
@@ -208,7 +186,13 @@ NSMutableArray * namesToBeAdded;
      [self.navigationController pushViewController:detailViewController animated:YES];
      */
     TableViewCell *cell = (TableViewCell *)[tableView cellForRowAtIndexPath:indexPath];
-    if(tableView.tag == 1) {
+    if(tableView.tag == 0) {
+        
+        [[Globals sharedInstance] setSelectedGroupName: [[Globals sharedInstance] groups][indexPath.row]];
+        
+        [self performSegueWithIdentifier:@"firstToSend" sender:self];
+    }
+    else if(tableView.tag == 1) {
         if(cell.accessoryType == UITableViewCellAccessoryCheckmark) {
             cell.accessoryType = UITableViewCellAccessoryNone;
             for(int i = 0; i < [groupsForRemoval count]; i++){
@@ -221,20 +205,7 @@ NSMutableArray * namesToBeAdded;
             [groupsForRemoval addObject: cell.nameLabel.text];
         }
     }
-    else if(tableView.tag == 2) {
-        if(cell.accessoryType == UITableViewCellAccessoryCheckmark) {
-            cell.accessoryType = UITableViewCellAccessoryNone;
-            for(int i = 0; i < namesToBeAdded.count; i++){
-                if([namesToBeAdded[i] isEqualToString: cell.nameLabel.text])
-                    [namesToBeAdded removeObject:namesToBeAdded[i]];
-            }
-        }
-        else {
-            cell.accessoryType = UITableViewCellAccessoryCheckmark;
-            [namesToBeAdded addObject: cell.nameLabel.text];
-        }
 
-    }
 }
 
 //////
@@ -258,17 +229,4 @@ NSMutableArray * namesToBeAdded;
 
 }
 
-- (IBAction)selectContactsToAddBarButton:(id)sender {
-    bool isPresent = false;
-    for(id name in namesToBeAdded) {
-        for(id member in [[Globals sharedInstance] namesForGroup])
-            if([member isEqualToString: name]) {
-                isPresent =true;
-                break;
-            };
-        if(!isPresent)
-            [[[Globals sharedInstance] namesForGroup] addObject: name];
-    }
-    [self performSegueWithIdentifier: @"selectToAdd" sender: self];
-}
 @end
