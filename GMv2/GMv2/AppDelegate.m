@@ -30,11 +30,11 @@ NSString *number;
     
     [PubNub setDelegate:self];
     
-    
+
     // Messaging server setup
     [PubNub setConfiguration:[PNConfiguration configurationForOrigin:@"pubsub.pubnub.com"
                                                           publishKey:@"pub-c-15eaba1b-1f85-4b28-98c3-52ad653f0747"
-                                                        subscribeKey:@"sub-c-4db30200-d92b-11e2-b1b2-02ee2ddab7fe"
+                                                          subscribeKey:@"sub-c-4db30200-d92b-11e2-b1b2-02ee2ddab7fe"
                                                            secretKey:@"sec-c-YzRmNTE5M2MtYWYyMC00M2FjLWEyMDctMjMyYzc4YjI1OTgy"]];
     
     [PubNub connect];
@@ -42,7 +42,7 @@ NSString *number;
     // Code for implemnting storing of messages
     
     // Making changes to save to iphone
-    
+
     [[Globals sharedInstance] loadVariables];
     
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
@@ -60,28 +60,28 @@ NSString *number;
 ////////////////////////////////////////////////////////////////
 
 - (void)pubnubClient:(PubNub *)client didReceiveMessage:(PNMessage *)message {
-    
+
     if([message.channel.name isEqualToString: [[Globals sharedInstance] userNumber]]) {
         
         group = [[NSString alloc] init];
         name = [[NSString alloc] init];
         number = [[NSString alloc] init];
-        
+
         group = [[message.message allKeys] objectAtIndex:0];
         name = [message.message objectForKey: group][0];
         number = [message.message objectForKey: group][1];
-        
+
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[[@"You've been added to " stringByAppendingString:group]stringByAppendingString: @" !"] message:[[@"Do you want to add " stringByAppendingString: name] stringByAppendingString:@" ?"]delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Awww yeah!", nil];
         [alert show];
         return;
     }
-    
+        
     NSMutableDictionary *groupMessages = [[NSMutableDictionary alloc] init];
     [groupMessages setDictionary: [[Globals sharedInstance] groupMess]];
     
     NSMutableDictionary *nameDict = [[NSMutableDictionary alloc] init];
     [nameDict setDictionary: [[Globals sharedInstance] nameDict]];
-    
+
     NSMutableString *groupName = [[NSMutableString alloc] init];
     
     NSString* text = [[message.message allKeys] objectAtIndex:0];
@@ -101,7 +101,7 @@ NSString *number;
                 groupName = [NSMutableString stringWithString: key];
                 isFound = true;
                 member = name; // So we know who sent message
-                
+
                 break;
             }
         }
@@ -125,62 +125,62 @@ NSString *number;
     
     // Save variables
     [[Globals sharedInstance] saveVariables];
-    
+
 }
 
 - (void)alertView:(UIAlertView *)alertView
 clickedButtonAtIndex:(NSInteger) buttonIndex
 {
-    if(buttonIndex == 0) {
-        return;
-    }
-    else if (buttonIndex == 1){
-        
-        bool isThere = false;
-        for(id cohors in [[Globals sharedInstance] nameDict]) {
-            if([cohors isEqualToString: group]) {
-                isThere = true;
-                break;
+        if(buttonIndex == 0) {
+            return;
+        }
+        else if (buttonIndex == 1){
+            
+            bool isThere = false;
+            for(id cohors in [[Globals sharedInstance] nameDict]) {
+                if([cohors isEqualToString: group]) {
+                    isThere = true;
+                    break;
+                }
+
             }
             
+            if(!isThere) {
+                NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
+                [dict setDictionary: [[Globals sharedInstance] nameDict]];
+                NSMutableArray * arr = [[NSMutableArray alloc] init];
+                arr[0] = name;
+                [dict setObject: arr forKey: group];
+                [[Globals sharedInstance] setNameDict: dict];
+                [[[Globals sharedInstance] groups] addObject: group];
+
+            }
+            else {
+                
+                // Add to groupdict if isn't there
+                NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
+                [dict setDictionary: [[Globals sharedInstance] nameDict]];
+                NSMutableArray *arr = [dict objectForKey: group];
+                [dict removeObjectForKey: group];
+                [dict setObject: arr forKey: group];
+                [[Globals sharedInstance] setNameDict: dict];
+                
+                // Add to name number as well                
+                
+            }
+            
+            // Add to groups
+                        
+            // Store group name in messgaes dictionary
+            
+            NSMutableDictionary * msgDict = [[NSMutableDictionary alloc] init];
+            [msgDict setDictionary:[[Globals sharedInstance] groupMess]];
+            [msgDict setObject: [[NSMutableArray alloc] init] forKey: group];
+            [[Globals sharedInstance] setGroupMess: msgDict];
+            
+            [[Globals sharedInstance] saveVariables];
+
         }
-        
-        if(!isThere) {
-            NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
-            [dict setDictionary: [[Globals sharedInstance] nameDict]];
-            NSMutableArray * arr = [[NSMutableArray alloc] init];
-            arr[0] = name;
-            [dict setObject: arr forKey: group];
-            [[Globals sharedInstance] setNameDict: dict];
-            [[[Globals sharedInstance] groups] addObject: group];
-            
-        }
-        else {
-            
-            // Add to groupdict if isn't there
-            NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
-            [dict setDictionary: [[Globals sharedInstance] nameDict]];
-            NSMutableArray *arr = [dict objectForKey: group];
-            [dict removeObjectForKey: group];
-            [dict setObject: arr forKey: group];
-            [[Globals sharedInstance] setNameDict: dict];
-            
-            // Add to name number as well
-            
-        }
-        
-        // Add to groups
-        
-        // Store group name in messgaes dictionary
-        
-        NSMutableDictionary * msgDict = [[NSMutableDictionary alloc] init];
-        [msgDict setDictionary:[[Globals sharedInstance] groupMess]];
-        [msgDict setObject: [[NSMutableArray alloc] init] forKey: group];
-        [[Globals sharedInstance] setGroupMess: msgDict];
-        
-        [[Globals sharedInstance] saveVariables];
-        
-    }
 }
 
 
@@ -194,7 +194,7 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
+    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
 }
 
@@ -220,11 +220,11 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
     NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
     if (managedObjectContext != nil) {
         if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
-            // Replace this implementation with code to handle the error appropriately.
-            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+             // Replace this implementation with code to handle the error appropriately.
+             // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
             NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
             abort();
-        }
+        } 
     }
 }
 
@@ -274,7 +274,7 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
         /*
          Replace this implementation with code to handle the error appropriately.
          
-         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
          
          Typical reasons for an error here include:
          * The persistent store is not accessible;
@@ -296,7 +296,7 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
          */
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
-    }
+    }    
     
     return _persistentStoreCoordinator;
 }

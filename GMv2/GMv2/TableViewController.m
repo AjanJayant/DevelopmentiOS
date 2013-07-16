@@ -46,7 +46,7 @@ NSMutableArray * namesToBeAdded;
     [super viewDidLoad];
     
     groupsForRemoval = [[NSMutableArray alloc] init];
-    namesToBeAdded = [[NSMutableArray alloc] init];
+    namesToBeAdded = [[NSMutableArray alloc] init]; 
     
     // Done here because Globals not set at AppDelegate stage
     
@@ -68,14 +68,14 @@ NSMutableArray * namesToBeAdded;
     
     // deleteGroupsDeleteButton.title = @"Delete";
     deleteGroupsNavBar.topItem.title = @"Select to delete";
-    
+
     [[Globals sharedInstance] setSelectedGroupName: @""];
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     //[self.tableView reloadData];
     
     [NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(reloadTable) userInfo:nil repeats:YES];
-    
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -115,17 +115,17 @@ NSMutableArray * namesToBeAdded;
     if(tableView.tag == 0) {
         CellIdentifier = @"Cell";
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-        
+    
         // Configure the cell...
         cell.nameLabel.text= [[Globals sharedInstance] groups][indexPath.row];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        
+
         // Resets names for groups every time
         [[Globals sharedInstance] setNamesForGroup: [[NSMutableArray alloc] init]];
     }
     // Delete groups controller has tag == 1
     else if(tableView.tag == 1){
-        NSString *CellIdentifier = @"Cell";
+         NSString *CellIdentifier = @"Cell";
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
         
         // Configure the cell...
@@ -136,11 +136,11 @@ NSMutableArray * namesToBeAdded;
     else {
         NSString *CellIdentifier = @"Cell";
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-        
+
         // Configure cell
         cell.accessoryType = UITableViewCellAccessoryNone; // Make sure reloaded data is not selected
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        
+
     }
     return cell;
 }
@@ -215,7 +215,7 @@ NSMutableArray * namesToBeAdded;
             [groupsForRemoval addObject: cell.nameLabel.text];
         }
     }
-    
+
 }
 
 //////
@@ -226,7 +226,7 @@ NSMutableArray * namesToBeAdded;
         [[[Globals sharedInstance] nameDict] removeObjectForKey: group];
         [[[Globals sharedInstance] groups] removeObject: group];
         [[[Globals sharedInstance] groupMess] setValue:nil forKey: group];
-        
+
     }
     [deleteTable reloadData];
     if([[[Globals sharedInstance] groups] count] == 0) {
@@ -235,7 +235,7 @@ NSMutableArray * namesToBeAdded;
     
     // Save variables
     [[Globals sharedInstance] saveVariables];
-    
+
 }
 
 -(void)reloadTable{
