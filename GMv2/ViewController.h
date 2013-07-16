@@ -109,6 +109,6 @@
 
 @property (strong, nonatomic) NSMutableArray *bubbleData;
 
-- (void) sanitizeUserNumber;
+- (NSString *) sanitizeUserNumber:(NSString*) str;
 
 @end

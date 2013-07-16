@@ -252,7 +252,7 @@ NSMutableArray * namesAdded;
     {
         [[Globals sharedInstance] setUserName : addUsernameField.text];
         [[Globals sharedInstance] setUserNumber : addUserNumberField.text];
-        [self sanitizeUserNumber];
+        [[Globals sharedInstance] setUserNumber: [self sanitizeUserNumber: [[Globals sharedInstance]userNumber]]];
 
         // Save variables
         [[Globals sharedInstance] saveVariables];
@@ -485,6 +485,7 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
             {
                 NSString* name = [alertView textFieldAtIndex:0].text;
                 NSString *number = [alertView textFieldAtIndex:1].text;
+                number = [self sanitizeUserNumber: number];
                 NSMutableDictionary *dict = [[Globals sharedInstance] nameNumber];
                 [dict setValue: number forKey: name];
                 [[Globals sharedInstance] setNameNumber: dict];
@@ -627,8 +628,8 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
 /////////////////////
 
 
-- (void) sanitizeUserNumber {
-    NSString * num = [[Globals sharedInstance] userNumber];
+- (NSString*) sanitizeUserNumber :(NSString*) str {
+    NSString * num = str;
     NSCharacterSet *doNotWant = [NSCharacterSet characterSetWithCharactersInString:@"()- "];
     num = [[num componentsSeparatedByCharactersInSet: doNotWant] componentsJoinedByString: @""];
     NSLocale *currentLocale = [NSLocale currentLocale];  // get the current locale.
@@ -636,7 +637,7 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
     NSString *countryCode =  [[[Globals sharedInstance] isoToCountry] objectForKey:isoCode];
     
     NSString * userNum = [countryCode stringByAppendingString:num];
-    [[Globals sharedInstance] setUserNumber: userNum];
+    return userNum;
 }
 
 // BubbleTable Code

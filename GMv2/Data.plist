@@ -2,8 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>isoToCountry</key>
+	<dict>
+		<key>CA</key>
+		<string>1</string>
+		<key>IN</key>
+		<string>91</string>
+		<key>US</key>
+		<string>1</string>
+	</dict>
 	<key>userNumber</key>
-	<string></string>
+	<string>1090980</string>
 	<key>groupMess</key>
 	<dict>
 		<key>F</key>
