@@ -13,7 +13,7 @@ namespace PNServerTest {
         private string pubKey = "pub-c-b2d901ee-2a0f-4d89-8cd3-63039aa6dd90";
         private string subKey = "sub-c-c74c7cd8-cc8b-11e2-a2ac-02ee2ddab7fe";
 
-        private DBConnector db;
+        private Database db;
 
         private Pubnub pubnub;
         private string uuid = "trivia-server";
@@ -23,7 +23,7 @@ namespace PNServerTest {
             this.pubnub.SessionUUID = this.uuid;
             this.pubnub.Subscribe<string>(this.channel, this.handleMessage, this.defaultCallback);
             Console.WriteLine("Server created.");
-            this.db = DBConnector.getInstance();
+            this.db = Database.getInstance();
         }
 
         /**

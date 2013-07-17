@@ -6,24 +6,24 @@ using System.Threading.Tasks;
 using System.Data.SQLite;
 
 namespace PNServerTest {
-    class DBConnector {
-        private static DBConnector instance;
-        public static DBConnector getInstance() {
+    class Database {
+        private static Database instance;
+        public static Database getInstance() {
             if (instance == null) {
-                instance = new DBConnector();
+                instance = new Database();
             }
             return instance;
         }
 
-        private string database;
+        private string dataSource;
 
-        private DBConnector() {
-            this.database = "Data Source=c:\\users\\taylor\\documents\\visual studio 2012\\Projects\\PNServerTest\\PNServerTest\\database.sqlite";
-            Console.WriteLine("DBConnector created");
+        private Database() {
+            this.dataSource = "Data Source=C:\\cygwin\\home\\Taylor\\pubnub\\DevelopmentiOS\\CardGame\\server\\CardGameServer\\database.sqlite";
+            Console.WriteLine("Database created");
         }
 
         public int addUser(string name) {
-            SQLiteConnection conn = new SQLiteConnection(this.database);
+            SQLiteConnection conn = new SQLiteConnection(this.dataSource);
             SQLiteCommand cmd = new SQLiteCommand(conn);
             int rowsAffected = 0;
             try {
