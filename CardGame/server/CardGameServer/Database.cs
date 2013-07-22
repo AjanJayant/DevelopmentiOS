@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
 
-namespace PNServerTest {
+namespace CardGame {
     class Database {
         private static Database instance;
         public static Database getInstance() {
@@ -22,12 +22,13 @@ namespace PNServerTest {
             Console.WriteLine("Database created");
         }
 
-        public int addUser(string name) {
+        private int execNonQuery(string sql) {
             SQLiteConnection conn = new SQLiteConnection(this.dataSource);
             SQLiteCommand cmd = new SQLiteCommand(conn);
             int rowsAffected = 0;
             try {
-                cmd.CommandText = "INSERT INTO users(name, wins) VALUES ('" + name + "', 0);";
+                cmd.CommandText = sql;
+                cmd.Prepare();
                 conn.Open();
                 rowsAffected = cmd.ExecuteNonQuery();
             }
@@ -39,6 +40,38 @@ namespace PNServerTest {
             }
 
             return rowsAffected;
+        }
+
+        private string execScalar(string sql) {
+            SQLiteConnection conn = new SQLiteConnection(this.dataSource);
+            SQLiteCommand cmd = new SQLiteCommand(conn);
+            object result = null;
+            try {
+                cmd.CommandText = sql;
+                cmd.Prepare();
+                conn.Open();
+                result = cmd.ExecuteScalar();
+            }
+            catch(SQLiteException e) {
+                Console.WriteLine("SQLite exception: {0}", e);
+            }
+            finally {
+                conn.Close();
+            }
+
+            if (result != null) {
+                return result.ToString();
+            }
+
+            return "";
+        }
+
+        public bool addUser(string name, string uuid) {
+          return (this.execNonQuery(String.Format("INSERT INTO users(name, uuid, wins) VALUES ('{0}', '{1}', 0);", name, uuid)) == 1);
+        }
+
+        public bool checkUser(string uuid) {
+            return false;
         }
 
     }
