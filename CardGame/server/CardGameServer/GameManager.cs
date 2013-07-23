@@ -20,8 +20,8 @@ namespace CardGame {
             this.name = name;
             this.creatorUUID = creator;
             Server s = Server.getInstance();
-            s.Pubnub.Subscribe<string>(this.name, this.handleMessage, this.defaultCallback);
-            s.Pubnub.Presence<string>(this.name, this.handlePresence, this.defaultCallback);
+            //s.Pubnub.Subscribe<string>(this.GameChannel, this.handleMessage, this.defaultCallback);
+            //s.Pubnub.Presence<string>(this.GameChannel, this.handlePresence, this.defaultCallback);
         }
 
         /*********************
@@ -70,7 +70,23 @@ namespace CardGame {
         private void handleMessage(string json) {
             var coll = JsonConvert.DeserializeObject<ReadOnlyCollection<object>>(json);
             JContainer container = coll[0] as JContainer;
+            Dictionary<string, string> msg = container.ToObject<Dictionary<string, string>>();
+            if (msg.ContainsKey("target")) {
+                return;
+            }
+
             Console.WriteLine("{0} message: {1}", this, container);
+            switch (msg["type"]) {
+                case "join":
+                    // Player is entering game
+                    bool success = this.tryJoin(msg["uuid"], msg["username"]);
+
+                    break;
+                case "bet":
+                    // Player makes bet
+                    break;
+                // ...
+            }
         }
 
         private void handlePresence(string json) {

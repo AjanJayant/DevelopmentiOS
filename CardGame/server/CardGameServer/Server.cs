@@ -45,8 +45,13 @@ namespace CardGame {
         private void handleMessage(string json) {
             var coll = JsonConvert.DeserializeObject<ReadOnlyCollection<object>>(json);
             JContainer container = coll[0] as JContainer;
-            Console.WriteLine("Server message: {0}", container);
             Dictionary<string, string> msg = container.ToObject<Dictionary<string, string>>();
+
+            if (msg.ContainsKey("target")) {
+                // If the message is for a specific target, it isn't for the server
+                return;
+            }
+            Console.WriteLine("Server message: {0}", container);
 
             /**
              * Local variables for the switch block
@@ -56,7 +61,6 @@ namespace CardGame {
             string gameName;
             string message;
             bool success;
-            Console.WriteLine(msg);
             switch (msg["type"]) {
                 case "joinable":
                     // Trying to join game
@@ -83,11 +87,12 @@ namespace CardGame {
 
                             // If trying to join private game, notify creator to allow access for new person
                             if (!publicGame) {
-                                Dictionary<string, string> promptAuth = new Dictionary<string, string>(2);
-                                promptAuth.Add("target", game.CreatorUUID);
-                                promptAuth.Add("requesterName", msg["username"]);
-                                promptAuth.Add("requesterUUID", msg["uuid"]);
-                                this.pubnub.Publish(this.channel, promptAuth, this.defaultCallback);
+                                Dictionary<string, string> promptAuth = new Dictionary<string, string>(3);
+                                promptAuth.Add("type", "authrequest");
+                                promptAuth.Add("requester-name", msg["username"]);
+                                promptAuth.Add("requester-uuid", msg["uuid"]);
+                                Console.WriteLine("Sending auth prompt: {0}", promptAuth);
+                                this.pubnub.Publish(game.CreatorUUID, promptAuth, this.defaultCallback);
                             }
                         }
                     }
@@ -95,12 +100,12 @@ namespace CardGame {
                         success = false;
                         message = String.Format("Game '{0}' does not exist", gameName);
                     }
-                    response.Add("target", msg["uuid"]);
                     response.Add("success", success.ToString());
                     if (message != null) {
                         response.Add("message", message);
                     }
-                    this.pubnub.Publish(this.channel, response, (object d) => { Console.WriteLine("Message sent: {0}", d); });
+                    Console.WriteLine("Sending response: {0}", response);
+                    this.pubnub.Publish(msg["uuid"], response, (object d) => { Console.WriteLine("Message sent: {0}", d); });
                     break;
                 case "create":
                     // Creating a new game
@@ -111,25 +116,26 @@ namespace CardGame {
                     if (game == null) {
                         success = true;
                         GameManager.createGame(gameName, msg["uuid"]);
+                        game = GameManager.getGame(gameName);
                         response.Add("channel", game.GameChannel);
                     }
                     else {
                         success = false;
                         message = String.Format("Game '{0}' exists already", gameName);
                     }
-                    response.Add("target", msg["uuid"]);
                     response.Add("success", success.ToString());
                     if (message != null) {
                         response.Add("message", message);
                     }
-                    this.pubnub.Publish(this.channel, response, (object d) => { Console.WriteLine("Message sent: {0}", d); });
+                    Console.WriteLine("Sending response: {0}", response);
+                    this.pubnub.Publish(msg["uuid"], response, (object d) => { Console.WriteLine("Message sent: {0}", d); });
                     break;
             }
         }
 
         private void defaultCallback(object msg) {
             // okay great
-            Console.WriteLine(msg);
+            //Console.WriteLine(msg);
         }
 
         /**
