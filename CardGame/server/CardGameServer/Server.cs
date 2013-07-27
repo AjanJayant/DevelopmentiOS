@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PubNubMessaging.Core;
+using System.Timers;
 
 namespace CardGame {
     class Server {
@@ -27,7 +28,7 @@ namespace CardGame {
         private Server() {
             this.pubnub = new Pubnub(this.pubKey, this.subKey, this.secretKey);
             this.pubnub.SessionUUID = this.uuid;
-            this.pubnub.Subscribe<string>(this.channel, this.handleMessage, this.defaultCallback);
+            this.pubnub.Subscribe<string>(this.channel, this.handleMessage, this.defaultCallback, errorCallback);
             //this.pubnub.Presence<string>(this.channel, this.handlePresence, this.defaultCallback);
             Console.WriteLine("Server created.");
             this.db = Database.getInstance();
@@ -47,11 +48,15 @@ namespace CardGame {
             JContainer container = coll[0] as JContainer;
             Dictionary<string, string> msg = container.ToObject<Dictionary<string, string>>();
 
-            if (msg.ContainsKey("target")) {
-                // If the message is for a specific target, it isn't for the server
+            Console.WriteLine();
+            Console.WriteLine("---------------------------");
+            Console.WriteLine();
+            Console.WriteLine("Server incoming message: {0}", container);
+
+            if (!msg.ContainsKey("uuid") || !msg.ContainsKey("username") || !msg.ContainsKey("type")) {
+                Console.WriteLine("Invalid message received");
                 return;
             }
-            Console.WriteLine("Server message: {0}", container);
 
             /**
              * Local variables for the switch block
@@ -61,7 +66,29 @@ namespace CardGame {
             string gameName;
             string message;
             bool success;
+
+            response["type"] = msg["type"];
             switch (msg["type"]) {
+                case "create-user":
+                    success = !this.db.userExists(msg["username"]);
+                    response["success"] = success.ToString();
+                    if (success) {
+                        this.db.addUser(msg["username"], msg["uuid"]);
+                    }
+                    else {
+                        response["message"] = String.Format("Username '{0}' is already taken.", msg["username"]);
+                    }
+                    response["username"] = msg["username"];
+                    this.sendMessage(msg["uuid"], response);
+                    break;
+                case "login":
+                    success = this.db.authenticateUser(msg["username"], msg["uuid"]);
+                    response["success"] = success.ToString();
+                    if (!success) {
+                        response["message"] = String.Format("The username '{0}' is not associated with your device.", msg["username"]);
+                    }
+                    this.sendMessage(msg["uuid"], response);
+                    break;
                 case "joinable":
                     // Trying to join game
                     bool publicGame = true;
@@ -82,17 +109,16 @@ namespace CardGame {
                         }
                         else {
                             // Success is true
-                            response.Add("channel", game.GameChannel);
-                            response.Add("message", game.MemberCount.ToString());
+                            response["channel"] = game.GameChannel;
+                            response["message"] = game.MemberCount.ToString();
 
                             // If trying to join private game, notify creator to allow access for new person
                             if (!publicGame) {
                                 Dictionary<string, string> promptAuth = new Dictionary<string, string>(3);
-                                promptAuth.Add("type", "authrequest");
-                                promptAuth.Add("requester-name", msg["username"]);
-                                promptAuth.Add("requester-uuid", msg["uuid"]);
-                                Console.WriteLine("Sending auth prompt: {0}", promptAuth);
-                                this.pubnub.Publish(game.CreatorUUID, promptAuth, this.defaultCallback);
+                                promptAuth["type"] = "authrequest";
+                                promptAuth["requester-name"] = msg["username"];
+                                promptAuth["requester-uuid"] = msg["uuid"];
+                                this.sendMessage(game.CreatorUUID, promptAuth);
                             }
                         }
                     }
@@ -100,12 +126,11 @@ namespace CardGame {
                         success = false;
                         message = String.Format("Game '{0}' does not exist", gameName);
                     }
-                    response.Add("success", success.ToString());
+                    response["success"] = success.ToString();
                     if (message != null) {
-                        response.Add("message", message);
+                        response["message"] = message;
                     }
-                    Console.WriteLine("Sending response: {0}", response);
-                    this.pubnub.Publish(msg["uuid"], response, (object d) => { Console.WriteLine("Message sent: {0}", d); });
+                    this.sendMessage(msg["uuid"], response);
                     break;
                 case "create":
                     // Creating a new game
@@ -117,27 +142,56 @@ namespace CardGame {
                         success = true;
                         GameManager.createGame(gameName, msg["uuid"]);
                         game = GameManager.getGame(gameName);
-                        response.Add("channel", game.GameChannel);
+                        game.join(msg["uuid"], msg["username"]);
+                        response["channel"] = game.GameChannel;
                     }
                     else {
                         success = false;
                         message = String.Format("Game '{0}' exists already", gameName);
                     }
-                    response.Add("success", success.ToString());
+                    response["success"] = success.ToString();
                     if (message != null) {
-                        response.Add("message", message);
+                        response["message"] = message;
                     }
-                    Console.WriteLine("Sending response: {0}", response);
-                    this.pubnub.Publish(msg["uuid"], response, (object d) => { Console.WriteLine("Message sent: {0}", d); });
+                    this.sendMessage(msg["uuid"], response);
+                    //Timer t = new Timer();
+                    //t.Interval = 500;
+                    //t.Elapsed += (object source, ElapsedEventArgs e) => {
+                    //    if (success) {
+                    //        response.Clear();
+                    //        response["type"] = "player-join";
+                    //        response["username"] = msg["username"];
+                    //        pubnub.Publish(msg["uuid"], response, (object o) => { Console.WriteLine("Player-join message sent: {0}", msg["username"]); }, errorCallback);
+                    //    }
+                    //};
+                    //t.AutoReset = false;
+                    //t.Enabled = true;
                     break;
             }
         }
 
-        private void defaultCallback(object msg) {
+        private void defaultCallback(string msg) {
             // okay great
             //Console.WriteLine(msg);
         }
 
+        private void errorCallback(string e) {
+            Console.WriteLine("Server error occurred: {0}", e);
+        }
+
+        private void messageSent(string e) {
+            Console.WriteLine("Message sent: {0}", e);
+        }
+
+        public void sendMessage(string channel, object data) {
+            var dict = data as Dictionary<string, string>;
+            if (dict != null) {
+                Console.Write("{0} sending <{1}>: ", "Server", channel);
+                Util.printDict<string, string>(dict);
+                Console.WriteLine();
+            }
+            this.pubnub.Publish<string>(channel, data, this.messageSent, this.errorCallback);
+        }
         /**
          * PubNub Callbacks
          **/

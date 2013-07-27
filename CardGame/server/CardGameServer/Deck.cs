@@ -21,7 +21,7 @@ namespace CardGame {
                 value = rand.Next(numValues);
                 if (!added[suit, value]) {
                     added[suit, value] = true;
-                    cards.Push(new Card(suit, value));
+                    cards.Push(new Card((Card.Suit)(suit + 1), (Card.Value)(value + 1)));
                 }
             }
         }

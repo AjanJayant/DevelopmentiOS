@@ -32,7 +32,7 @@ namespace CardGame {
                 conn.Open();
                 rowsAffected = cmd.ExecuteNonQuery();
             }
-            catch(SQLiteException e) {
+            catch (SQLiteException e) {
                 Console.WriteLine("SQLite exception: {0}", e);
             }
             finally {
@@ -52,7 +52,7 @@ namespace CardGame {
                 conn.Open();
                 result = cmd.ExecuteScalar();
             }
-            catch(SQLiteException e) {
+            catch (SQLiteException e) {
                 Console.WriteLine("SQLite exception: {0}", e);
             }
             finally {
@@ -66,12 +66,28 @@ namespace CardGame {
             return "";
         }
 
-        public bool addUser(string name, string uuid) {
-          return (this.execNonQuery(String.Format("INSERT INTO users(name, uuid, wins) VALUES ('{0}', '{1}', 0);", name, uuid)) == 1);
+        public int clear() {
+            return this.execNonQuery("DELETE FROM users;");
         }
 
-        public bool checkUser(string uuid) {
-            return false;
+        public bool addUser(string username, string uuid) {
+            return (this.execNonQuery(String.Format("INSERT INTO users(name, uuid, wins, funds) VALUES ('{0}', '{1}', 0, 0);", username, uuid)) == 1);
+        }
+
+        public bool userExists(string username) {
+            return "" != this.execScalar(String.Format("SELECT name FROM users WHERE name='{0}';", username));
+        }
+
+        public bool authenticateUser(string username, string uuid) {
+            return uuid == this.execScalar(String.Format("SELECT uuid FROM users WHERE name='{0}';", username));
+        }
+
+        public int loadFunds(string uuid) {
+            return int.Parse(this.execScalar(String.Format("SELECT funds FROM users WHERE uuid='{0}';", uuid)));
+        }
+
+        public bool saveFunds(string uuid, int amt) {
+            return (this.execNonQuery(String.Format("UPDATE users SET funds={0} WHERE uuid='{1}';", amt, uuid)) == 1);
         }
 
     }
