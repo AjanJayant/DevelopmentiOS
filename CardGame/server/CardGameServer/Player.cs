@@ -8,9 +8,9 @@ namespace CardGame {
         private string uuid;
 
         private Card[] hand = new Card[2];
-        private bool folded = false;
         private int funds;
         public int Bet;
+        public bool Folded = false;
 
         public int Funds {
             get { return this.funds; }

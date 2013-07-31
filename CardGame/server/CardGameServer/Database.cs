@@ -71,7 +71,7 @@ namespace CardGame {
         }
 
         public bool addUser(string username, string uuid) {
-            return (this.execNonQuery(String.Format("INSERT INTO users(name, uuid, wins, funds) VALUES ('{0}', '{1}', 0, 0);", username, uuid)) == 1);
+            return (this.execNonQuery(String.Format("INSERT INTO users(name, uuid, wins, funds) VALUES ('{0}', '{1}', 0, 100);", username, uuid)) == 1);
         }
 
         public bool userExists(string username) {

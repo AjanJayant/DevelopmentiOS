@@ -10,7 +10,10 @@ namespace CardGame {
         public static int MEMBER_LIMIT = 8;
         private static List<string> publicGames = new List<string>(10);     // Names of public games
         private static Dictionary<string, GameManager> instances = new Dictionary<string, GameManager>();
-        public enum Positions { SmallBlind, BigBlind };
+        public enum Position { SmallBlind, BigBlind };
+        public enum Round { Preflop, Flop, Turn, River };
+
+        private Round round = Round.Preflop;
 
         private string name;
         private string creatorUUID;
@@ -19,6 +22,7 @@ namespace CardGame {
         private Deck deck;
         private Card[] community = new Card[5];
         private List<Player> players = new List<Player>(GameManager.MEMBER_LIMIT);
+        private Queue<Player> needToAct = new Queue<Player>(GameManager.MEMBER_LIMIT);
 
         private int pot = 0;
         private int currBet = 0;
@@ -143,14 +147,29 @@ namespace CardGame {
                 case "check":
                     // Okay, doesn't really do anything
                     player = this.getPlayer(msg["uuid"]);
+                    this.lastAct = String.Format("{0} checks", player.Name);
+                    Util.setTimeout(this.updateClients, 500);
+                    Util.setTimeout(this.takeTurn, 1000);
                     break;
                 case "call":
                     player = this.getPlayer(msg["uuid"]);
                     this.handleCall(player);
+                    Util.setTimeout(this.updateClients, 500);
+                    Util.setTimeout(this.takeTurn, 1000);
                     break;
                 case "raise":
                     player = this.getPlayer(msg["uuid"]);
                     this.handleRaise(player, int.Parse(msg["amount"]));
+                    Util.setTimeout(this.updateClients, 500);
+                    Util.setTimeout(this.takeTurn, 1000);
+                    break;
+                case "fold":
+                    player = this.getPlayer(msg["uuid"]);
+                    player.Folded = true;
+                    this.lastAct = String.Format("{0} folds", player.Name);
+                    this.updateClients();
+                    Util.setTimeout(this.updateClients, 500);
+                    Util.setTimeout(this.takeTurn, 1000);
                     break;
             }
         }
@@ -198,63 +217,145 @@ namespace CardGame {
         private void startHand() {
             Console.WriteLine("{0} starting game...", this);
             this.deck = new Deck();
-            this.lastAct = "The new hand has been dealt.";
+            this.round = Round.Preflop;
+            this.lastAct = "The new hand has been dealt";
             Dictionary<string, string> start = new Dictionary<string, string>(2);
             start["type"] = "start";
             start["success"] = true.ToString();
             Player p;
             for (int i = 0, len = this.players.Count; i < len; i++) {
                 p = this.players[i];
-                if (i == (int)Positions.SmallBlind) {
-                    this.handleRaise(p, this.BIG_BLIND/2);
+                p.Folded = false;
+                start["initial-funds"] = "$" + p.Funds.ToString();
+                if (i == (int)Position.SmallBlind) {
+                    this.handleRaise(p, this.BIG_BLIND / 2);
+                    this.lastAct = String.Format("{0} posts small blind of ${1}", p.Name, this.BIG_BLIND / 2);
                 }
-                else if (i == (int)Positions.BigBlind) {
+                else if (i == (int)Position.BigBlind) {
                     this.handleRaise(p, this.BIG_BLIND);
+                    this.lastAct = String.Format("{0} posts big blind of ${1}", p.Name, this.BIG_BLIND);
                 }
-                start["blind"] = Enum.GetName(typeof(Positions), i).ToLower();
+                if (Enum.IsDefined(typeof(Position), i)) {
+                    start["blind"] = Enum.GetName(typeof(Position), i).ToLower();
+                }
                 p.setHand(this.deck.draw(), this.deck.draw());
                 start["card1"] = p.Card1.Serialize();
                 start["card2"] = p.Card2.Serialize();
-                start["my-funds"] = p.Funds.ToString();
+                start["my-funds"] = "$" + p.Funds.ToString();
                 this.sendMessage(p.UUID, start);
             }
+            // Blinds 'automatically' put money in the pot
+            this.CurrPlayer = (int)Position.BigBlind + 1;
+            this.queueActors();
+            this.needToAct.Dequeue();   // Small blind 'acts'
+            this.needToAct.Dequeue();   // Big blind 'acts'
+            Util.setTimeout(this.updateClients, 500);
+            Util.setTimeout(this.takeTurn, 1000);
         }
 
         private void updateClients() {
+            if (this.roundOver()) {
+                if (this.round != Round.River) {
+                    this.advanceRound();
+                    if (this.needToAct.Count == 1) {
+                        // One man standing, everyone else folded
+                    }
+                }
+                else {
+                    // Showdown
+                }
+            }
             Dictionary<string, string> state = new Dictionary<string, string>();
             state["type"] = "update";
-            state["pot"] = this.pot.ToString();
+            state["pot"] = "$" + this.pot.ToString();
             state["current-bet"] = this.currBet.ToString();
             state["last-act"] = this.lastAct;
+            state["community"] = this.serializeCommunity();
             foreach (Player p in this.players) {
                 state["my-bet"] = p.Bet.ToString();
-                state["my-funds"] = p.Funds.ToString();
+                state["my-funds"] = "$" + p.Funds.ToString();
                 this.sendMessage(p.UUID, state);
             }
         }
 
+        private string serializeCommunity() {
+            string s = "";
+            Card c = this.community[0];
+            if (c != null) {
+                s = c.Serialize();
+            }
+            for (int i = 1; i < this.community.Length; i++) {
+                c = this.community[i];
+                if (c != null) {
+                    s += "," + c.Serialize();
+                }
+            }
+            return s;
+        }
+
+        private void advanceRound() {
+            this.round++;
+            if (this.round == Round.Flop) {
+                this.community[0] = this.deck.draw();
+                this.community[1] = this.deck.draw();
+                this.community[2] = this.deck.draw();
+            }
+            else if (this.round == Round.Turn) {
+                this.community[3] = this.deck.draw();
+            }
+            else if (this.round == Round.River) {
+                this.community[4] = this.deck.draw();
+            }
+            this.queueActors();
+        }
+
+        private bool roundOver() {
+            if (this.needToAct.Count > 0) {
+                return false;
+            }
+            foreach (Player p in this.players) {
+                if (p.Bet != this.currBet && !p.Folded && p.Funds > 0) {
+                    this.queueActors();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private void queueActors() {
+            foreach (Player p in this.players) {
+                if (!p.Folded) {
+                    this.needToAct.Enqueue(p);
+                }
+            }
+        }
+
         private void takeTurn() {
-            Player actor = this.players[this.CurrPlayer++];
-            Dictionary<string, string> data = new Dictionary<string, string>(2);
-            data["type"] = "take-turn";
-            data["min-raise"] = this.minRaise.ToString();
-            this.sendMessage(actor.UUID, data);
+            if (this.needToAct.Count > 0) {
+                Player actor = this.needToAct.Dequeue();
+                Dictionary<string, string> data = new Dictionary<string, string>(2);
+                data["type"] = "take-turn";
+                data["min-raise"] = this.minRaise.ToString();
+                this.sendMessage(actor.UUID, data);
+            }
         }
 
         private void handleCall(Player player) {
             int moneyAdded = player.removeFunds(this.currBet - player.Bet);
             player.Bet = this.currBet;
             this.pot += moneyAdded;
-            this.lastAct = String.Format("{0} raises ${1}.", player.Name, this.currBet);
+            this.lastAct = String.Format("{0} calls ${1}", player.Name, this.currBet);
+            Console.WriteLine("{0}: {1}", this, this.lastAct);
         }
 
         private void handleRaise(Player player, int bet) {
             int moneyAdded = player.removeFunds(bet - player.Bet);
-            player.Bet = this.currBet + moneyAdded;
+            player.Bet += moneyAdded;
             this.pot += moneyAdded;
             this.currBet = player.Bet;
             this.minRaise = this.currBet + moneyAdded;
-            this.lastAct = String.Format("{0} raises ${1}.", player.Name, this.currBet);
+            this.lastAct = String.Format("{0} raises ${1}", player.Name, this.currBet);
+            Console.WriteLine("{0}: {1}", this, this.lastAct);
         }
 
         private Player getPlayer(string uuid) {
