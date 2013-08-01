@@ -14,12 +14,20 @@
 
 @property (strong, nonatomic) PNChannel * serverChannel;
 
+@property (strong, nonatomic) PNChannel * gameChannel;
+
 @property (strong, nonatomic) NSString * userName;
 
 + (Globals *)sharedInstance;
 
--(void)setuDID;
+-(void)setuDID: (NSString *) str;
 
 -(void)setUserName: (NSString *) str;
+
+-(void)setGameChannel: (PNChannel *) chan;
+
+-(void) saveVariables;
+
+-(void) loadVariables;
 
 @end

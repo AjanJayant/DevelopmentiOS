@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "CustomTextField.h"
+#import "CustomCell.h"
 
 @protocol UIFunctionality <NSObject>
 

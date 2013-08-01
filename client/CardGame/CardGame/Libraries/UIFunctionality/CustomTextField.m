@@ -1,4 +1,4 @@
-//
+ //
 //  CustomTextField.m
 //  CardGame
 //
@@ -14,11 +14,15 @@
 
 @synthesize screenHeight;
 
+@synthesize c;
+
 BOOL shouldHide;
 
 BOOL setLeft;
 
-NSArray  * otherViews;
+BOOL hideIfEmpty;
+
+NSArray * otherViews;
 
 int originX;
 
@@ -26,7 +30,7 @@ int originY;
 
 // Init function
 
-- (id)initWithFrame:(CGRect)frame
+- (id)initWithFrame:(CGRect)frame 
 {
     self = [super initWithFrame:frame];
     
@@ -36,36 +40,80 @@ int originY;
     return self;
 }
 
+- (id)initWithCoder:(NSCoder *)inCoder{
+    if (self = [super initWithCoder:inCoder]) {
+
+    }
+    return self;
+
+}
+
 // Basic configure
 - (void)configureTextField: (NSString *) place color:(UIColor *) col
 {
     [self setProperties: place color: col];
+    hideIfEmpty = NO;
+    c = [[CustomTextFieldDelegate alloc] init];
+    self.delegate = c;
 }
 
+- (void)configureTextField: (NSString *) place color:(UIColor *) col hideSelf: (BOOL) hideSelf
+{
+    [self configureTextField: place color: col];
+    hideIfEmpty = hideSelf;
+    
+}
+
+
 // Configure with options
-- (void)configureTextField: (NSString *) place color:(UIColor *) col moveWithKB:(BOOL) move returnHidesKB:(BOOL)ret
+- (void)configureTextField: (NSString *) place color:(UIColor *) col moveWithKB:(BOOL) move 
 {
     [self configureTextField: place color:col];
     
     if(move)
         [self setObservers];
     
-    if(ret)
-        [self resignFirstResponder];
 }
 
 // Configure and set left
 - (void)configureTextField:(NSString *) place color:(UIColor *) col returnHidesKB:(BOOL)ret movesLeft:(BOOL) moveLeft {
-    [self configureTextField: place color:col moveWithKB: YES returnHidesKB: ret];
+    [self configureTextField: place color:col moveWithKB: YES];
     setLeft = moveLeft;
 }
 
-- (void)configureTextField:(NSString *) place color:(UIColor *) col  returnHidesKB:(BOOL)ret movesLeft:(BOOL) moveLeft hideOthers:(NSArray *)arr {
+// Configure and hide Others
+- (void)configureTextField:(NSString *) place color:(UIColor *) col returnHidesKB:(BOOL)ret movesLeft:(BOOL) moveLeft hideOthers:(NSArray *)arr {
     [self configureTextField: place color:col returnHidesKB: ret movesLeft: moveLeft];
     otherViews = arr;
     shouldHide = true;
 }
 
+// Configure and auto load keyboard
+- (void)configureTextField:(NSString *) place color:(UIColor *) col autoLoadKeyboard:(BOOL)autoLoad  hideOthers:(NSArray *) arr{
+    [self configureTextField: place color:col returnHidesKB: YES movesLeft: NO hideOthers: arr];
+    if(autoLoad)
+        [self becomeFirstResponder];
+}
+
+// Configure, load keyboard and hide self if empty
+- (void)configureTextField:(NSString *) place color:(UIColor *) col hideOthers:(NSArray *) arr hideSelf: (BOOL) hideSelf {
+    [self configureTextField: place color:col autoLoadKeyboard:YES hideOthers: arr];
+    hideIfEmpty = hideSelf;
+}
+
+// Configure, setText of other object
+- (void)configureTextField:(NSString *) place hideOthers:(NSArray *) arr setOther:(UIView *) other setText:(NSString *) text;
+{
+    [self configureTextField: place color: [UIColor blackColor] autoLoadKeyboard:YES  hideOthers: arr];
+    if([other isKindOfClass:[UIButton class]]){
+        UIButton * but = (UIButton *) other;
+        [but setTitle:text forState:UIControlStateNormal];
+    }
+    else if([other isKindOfClass:[UILabel class]]){
+        UILabel * lbl = (UILabel *) other;
+        lbl.text= text; 
+    }
+}
 
 #pragma mark - Private Functions
 // Functions not visible to usre; hidding implementation details
@@ -73,24 +121,13 @@ int originY;
 
 //Set properties
 -(void) setProperties: (NSString *) place color:(UIColor *) col {
-    self.delegate = self;
-    
-    CGRect screenRect = [[UIScreen mainScreen] bounds];
-    self.screenWidth = screenRect.size.width;
-    self.screenHeight = screenRect.size.height;
     
     // Set properties
     self.placeholder = [NSString stringWithString: place];
     self.textColor = col;
     
     shouldHide = false;
-}
-
-// Make field return if return is hit
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    [textField resignFirstResponder];
-    return YES;
+    
 }
 
 // Set observes so that if keyboard is shown, function is triggered
@@ -110,6 +147,10 @@ int originY;
         CGRect textRect = self.frame;
         originX = textRect.origin.x;
         originY = textRect.origin.y;
+        
+        CGRect screenRect = [[UIScreen mainScreen] bounds];
+        self.screenWidth = screenRect.size.width;
+        self.screenHeight = screenRect.size.height;
         
         textRect.origin.y = screenHeight - kbSize.height - (textRect.size.height*2);
         
@@ -135,7 +176,11 @@ int originY;
         // For send controller
         CGRect textRect = self.frame;
         textRect.origin.y = originY;
-        textRect.origin.x = originX;
+        
+        if(setLeft){
+            textRect.origin.x = originX;
+        }
+        
         self.frame = textRect;
         
     }];
@@ -145,6 +190,16 @@ int originY;
             view.hidden = NO;
         }
     }
+    if(hideIfEmpty)
+        if([self.text isEqualToString:@""])
+            self.hidden = YES;;
+}
+
+- (void) setOrigin:(int) x y:(int)y {
+    CGRect textRect = self.frame;
+    textRect.origin.y = y;
+    textRect.origin.x = x;
+
 }
 
 @end

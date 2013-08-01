@@ -6,12 +6,17 @@
 //  Copyright (c) 2013 Ajan Jayant. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import "ViewController.h"
+#import <UIKit/UIKit.h>
 #import "Globals.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate, PNDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
+
+@property (nonatomic, strong) ViewController *loadViewController;
+
+
+@property (nonatomic, strong) ViewController *roomViewController;
 
 @end
