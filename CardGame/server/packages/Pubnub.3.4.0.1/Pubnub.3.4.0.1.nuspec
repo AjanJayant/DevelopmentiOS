@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Pubnub</id>
+    <version>3.4.0.1</version>
+    <title>PubNub C# Web Data Push API</title>
+    <authors>Pandu Masabathula</authors>
+    <owners>Pandu Masabathula</owners>
+    <licenseUrl>http://www.pubnub.com/terms</licenseUrl>
+    <projectUrl>http://www.pubnub.com/</projectUrl>
+    <iconUrl>http://pubnub.s3.amazonaws.com/2011/powered-by-pubnub/pubnub-icon-600x600.png</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>PubNub allows you to securely connect mobile phones, tablets, laptops, desktops and other clients outside of your cloud. PubNub provides the connectivity from your cloud to push data to end clients (phones, tablets, laptops and servers). This is called Real-time Data Push, or Push Notifications.
+
+PubNub removes the need for your client apps to constantly poll your cloud for new updates. So you can push data from a Server to a Client. And also you may push data from one Server to another Server, just like Azure ServiceBus ESB.
+
+Another option is available for a Mobile Phone to Push Data to another Mobile Phone or any endpoint. With PubNub this becomes easy using the two basic Publish/Subscribe APIs.
+
+Additionally PubNub provides automatic Broadcasting. When multiple clients/servers/phones are subscribed to a single channel, each endpoint receives a published message simultaneously.</description>
+    <summary>PubNub is a Massively Scalable Web Push Service for Web and Mobile Games.  This is a cloud-based service for broadcasting messages to thousands of web and mobile clients simultaneously</summary>
+    <releaseNotes>C# Core API Installation based on user .net framework.
+Supports .net 3.5/4.0/4.5/WP7.1</releaseNotes>
+    <copyright>PubNub 2012-2013</copyright>
+    <language>en-US</language>
+    <tags>Web Data Push Real-time Notifications ESB Message Broadcasting Distributed Computing</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Configuration" targetFramework=".NETFramework0.0" />
+    </frameworkAssemblies>
+  </metadata>
+</package>
