@@ -119,6 +119,7 @@
 - (IBAction)raiseOrCallOrCheckButton:(id)sender;
 
 - (IBAction)foldButton:(id)sender;
+
 @property BOOL isBlind;
 
 @property int minRaise;

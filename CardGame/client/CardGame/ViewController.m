@@ -180,7 +180,6 @@ BOOL isCreator;
 #pragma mark - Start screen buttons
 
 - (IBAction)createGameButton:(id)sender {
-    [self alertIfServerOff];
     
     if([gameName.text isEqualToString:@""]) {
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Game could not be joined" message: @"Please type a game name" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
@@ -192,11 +191,14 @@ BOOL isCreator;
 }
 
 - (IBAction)addUser:(id)sender {
+    [self checkIfHereNow];
+
     [self genericLogin:@"create-user"];
 }
 
 - (IBAction)loginUser:(id)sender {
-    [self alertIfServerOff];
+    
+    [self checkIfHereNow];
     
     [self genericLogin:@"login"];
 }
@@ -373,22 +375,18 @@ BOOL isCreator;
     foldButton.hidden = YES;
 }
 
--(void) alertIfServerOff{
-    int i = 24;
-    [self checkIfHereNow: &i];
-    if(i == 0) {
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Server not running :(" message: @"There seems to be a error in the space time continuum" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
-        [alert show];
-    }
-}
+        
 
--(void) checkIfHereNow:(int *) num{
+-(void) checkIfHereNow{
     [PubNub requestParticipantsListForChannel:[[Globals sharedInstance] serverChannel]withCompletionBlock:^(NSArray *udids,
                                                                                                             PNChannel *channel,
                                                                                                             PNError *error) {
         if (error == nil) {
             
-            *num = [udids count];
+            if([udids count] == 0) {
+                UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Server not running :(" message: @"There seems to be a error in the space time continuum" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+                [alert show];
+            }
         }
         else {  
             
