@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ViewController.h"
+#import "Globals.h"
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate, PNDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 

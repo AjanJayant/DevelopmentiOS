@@ -13,9 +13,43 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    
+    [PubNub setConfiguration:[PNConfiguration configurationForOrigin:@"pubsub.pubnub.com" publishKey:@"demo" subscribeKey:@"demo" secretKey:@"mySecret"]];
+    [PubNub connect];
+    [PubNub setDelegate:self];
+    
+    PNChannel *channel_server = [PNChannel channelWithName:@"PokerServer" shouldObservePresence:YES];
+    [PubNub subscribeOnChannel:channel_server];
+    [[Globals sharedInstance] setuDID];
+    
     return YES;
 }
-							
+
+- (void)pubnubClient:(PubNub *)client didReceiveMessage:(PNMessage *)message
+{
+        
+    //NSString * udid = [[Globals sharedInstance] udid];
+
+    //NSString * tar = [message.message objectForKey: @"target"];
+    
+    if([message.message objectForKey: @"success"] == nil || [message.message objectForKey: @"target"]  == nil)
+        return;
+    
+    NSString * suc = [message.message objectForKey: @"success"];
+    NSString * mess = [message.message objectForKey: @"message"];
+    
+    if([suc isEqualToString: @"true"]){
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Game could not be joined" message: mess delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+        [alert show];
+    }
+    else
+    {
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle: [[@"Joining game with " stringByAppendingString: mess] stringByAppendingString:@" players"] message: @"Click below to confirm" delegate:self cancelButtonTitle:@"Go back" otherButtonTitles:@"Confirm", nil];
+        [alert show];
+        alert.tag = 1;
+    }
+}
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -41,6 +75,27 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+- (void)alertView:(UIAlertView *)alertView
+clickedButtonAtIndex:(NSInteger) buttonIndex
+{
+    if(alertView.tag == 1) {
+        if(buttonIndex == 0) {
+            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+            
+            [dict setObject:@"" forKey: @"game"];
+            [dict setObject:@"" forKey: @"uuid"];
+            [dict setObject:[[Globals sharedInstance] userName] forKey: @"user-name"];
+            [dict setObject:@"Declined" forKey:@"type"];
+            return;
+        }
+        else if (buttonIndex == 1){
+            UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle: nil];
+            ViewController *room = (ViewController *)[mainStoryboard instantiateViewControllerWithIdentifier:@"room"];
+            [self.window addSubview:room.view];
+        }
+    }
 }
 
 @end
