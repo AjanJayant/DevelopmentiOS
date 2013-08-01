@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SQLite;
+using CardGame.GameElements;
 
-namespace CardGame {
+namespace CardGame.Server {
     class Database {
         private static Database instance;
         public static Database getInstance() {
@@ -70,8 +67,9 @@ namespace CardGame {
             return this.execNonQuery("DELETE FROM users;");
         }
 
-        public bool addUser(string username, string uuid) {
-            return (this.execNonQuery(String.Format("INSERT INTO users(name, uuid, wins, funds) VALUES ('{0}', '{1}', 0, 100);", username, uuid)) == 1);
+        public Player addUser(string username, string uuid) {
+            return (this.execNonQuery(String.Format("INSERT INTO users(name, uuid, wins, funds) VALUES ('{0}', '{1}', 0, 100);", username, uuid)) == 1)
+                ? new Player(username, uuid) : null;
         }
 
         public bool userExists(string username) {
@@ -86,8 +84,12 @@ namespace CardGame {
             return int.Parse(this.execScalar(String.Format("SELECT funds FROM users WHERE uuid='{0}';", uuid)));
         }
 
-        public bool saveFunds(string uuid, int amt) {
-            return (this.execNonQuery(String.Format("UPDATE users SET funds={0} WHERE uuid='{1}';", amt, uuid)) == 1);
+        public int loadWins(string uuid) {
+            return int.Parse(this.execScalar(String.Format("SELECT wins FROM users WHERE uuid='{0}';", uuid)));
+        }
+
+        public bool savePlayer(Player p) {
+            return (this.execNonQuery(String.Format("UPDATE users SET funds={0}, wins={1} WHERE uuid='{2}';", p.Funds, p.Wins, p.Uuid)) == 1);
         }
 
     }
