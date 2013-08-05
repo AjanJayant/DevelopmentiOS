@@ -22,7 +22,13 @@ BOOL setLeft;
 
 BOOL hideIfEmpty;
 
+BOOL modOther;
+
 NSArray * otherViews;
+
+NSString * viewString;
+
+UIButton * modView;
 
 int originX;
 
@@ -40,6 +46,8 @@ int originY;
     return self;
 }
 
+// Maybe remove this?
+/*
 - (id)initWithCoder:(NSCoder *)inCoder{
     if (self = [super initWithCoder:inCoder]) {
 
@@ -47,6 +55,7 @@ int originY;
     return self;
 
 }
+ */
 
 // Basic configure
 - (void)configureTextField: (NSString *) place color:(UIColor *) col
@@ -86,6 +95,14 @@ int originY;
     [self configureTextField: place color:col returnHidesKB: ret movesLeft: moveLeft];
     otherViews = arr;
     shouldHide = true;
+}
+
+// Configure and set other to state if desired
+- (void)configureTextField:(NSString *) place view:(UIButton *) view state:(NSString *) state hideOthers:(NSArray *)arr{
+    [self configureTextField:place  color:[UIColor blackColor] returnHidesKB: YES movesLeft: NO];
+    modOther = YES;
+    viewString = [NSString stringWithString: state];
+    modView = view;
 }
 
 // Configure and auto load keyboard
@@ -193,6 +210,11 @@ int originY;
     if(hideIfEmpty)
         if([self.text isEqualToString:@""])
             self.hidden = YES;;
+    if(modOther) {
+        if([modView isKindOfClass:[UIButton class]]) {
+            [modView setTitle:viewString forState:UIControlStateNormal];
+         }
+    }
 }
 
 - (void) setOrigin:(int) x y:(int)y {

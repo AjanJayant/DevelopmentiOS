@@ -14,7 +14,7 @@
 
 @end
 
-// Must mention UITextFieldDelegate so delgating object knows that it contains said function
+// Must mention UITextFieldDelegate so delegating object knows that it contains said function
 @interface CustomTextFieldDelegate : NSObject <UITextFieldDelegate>
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField;

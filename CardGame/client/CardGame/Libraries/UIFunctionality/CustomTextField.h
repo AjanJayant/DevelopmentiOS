@@ -31,6 +31,8 @@
 
 - (void)configureTextField:(NSString *) place color:(UIColor *) col autoLoadKeyboard:(BOOL)autoLoad hideOthers:(NSArray *) arr;
 
+- (void)configureTextField:(NSString *) place view:(UIView *) view state:(NSString *) state hideOthers:(NSArray *)arr;
+
 - (void)configureTextField:(NSString *) place color:(UIColor *) col  hideOthers:(NSArray *) arr hideSelf: (BOOL) hideSelf;
 
 - (void)configureTextField:(NSString *) place hideOthers:(NSArray *) arr setOther:(UIView *) other setText:(NSString *) text;

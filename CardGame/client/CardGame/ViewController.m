@@ -83,7 +83,9 @@
 
 @synthesize raiseTextField;
 
-@synthesize raiseOrCallOrCheckButton;
+@synthesize raiseButton;
+
+@synthesize callButton;
 
 @synthesize foldButton;
 
@@ -135,7 +137,7 @@ BOOL isCreator;
     // Make all labels hidden
     else if([[self title] isEqualToString: @"load"]){
 
-        firstNameLabel.text = [[Globals sharedInstance] userName];
+        firstNameLabel.hidden = YES;
         secondNameLabel.hidden = YES;
         thirdnameLabel.hidden = YES;
         fourthNameLabel.hidden = YES;;
@@ -151,6 +153,7 @@ BOOL isCreator;
     }
     // For game setup
     else if([[self title] isEqualToString: @"room"]) {
+        
         deckCardOne.hidden = YES;
         deckCard2.hidden = YES;
         deckCard3.hidden = YES;
@@ -161,9 +164,13 @@ BOOL isCreator;
         bankLabel.hidden = YES;
         recentBetLabel.hidden = YES;
         raiseTextField.hidden = YES;
-        raiseOrCallOrCheckButton.hidden = YES;
+        raiseButton.hidden = YES;
+        callButton.hidden = YES;
         foldButton.hidden = YES;
         blindImage.hidden = YES;
+        
+        [raiseButton setTitle:@"Raise" forState:UIControlStateNormal];
+        [callButton setTitle:@"Call" forState:UIControlStateNormal];
     }
     
     [NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(saveVaraiables) userInfo:nil repeats:YES];
@@ -239,8 +246,60 @@ BOOL isCreator;
 
 }
 
+#pragma Mark- room Buttons
+
+
+- (IBAction)raiseButton:(id)sender {
+    
+    if([raiseTextField.text isEqualToString: @""]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"You must raise a value" message: @"Type a value in the field" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
+        [alert show];
+        return;
+    }
+    
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    
+    [dict setObject:@"raise" forKey:@"type"];
+    
+    [dict setObject:raiseTextField.text forKey:@"amount"];
+    
+    [self setUIDAndUserName:dict];
+    
+    [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
+    
+    [self enableInteraction:NO];
+    
+    raiseTextField.text = @"";
+}
+
+- (IBAction)callButton:(id)sender {
+}
+
+- (IBAction)foldButton:(id)sender {
+    
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    
+    [dict setObject:@"call" forKey:@"type"];
+    
+    [dict setObject:raiseTextField.text  forKey:@"amount"];
+    
+    [self setUIDAndUserName:dict];
+    
+    [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
+    
+    [self enableInteraction:NO];
+}
+
+
 // Helper Funtions
 #pragma mark - Auxilliary Functions
+
+-(void) enableInteraction:(BOOL) shouldInteract{
+    [raiseTextField setUserInteractionEnabled:shouldInteract];
+    [raiseButton setUserInteractionEnabled:shouldInteract];
+    [callButton setUserInteractionEnabled:shouldInteract];
+    [foldButton setUserInteractionEnabled:shouldInteract];
+}
 
 -(void) genericLogin:(NSString *) type {
     [loginField resignFirstResponder];
@@ -291,17 +350,15 @@ BOOL isCreator;
         bgImageView.image = [UIImage imageNamed:@"awesome_poker2.png"];
 }
 
--(void) setCards :(NSString *) card1 card2:(NSString *) card2 initialFunds:(NSString *) initialFunds{
+-(void) setCards :(NSString *) card cardView:(UIImageView *) cardView{
     
-    card1 = [card1 stringByAppendingString: @".png"];
-    card2 = [card2 stringByAppendingString: @".png"];
+    card = [card stringByAppendingString: @".png"];
+        
+    [cardView setImage:[UIImage imageNamed:card]];
     
-    UIImage *image1 = [UIImage imageNamed:card1];
-    UIImage *image2 = [UIImage imageNamed:card2];
-    
-    [ownCardOneView setImage:image1];
-    [ownCardTwoView setImage:image2];
-    
+}
+
+-(void) setInitialFunds:(NSString *) initialFunds {
     initialBankLabel.hidden = NO;
     initialBankLabel.text = initialFunds;
 }
@@ -336,7 +393,8 @@ BOOL isCreator;
     bankLabel.text = myFunds;
     bankLabel.hidden = NO;
     
-    [raiseTextField configureTextField: [@"Curent bet: " stringByAppendingString: currentBet]  color:[UIColor whiteColor]  returnHidesKB:YES movesLeft:NO hideOthers:[NSArray arrayWithObjects:ownCardOneView, ownCardTwoView, ownCardTwoView, deckCardOne, deckCard2, deckCard3, deckCard4, deckCard5, potImageView, recentBetLabel, potImageView, initialBankLabel, bankLabel, raiseOrCallOrCheckButton, foldButton,  nil]];
+    [raiseTextField configureTextField: [@"Curent bet: " stringByAppendingString: currentBet] color:[UIColor blackColor] returnHidesKB: YES movesLeft:NO hideOthers:[NSArray arrayWithObjects:ownCardOneView, ownCardTwoView, ownCardTwoView, deckCardOne, deckCard2, deckCard3, deckCard4, deckCard5, potImageView, recentBetLabel, potImageView, initialBankLabel, bankLabel, raiseButton, callButton, foldButton,  nil]];
+    
     raiseTextField.hidden = NO;
     
 }
@@ -344,35 +402,13 @@ BOOL isCreator;
 - (void)removeBlind {
     blindImage.hidden = YES;
     
-    raiseOrCallOrCheckButton.hidden = NO;
+    raiseButton.hidden = NO;
     
-    [raiseOrCallOrCheckButton setTitle:@"Call" forState:UIControlStateNormal];
-    
+    callButton.hidden = NO;
+
     foldButton.hidden = NO;
+    
     [foldButton setTitle:@"Fold" forState:UIControlStateNormal];
-
-}
-
-- (IBAction)raiseOrCallOrCheckButton:(id)sender {
-    
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-
-    [dict setObject:@"call" forKey:@"type"];
-    
-    [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] serverChannel]];
-    
-}
-
-- (IBAction)foldButton:(id)sender {
-    
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-    
-    [dict setObject:@"fold" forKey:@"type"];
-    
-    [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] serverChannel]];
-
-    raiseOrCallOrCheckButton.hidden = YES;
-    foldButton.hidden = YES;
 }
 
         
@@ -386,6 +422,7 @@ BOOL isCreator;
             if([udids count] == 0) {
                 UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Server not running :(" message: @"There seems to be a error in the space time continuum" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
                 [alert show];
+                loginProgress.hidden = YES;
             }
         }
         else {  
@@ -393,6 +430,10 @@ BOOL isCreator;
             // Handle participants request error  
         }  
     }];;
-    //*num = [[[Globals sharedInstance] serverChannel] participantsCount];
+}
+
+-(void) setUIDAndUserName:(NSMutableDictionary *) dict {
+    [dict setObject: [[Globals sharedInstance] udid] forKey: @"uuid"];
+    [dict setObject: [[Globals sharedInstance] userName] forKey: @"username"];
 }
 @end

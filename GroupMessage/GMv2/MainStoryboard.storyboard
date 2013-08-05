@@ -128,6 +128,7 @@
                     <connections>
                         <outlet property="editGroups" destination="3Da-Ya-ZoY" id="IDm-x2-GRp"/>
                         <outlet property="firstNavBar" destination="APV-nP-Tr7" id="yoM-Sh-dQF"/>
+                        <outlet property="groupTable" destination="3Hp-p0-xBH" id="KtE-0j-SIC"/>
                         <outlet property="searchDisplayController" destination="PBt-CZ-G1C" id="zAn-cd-kHZ"/>
                         <segue destination="dKv-EX-vp6" kind="modal" identifier="firstToSend" modalTransitionStyle="crossDissolve" id="yYC-LR-rHl"/>
                     </connections>
@@ -565,7 +566,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="C7v-wm-d1i"/>
-        <segue reference="S4N-6X-z24"/>
+        <segue reference="nge-tX-MUa"/>
+        <segue reference="yYC-LR-rHl"/>
     </inferredMetricsTieBreakers>
 </document>

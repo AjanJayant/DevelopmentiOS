@@ -28,4 +28,6 @@
 
 @property (strong, nonatomic) IBOutlet UITableView *deleteTable;
 
+@property (strong, nonatomic) IBOutlet UITableView *groupTable;
+
 @end

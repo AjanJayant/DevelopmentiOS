@@ -51,6 +51,9 @@ NSString * reqUUID;
         [self handleUpdate: message.message];
     else if([type isEqualToString: @"take-turn"])
         [self handleTakeTurn: message.message];
+    else if([type isEqualToString: @"end"])
+        [self handleEnd: message.message];
+
 }
 
 -(void) handleCreateUser: (NSDictionary *) dict {
@@ -62,6 +65,15 @@ NSString * reqUUID;
     }
     [self handleGenericLogin: dict];
 }
+
+-(void) handleEnd: (NSDictionary *) dict {
+    NSString * msg = [dict objectForKey: @"message"];
+
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle: msg message: @"You will be taken back to the menu" delegate:self cancelButtonTitle:@"Return" otherButtonTitles: nil];
+    [alert show];
+
+}
+
 
 -(void) handleLogin: (NSDictionary *) dict {
     [self handleGenericLogin: dict];
@@ -137,17 +149,24 @@ NSString * reqUUID;
     NSString * name = [dict objectForKey: @"usernames"];
     NSArray * list = [name componentsSeparatedByString:@","];
     
-    int i = 2;
+    int i = 1;
     for(id appelo in list){
+        if(i == 1) {
+            loadViewController.firstNameLabel.hidden = NO;
+            loadViewController.firstNameLabel.text = appelo;
+            
+        }
 
         if(i == 2) {
             loadViewController.secondNameLabel.hidden = NO;
             loadViewController.secondNameLabel.text = appelo;
             [loadViewController setGameButton];
+
         }
         else if(i == 3) {
             loadViewController.thirdnameLabel.hidden = NO;
             loadViewController.thirdnameLabel.text = appelo;
+
         }
         else if(i == 4) {
             loadViewController.fourthNameLabel.hidden = NO;
@@ -208,18 +227,21 @@ NSString * reqUUID;
     NSString * blind = [dict objectForKey: @"blind"];
     NSString * initialFunds = [dict objectForKey: @"initial-funds"];
 
-    
     if([suc isEqualToString: @"True"]){
         UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle: nil];
         ViewController* room = [mainStoryboard instantiateViewControllerWithIdentifier:@"room"];
             
         [self.window addSubview:room.view];
-        [room setCards:card1 card2:card2 initialFunds:initialFunds];
-        if([blind isEqualToString: @"smallblind"] ||  [blind isEqualToString: @"bigblind"])
-        {
+        [room setCards:card1 cardView:room.ownCardOneView];
+        [room setCards:card2 cardView:room.ownCardTwoView];
+        [room setInitialFunds: initialFunds];
+
+        
+        if([blind isEqualToString: @"smallblind"] ||  [blind isEqualToString: @"bigblind"]) {
             [room setBlind: blind];
             room.isBlind = YES;
         }
+        
         AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
         appDelegate.roomViewController = room;
     }
@@ -236,11 +258,37 @@ NSString * reqUUID;
     NSString * currBet = [dict objectForKey: @"current-bet"];
     NSString * lastAct = [dict objectForKey: @"last-act"];
     NSString * myFunds = [dict objectForKey: @"my-funds" ];
-    
+    NSString * comm = [dict objectForKey: @"community" ];
+
     [roomViewController setLabels:pot lastAct:lastAct myFunds:myFunds currentBet:currBet];
+    
+    if(![comm isEqualToString: @""]) {
+        NSArray * list = [comm componentsSeparatedByString:@" "];
+     
+        [roomViewController setCards:list[0] cardView:roomViewController.deckCardOne];
+        roomViewController.deckCardOne.hidden = NO;
+        [roomViewController setCards:list[1] cardView:roomViewController.deckCard2];
+        roomViewController.deckCard2.hidden = NO;
+        [roomViewController setCards:list[2] cardView:roomViewController.deckCard3];
+        roomViewController.deckCard3.hidden = NO;
+        if([list count] > 3) {
+            [roomViewController setCards:list[3] cardView:roomViewController.deckCard4];
+            roomViewController.deckCard4.hidden = NO;
+
+        }
+        if([list count] > 4) {
+            [roomViewController setCards:list[4] cardView:roomViewController.deckCard5];
+            roomViewController.deckCard5.hidden = NO;
+        }
+
+    }
 }
 
 -(void) handleTakeTurn: (NSDictionary *) dict {
+    
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Your turn playa" message: @"It's now or never" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
+    [alert show];
+    
     NSString * minraise = [dict objectForKey: @"min-raise"];
     
     roomViewController.isBlind = NO;
@@ -248,6 +296,8 @@ NSString * reqUUID;
     
     [roomViewController removeBlind];
     roomViewController.raiseTextField.placeholder = [@"Min-raise:" stringByAppendingString: minraise];
+    
+    [roomViewController enableInteraction:YES];
     
 }
 - (void)applicationWillResignActive:(UIApplication *)application

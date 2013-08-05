@@ -110,13 +110,17 @@
 
 @property (weak, nonatomic) IBOutlet CustomTextField *raiseTextField;
 
-@property (weak, nonatomic) IBOutlet UIButton *raiseOrCallOrCheckButton;
+@property (weak, nonatomic) IBOutlet UIButton *callButton;
+
+@property (weak, nonatomic) IBOutlet UIButton *raiseButton;
 
 @property (weak, nonatomic) IBOutlet UIButton *foldButton;
 
 @property (weak, nonatomic) IBOutlet UIImageView *blindImage;
 
-- (IBAction)raiseOrCallOrCheckButton:(id)sender;
+- (IBAction)raiseButton:(id)sender;
+
+- (IBAction)callButton:(id)sender;
 
 - (IBAction)foldButton:(id)sender;
 
@@ -126,9 +130,13 @@
 
 // Aux functions
 
--(void) setCards:(NSString *) card1 card2:(NSString *) card2 initialFunds:(NSString *) initialFunds;
+-(void) enableInteraction:(BOOL) shouldInteract;
+
+-(void) setCards :(NSString *) card cardView:(UIImageView *) cardView;
 
 - (void)setLabels:(NSString *) pot lastAct:(NSString *) lastAct myFunds:(NSString *)myFunds currentBet:(NSString *)currentBet;
+
+-(void) setInitialFunds:(NSString *) initialFunds;
 
 -(void) setBlind: (NSString *) img;
 
