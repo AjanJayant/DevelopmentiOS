@@ -1,22 +1,30 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Linq;
+﻿using CardGame.GameElements;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using CardGame.GameElements;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace CardGame.Server {
-    class GameManager {
-
+    internal class GameManager {
+        /**
+         * Settings
+         * -big blind
+         * -max funds
+         * -difficulty ratings
+         **/
         public const int MEMBER_LIMIT = 8;
         private static readonly List<string> PublicGames = new List<string>(10);     // Names of public games
         private static readonly Dictionary<string, GameManager> Instances = new Dictionary<string, GameManager>();
+
         public enum Position { SmallBlind, BigBlind };
+
         public enum Round { Preflop, Flop, Turn, River };
 
-        private Round round = Round.Preflop;
+        private Round round;
 
+        private readonly string channel = System.Guid.NewGuid().ToString();
         private readonly string name;
         private string lastAct;
 
@@ -24,17 +32,14 @@ namespace CardGame.Server {
         private readonly Card[] community = new Card[5];
         private readonly List<Player> players = new List<Player>(GameManager.MEMBER_LIMIT);
         private readonly Queue<Player> needToAct = new Queue<Player>(GameManager.MEMBER_LIMIT);
+        private readonly Dictionary<string, Boolean> leaving = new Dictionary<string, bool>();
 
+        private int responsesExpected = 0;
         private int pot = 0;
         private int currBet = 0;
         private int minRaise = 0;
-        private int currPlayer = 0;
-        private int CurrPlayer {
-            set {
-                this.currPlayer = value % this.players.Count;
-            }
-        }
-        private int bigBlind = 4;  // Buy-in is $4
+
+        private readonly int bigBlind = 4;  // Buy-in is $4
 
         private GameManager(string name, string creator) {
             this.name = name;
@@ -42,36 +47,29 @@ namespace CardGame.Server {
             Server s = Server.GetInstance();
             Console.WriteLine("{0} created.", this);
             s.Pubnub.Subscribe<string>(this.GameChannel, this.HandleMessage, this.DefaultCallback, this.ErrorCallback);
-            //s.Pubnub.Presence<string>(this.GameChannel, this.handlePresence, this.defaultCallback);
+            //s.Pubnub.Presence<string>(this.GameChannel, this.HandlePresence, this.DefaultCallback, this.ErrorCallback);
         }
 
-        /*********************
-         * Public Properties *
-         *********************/
+        #region Properties
 
         public int MemberCount {
-            get {
-                return this.players.Count;
-            }
+            get { return this.players.Count; }
         }
 
         public string GameChannel {
-            get {
-                return "game-" + this.name;
-            }
+            get { return "game-" + this.name;/* this.channel; */}
         }
 
         public string CreatorUuid { get; private set; }
 
         public bool Full {
-            get {
-                return (this.players.Count == GameManager.MEMBER_LIMIT);
-            }
+            get { return (this.players.Count == GameManager.MEMBER_LIMIT); }
         }
 
-        /*******************
-         * Public Methods  *
-         *******************/
+        #endregion Properties
+
+        #region Public Methods
+
         public bool Join(Player p) {
             this.players.Add(p);
             return true;
@@ -81,14 +79,16 @@ namespace CardGame.Server {
             return ("GameManager[" + this.name + "]");
         }
 
-        /*******************
-         * Private Methods *
-         *******************/
+        #endregion Public Methods
 
-        // Callbacks \\
+        #region Pubnub Callbacks
+
         private void HandleMessage(string json) {
             var coll = JsonConvert.DeserializeObject<ReadOnlyCollection<object>>(json);
             JContainer container = coll[0] as JContainer;
+            if (container == null) {
+                return;
+            }
             Dictionary<string, string> msg = container.ToObject<Dictionary<string, string>>();
             if (!msg.ContainsKey("uuid") || !msg.ContainsKey("username") || !msg.ContainsKey("type")) {
                 Console.WriteLine("Invalid message received");
@@ -118,24 +118,42 @@ namespace CardGame.Server {
                     if (success) {
                         Dictionary<string, string> pJoin = new Dictionary<string, string>(2);
                         pJoin["type"] = "player-join";
-                        pJoin["usernames"] = msg["username"];
-
-                        // Tell all players that the new guy has joined
-                        this.SendToPlayers(pJoin);
-
-                        // Tell new player who the existing players are
-                        List<string> list = this.players.Select(p => p.Name).ToList();
-                        pJoin["usernames"] = String.Join<string>(",", list);
-                        this.SendMessage(msg["uuid"], pJoin);
                         this.Join(Server.GetInstance().GetPlayer(msg["uuid"]));
+                        // Tell new player who the existing players are
+                        pJoin["usernames"] = String.Join<string>(",", this.players.Select(p => p.Name).ToList());
+                        this.SendToPlayers(pJoin);
                     }
                     //this.sendMessage(new Card(2, 0).Serialize(), msg["uuid"]);
                     break;
                 case "start":
                     this.StartHand();
                     break;
+                case "play-again":
+                    player = this.GetPlayer(msg["uuid"]);
+                    bool staying = Boolean.Parse(msg["yes"]);
+
+                    // Don't handle duplicate responses
+                    if (player.Responded) {
+                        return;
+                    }
+                    player.Responded = true;
+                    this.responsesExpected--;
+                    if (!staying) {
+                        this.HandleLeave(player);
+                    }
+                    Dictionary<string, string> membersUpdate = new Dictionary<string, string>(2);
+                    membersUpdate["type"] = "player-join";
+                    membersUpdate["usernames"] = String.Join(",", this.players.Select(p => p.Name));
+                    this.SendToPlayers(membersUpdate);
+                    // If everyone has made a decision on whether to play again, we can automatically start
+                    if (this.responsesExpected == 0) {
+                        Util.setTimeout(this.StartHand, 5000);
+                    }
+                    else if (staying) {
+                        this.SendMessage(player.Uuid, this.getStats(player));
+                    }
+                    break;
                 case "check":
-                    // Okay, doesn't really do anything
                     player = this.GetPlayer(msg["uuid"]);
                     this.lastAct = String.Format("{0} checks", player.Name);
                     this.UpdateClients();
@@ -155,9 +173,7 @@ namespace CardGame.Server {
                     break;
                 case "fold":
                     player = this.GetPlayer(msg["uuid"]);
-                    player.Folded = true;
-                    this.lastAct = String.Format("{0} folds", player.Name);
-                    this.UpdateClients();
+                    this.HandleFold(player);
                     this.UpdateClients();
                     Util.setTimeout(this.TakeTurn, 500);
                     break;
@@ -165,9 +181,30 @@ namespace CardGame.Server {
         }
 
         private void HandlePresence(string json) {
+            return; // Presence is buggy atm
             var coll = JsonConvert.DeserializeObject<ReadOnlyCollection<object>>(json);
             JContainer container = coll[0] as JContainer;
+            if (container == null) {
+                return;
+            }
             Console.WriteLine("{0} presence: {1}", this, container);
+            var dict = container.ToObject<Dictionary<string, string>>();
+            string uuid = dict["uuid"];
+            if (dict["action"] == "leave") {
+                this.leaving[uuid] = true;
+                // Don't kick them immediately, wait a few seconds
+                Util.setTimeout(() => {
+                    Player leaving = this.GetPlayer(uuid);
+                    if (leaving != null && this.leaving[uuid]) {
+                        // Don't let them get out of bad situations by quitting and keeping their betted money...they will lose any money they've bet so far
+                        Database.getInstance().savePlayer(leaving);
+                        this.HandleLeave(leaving);
+                    }
+                }, 5000);
+            }
+            else {
+                this.leaving[uuid] = false;
+            }
         }
 
         private void DefaultCallback(string e) {
@@ -178,11 +215,13 @@ namespace CardGame.Server {
             Console.WriteLine("{0} message sent: {1}", this, e);
         }
 
-
         private void ErrorCallback(string e) {
             Console.WriteLine("{0} error occurred: {1}", this, e);
         }
-        //end Callbacks\\
+
+        #endregion Pubnub Callbacks
+
+        #region Convenience Methods
 
         private void SendToPlayers(object data) {
             foreach (Player p in this.players) {
@@ -200,6 +239,49 @@ namespace CardGame.Server {
             Server.GetInstance().Pubnub.Publish<string>(channel, data, this.MessageSent, this.ErrorCallback);
         }
 
+        private Player GetPlayer(string uuid) {
+            return this.players.FirstOrDefault(p => p.Uuid.Equals(uuid));
+        }
+
+        private string SerializeCommunity(bool forHandEval = false) {
+            return String.Join(" ", this.community
+                .Where(card => card != null)
+                .Select(card => card.Serialize(forHandEval)));
+        }
+
+        private void InitVars() {
+            this.pot = 0;
+            this.deck = new Deck();
+            this.round = Round.Preflop;
+            this.lastAct = "A new hand has been dealt";
+            Array.Clear(this.community, 0, this.community.Length);
+            foreach (Player p in this.players) {
+                p.Folded = false;
+                p.Bet = 0;
+                this.needToAct.Enqueue(p);
+            }
+        }
+
+        private Dictionary<string, string> getStats(Player p) {
+            Dictionary<string, string> stats = new Dictionary<string, string>();
+            stats["type"] = "stats";
+            stats["hands-won"] = p.HandsWon.ToString();
+            stats["hands-played"] = p.HandsPlayed.ToString();
+            stats["life-winnings"] = p.LifetimeWinnings.ToString();
+            stats["highest-bet"] = p.HighestBet.ToString();
+            stats["funds"] = p.Funds.ToString();
+            return stats;
+        }
+
+        private void Dispose() {
+            //Server.GetInstance().Pubnub.PresenceUnsubscribe<string>(this.GameChannel, this.DefaultCallback, this.DefaultCallback, this.DefaultCallback, this.DefaultCallback);
+            //Server.GetInstance().Pubnub.Unsubscribe<string>(this.GameChannel, this.DefaultCallback, this.DefaultCallback, this.DefaultCallback, this.DefaultCallback);
+        }
+
+        #endregion Convenience Methods
+
+        #region Game Events
+
         /// <summary>
         /// Informs each player that the game is starting. Notifies a player if he is the small/big blind, and
         /// deals him a two card hand.
@@ -214,6 +296,7 @@ namespace CardGame.Server {
             for (int i = 0, len = this.players.Count; i < len; i++) {
                 p = this.players[i];
                 p.Folded = false;
+                p.SetPocket(this.deck.Draw(), this.deck.Draw());
                 start["initial-funds"] = "$" + p.Funds;
                 switch (i) {
                     case (int)Position.SmallBlind:
@@ -228,14 +311,12 @@ namespace CardGame.Server {
                 if (Enum.IsDefined(typeof(Position), i)) {
                     start["blind"] = Enum.GetName(typeof(Position), i).ToLower();
                 }
-                p.SetPocket(this.deck.Draw(), this.deck.Draw());
                 start["card1"] = p.Card1.Serialize();
                 start["card2"] = p.Card2.Serialize();
                 start["my-funds"] = "$" + p.Funds;
                 this.SendMessage(p.Uuid, start);
             }
             // Blinds 'automatically' put money in the pot
-            this.CurrPlayer = (int)Position.BigBlind + 1;
             this.QueueActors();
             this.needToAct.Dequeue();   // Small blind 'acts'
             this.needToAct.Dequeue();   // Big blind 'acts'
@@ -243,29 +324,41 @@ namespace CardGame.Server {
             Util.setTimeout(this.TakeTurn, 1000);
         }
 
-        private void TakeTurn() {
-            if (this.needToAct.Count <= 0) {
-                return;
-            }
-            Player actor = this.needToAct.Dequeue();
-            Dictionary<string, string> data = new Dictionary<string, string>(2);
-            data["type"] = "take-turn";
-            data["min-raise"] = this.minRaise.ToString();
-            this.SendMessage(actor.Uuid, data);
+        /// <summary>
+        /// Sorts the Players by strength of the best hand they can make with the community cards.
+        /// </summary>
+        /// <returns>The Player with the strongest hand</returns>
+        private Player DetermineWinner() {
+            string commStr = this.SerializeCommunity(true);
+            this.players.Sort((a, b) => {
+                if (a.Folded) return 1;
+                return (int)(b.FindBestHand(commStr).HandValue - a.FindBestHand(commStr).HandValue);
+            });
+            Player winner = this.players[0];
+            this.lastAct = String.Format("{0} wins with {1}", winner.Name, winner.FindBestHand(commStr).Description);
+            return winner;
         }
 
+        /// <summary>
+        /// Sends a message indicating the hand has ended, and who takes the pot
+        /// </summary>
+        /// <param name="winner"></param>
         private void DeclareWinner(Player winner) {
             Dictionary<string, string> end = new Dictionary<string, string>(2);
             end["type"] = "end";
             end["winner"] = winner.Name;
             end["message"] = this.lastAct;
             string comm = this.SerializeCommunity();
-            end["hands"] = String.Join("\n", this.players.Select(p => p.FindBestHand(comm).Description));
+            //end["hands"] = String.Join("\n", this.players.Select(p => p.FindBestHand(comm).Description));
             winner.Funds += this.pot;
-            winner.Wins++;
+            winner.HandsWon++;
             Database db = Database.getInstance();
+            this.responsesExpected = 0;
             foreach (Player p in this.players) {
+                p.HandsPlayed++;
                 db.savePlayer(p);
+                p.Responded = false;
+                this.responsesExpected++;
             }
             this.SendToPlayers(end);
         }
@@ -301,18 +394,27 @@ namespace CardGame.Server {
             }
         }
 
-        private Player DetermineWinner() {
-            string commStr = this.SerializeCommunity();
-            this.players.Sort((a, b) => (int) (b.FindBestHand(commStr).HandValue - a.FindBestHand(commStr).HandValue));
-            Player winner = this.players[0];
-            this.lastAct = String.Format("{0} wins with {1}", winner.Name, winner.FindBestHand(commStr).Description);
-            return winner;
+        #endregion Game Events
+
+        #region Betting Round Logic
+
+        private void TakeTurn() {
+            if (this.needToAct.Count <= 0) {
+                return;
+            }
+            Player actor = this.needToAct.Dequeue();
+            Dictionary<string, string> data = new Dictionary<string, string>(2);
+            data["type"] = "take-turn";
+            data["current-bet"] = this.currBet.ToString();
+            data["my-bet"] = actor.Bet.ToString();
+            data["min-raise"] = this.minRaise.ToString();
+            this.SendMessage(actor.Uuid, data);
         }
 
-        private string SerializeCommunity() {
-            return String.Join(" ", this.community
-                .Where(card => card != null)
-                .Select(card => card.Serialize()));
+        private void QueueActors() {
+            foreach (Player p in this.players.Where(p => !p.Folded)) {
+                this.needToAct.Enqueue(p);
+            }
         }
 
         private void AdvanceRound() {
@@ -344,25 +446,9 @@ namespace CardGame.Server {
             return false;
         }
 
-        private void QueueActors() {
-            foreach (Player p in this.players.Where(p => !p.Folded)) {
-                this.needToAct.Enqueue(p);
-            }
-        }
+        #endregion Betting Round Logic
 
-        private void InitVars() {
-            this.pot = 0;
-            this.deck = new Deck();
-            this.round = Round.Preflop;
-            this.lastAct = "A new hand has been dealt";
-            for (int i = 0; i < this.community.Length; i++) {
-                this.community[i] = null;
-            }
-            foreach (Player p in this.players) {
-                p.Folded = false;
-                p.Bet = 0;
-            }
-        }
+        #region Player Actions
 
         private void HandleCall(Player player) {
             int moneyAdded = player.RemoveFunds(this.currBet - player.Bet);
@@ -375,6 +461,7 @@ namespace CardGame.Server {
         private void HandleRaise(Player player, int bet) {
             int moneyAdded = player.RemoveFunds(bet - player.Bet);
             player.Bet += moneyAdded;
+            player.HighestBet = Math.Max(player.HighestBet, player.Bet);
             this.pot += moneyAdded;
             this.currBet = player.Bet;
             this.minRaise = this.currBet + moneyAdded;
@@ -382,13 +469,30 @@ namespace CardGame.Server {
             Console.WriteLine("{0}: {1}", this, this.lastAct);
         }
 
-        private Player GetPlayer(string uuid) {
-            return this.players.FirstOrDefault(p => p.Uuid.Equals(uuid));
+        private void HandleFold(Player player) {
+            player.Folded = true;
+            this.lastAct = String.Format("{0} folds", player.Name);
+            // If the last person who needs to act is also the last man standing, he doesn't need to take his turn
+            if (this.needToAct.Count == 1 && this.players.Count(p => !p.Folded) == 1) {
+                this.needToAct.Clear();
+            }
         }
 
-        /******************
-         * Static Methods *
-         ******************/
+        private void HandleLeave(Player player) {
+            this.players.Remove(player);
+            if (this.players.Count == 1) {
+                // Everybody left, scrap this game
+                GameManager.Instances.Remove(this.name);
+                this.Dispose();
+            }
+            else if (this.CreatorUuid == player.Uuid) {
+                this.CreatorUuid = this.players[0].Uuid;
+            }
+        }
+
+        #endregion Player Actions
+
+        #region Static Methods
 
         public static GameManager GetGame(string name) {
             GameManager g;
@@ -410,5 +514,7 @@ namespace CardGame.Server {
             GameManager.CreateGame(newName, null);
             return newName;
         }
+
+        #endregion Static Methods
     }
 }

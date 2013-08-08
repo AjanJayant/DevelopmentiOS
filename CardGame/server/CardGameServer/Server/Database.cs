@@ -1,21 +1,22 @@
 ﻿using System;
+using System.IO;
 using System.Data.SQLite;
+using System.Reflection;
 using CardGame.GameElements;
+
+//TODO: Parameterize SQL commands
 
 namespace CardGame.Server {
     class Database {
         private static Database instance;
         public static Database getInstance() {
-            if (instance == null) {
-                instance = new Database();
-            }
-            return instance;
+            return instance ?? (instance = new Database());
         }
-
-        private string dataSource;
+        private readonly string dataSource;
 
         private Database() {
-            this.dataSource = "Data Source=C:\\cygwin\\home\\Taylor\\pubnub\\DevelopmentiOS\\CardGame\\server\\CardGameServer\\database.sqlite";
+            // NOTE: if trying to run this on your own, this path needs to be changed
+            this.dataSource = String.Format("Data Source=C:\\cygwin\\home\\Taylor\\pubnub\\DevelopmentiOS\\CardGame\\server\\CardGameServer\\database.sqlite");
             Console.WriteLine("Database created");
         }
 
@@ -56,11 +57,7 @@ namespace CardGame.Server {
                 conn.Close();
             }
 
-            if (result != null) {
-                return result.ToString();
-            }
-
-            return "";
+            return result != null ? result.ToString() : "";
         }
 
         public int clear() {
@@ -68,8 +65,9 @@ namespace CardGame.Server {
         }
 
         public Player addUser(string username, string uuid) {
-            return (this.execNonQuery(String.Format("INSERT INTO users(name, uuid, wins, funds) VALUES ('{0}', '{1}', 0, 100);", username, uuid)) == 1)
-                ? new Player(username, uuid) : null;
+            int startingFunds = 100;
+            return (this.execNonQuery(String.Format("INSERT INTO users(name, uuid, handsWon, funds, handsPlayed, lifetimeWinnings, highestBet) VALUES ('{0}', '{1}', 0, {2}, 0, 0, 0);", username, uuid, startingFunds)) == 1)
+                ? new Player(username, uuid, startingFunds, 0, 0, 0, 0) : null;
         }
 
         public bool userExists(string username) {
@@ -80,16 +78,49 @@ namespace CardGame.Server {
             return uuid == this.execScalar(String.Format("SELECT uuid FROM users WHERE name='{0}';", username));
         }
 
+        public Player loadPlayer(string uuid) {
+            SQLiteConnection conn = new SQLiteConnection(this.dataSource);
+            SQLiteCommand cmd = new SQLiteCommand(conn);
+            Player loaded = null;
+            try {
+                cmd.CommandText = String.Format("SELECT * FROM users WHERE uuid='{0}';", uuid);
+                cmd.Prepare();
+                conn.Open();
+                SQLiteDataReader reader = cmd.ExecuteReader();
+                while (reader.Read()) {
+                    loaded = new Player(reader.GetString(reader.GetOrdinal("name")), uuid,
+                        reader.GetInt32(reader.GetOrdinal("funds")),
+                        reader.GetInt32(reader.GetOrdinal("handsWon")), reader.GetInt32(reader.GetOrdinal("lifetimeWinnings")),
+                        reader.GetInt32(reader.GetOrdinal("handsPlayed")),
+                        reader.GetInt32(reader.GetOrdinal("highestBet")));
+                }
+                reader.Close();
+            }
+            catch (SQLiteException e) {
+                Console.WriteLine("SQLite exception: {0}", e);
+            }
+            finally {
+                conn.Close();
+            }
+            return loaded;
+        }
+
+
+
         public int loadFunds(string uuid) {
-            return int.Parse(this.execScalar(String.Format("SELECT funds FROM users WHERE uuid='{0}';", uuid)));
+            int funds = 0;
+            int.TryParse(this.execScalar(String.Format("SELECT funds FROM users WHERE uuid='{0}';", uuid)), out funds);
+            return funds;
         }
 
         public int loadWins(string uuid) {
-            return int.Parse(this.execScalar(String.Format("SELECT wins FROM users WHERE uuid='{0}';", uuid)));
+            int wins = 0;
+            int.TryParse(this.execScalar(String.Format("SELECT handsWon FROM users WHERE uuid='{0}';", uuid)), out wins);
+            return wins;
         }
 
         public bool savePlayer(Player p) {
-            return (this.execNonQuery(String.Format("UPDATE users SET funds={0}, wins={1} WHERE uuid='{2}';", p.Funds, p.Wins, p.Uuid)) == 1);
+            return (this.execNonQuery(String.Format("UPDATE users SET funds={1}, handsWon={2}, handsPlayed={3}, lifetimeWinnings={4}, highestBet={5} WHERE uuid='{0}';", p.Uuid, p.Funds, p.HandsWon, p.HandsPlayed, p.LifetimeWinnings, p.HighestBet)) == 1);
         }
 
     }

@@ -1,42 +1,36 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
+﻿using CardGame.GameElements;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PubNubMessaging.Core;
-using CardGame.GameElements;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace CardGame.Server {
-    class Server {
+    internal class Server {
         private static Server instance;
 
         private const string Channel = "PokerServer";
+        private const string Uuid = "server";
         private const string PubKey = "demo"; //"pub-c-b2d901ee-2a0f-4d89-8cd3-63039aa6dd90";
         private const string SubKey = "demo"; //"sub-c-c74c7cd8-cc8b-11e2-a2ac-02ee2ddab7fe";
         private const string SecretKey = "mySecret";
-        private const string Uuid = "server";
+
+        private readonly Database db;
+        public Pubnub Pubnub { get; private set; }
 
         private readonly Dictionary<string, Player> players = new Dictionary<string, Player>();
 
-        private readonly Database db;
-        private readonly Pubnub pubnub;
-        public Pubnub Pubnub {
-            get {
-                return this.pubnub;
-            }
-        }
-
         private Server() {
-            this.pubnub = new Pubnub(PubKey, SubKey, SecretKey) { SessionUUID = Uuid };
-            this.pubnub.Subscribe<string>(Channel, this.HandleMessage, DefaultCallback, ErrorCallback);
+            this.Pubnub = new Pubnub(PubKey, SubKey, SecretKey) { SessionUUID = Uuid };
+            this.Pubnub.Subscribe<string>(Channel, this.HandleMessage, DefaultCallback, ErrorCallback);
             //this.pubnub.Presence<string>(this.channel, this.handlePresence, this.defaultCallback);
             Console.WriteLine("Server created.");
             this.db = Database.getInstance();
         }
 
-        /**
-         * PubNub Callbacks
-         **/
+        #region PubNub Callbacks
+
         private void HandlePresence(string json) {
             var coll = JsonConvert.DeserializeObject<ReadOnlyCollection<object>>(json);
             JContainer container = coll[0] as JContainer;
@@ -92,8 +86,14 @@ namespace CardGame.Server {
                         response["message"] = String.Format("The username '{0}' is not associated with your device.", msg["username"]);
                     }
                     else if (!this.players.ContainsKey(msg["uuid"])) {
-                        player = new Player(msg["username"], msg["uuid"]);
-                        this.players.Add(player.Uuid, player);
+                        player = db.loadPlayer(msg["uuid"]);
+                        if (player != null) {
+                            this.players.Add(player.Uuid, player);
+                        }
+                        else {
+                            success = false;
+                            response["message"] = String.Format("An error occurred during login.");
+                        }
                     }
                     this.SendMessage(msg["uuid"], response);
                     break;
@@ -162,18 +162,6 @@ namespace CardGame.Server {
                         response["message"] = message;
                     }
                     this.SendMessage(msg["uuid"], response);
-                    //Timer t = new Timer();
-                    //t.Interval = 500;
-                    //t.Elapsed += (object source, ElapsedEventArgs e) => {
-                    //    if (success) {
-                    //        response.Clear();
-                    //        response["type"] = "player-join";
-                    //        response["username"] = msg["username"];
-                    //        pubnub.Publish(msg["uuid"], response, (object o) => { Console.WriteLine("Player-join message sent: {0}", msg["username"]); }, errorCallback);
-                    //    }
-                    //};
-                    //t.AutoReset = false;
-                    //t.Enabled = true;
                     break;
             }
         }
@@ -191,6 +179,10 @@ namespace CardGame.Server {
             Console.WriteLine("Message sent: {0}", e);
         }
 
+        #endregion PubNub Callbacks
+
+        #region Convenience Methods
+
         public void SendMessage(string channel, object data) {
             var dict = data as Dictionary<string, string>;
             if (dict != null) {
@@ -198,7 +190,7 @@ namespace CardGame.Server {
                 Util.printDict<string, string>(dict);
                 Console.WriteLine();
             }
-            this.pubnub.Publish<string>(channel, data, MessageSent, ErrorCallback);
+            this.Pubnub.Publish<string>(channel, data, MessageSent, ErrorCallback);
         }
 
         public Player GetPlayer(string uuid) {
@@ -206,6 +198,10 @@ namespace CardGame.Server {
             this.players.TryGetValue(uuid, out p);
             return p;
         }
+
+        #endregion Convenience Methods
+
+        #region Statics
 
         public static void Init() {
             if (instance == null) {
@@ -216,5 +212,7 @@ namespace CardGame.Server {
         public static Server GetInstance() {
             return instance;
         }
+
+        #endregion Statics
     }
 }

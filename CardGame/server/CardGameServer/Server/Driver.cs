@@ -1,11 +1,12 @@
-﻿using System;
-using System.Linq;
-using CardGame.GameElements;
+﻿using CardGame.GameElements;
 using HoldemHand;
+using System;
+using System.Linq;
 
 namespace CardGame.Server {
-    class Driver {
-        static void DeckTest() {
+    internal class Driver {
+
+        private static void DeckTest() {
             Deck a = new Deck();
             Deck b = new Deck();
             while (!a.IsEmpty && !b.IsEmpty) {
@@ -13,10 +14,10 @@ namespace CardGame.Server {
             }
         }
 
-        static void HandTest() {
+        private static void HandTest() {
             Deck d = new Deck();
-            Card[] pocket = {d.Draw(), d.Draw()};
-            Card[] community = {d.Draw(), d.Draw(), d.Draw(), d.Draw(), d.Draw()};
+            Card[] pocket = { d.Draw(), d.Draw() };
+            Card[] community = { d.Draw(), d.Draw(), d.Draw(), d.Draw(), d.Draw() };
             Console.WriteLine("{0}\n{1}", String.Join("\n", pocket.Select(card => card.ToString())),
                 String.Join("\n", community.Select(card => card.ToString())));
             Console.WriteLine(
@@ -24,7 +25,24 @@ namespace CardGame.Server {
                     String.Join(" ", community.Select(card => card.Serialize(true)))).Description);
         }
 
-        static void Main(string[] args) {
+        private static void TestGame() {
+            Deck d = new Deck();
+            Player p = new Player("Robot1", "Robot1");
+            Player q = new Player("Robot2", "Robot2");
+            p.SetPocket(d.Draw(), d.Draw());
+            q.SetPocket(d.Draw(), d.Draw());
+            Card[] community = { d.Draw(), d.Draw(), d.Draw(), d.Draw(), d.Draw() };
+            Console.WriteLine(p.FindBestHand(SerializeCommunity(community)).Description);
+            Console.WriteLine(q.FindBestHand(SerializeCommunity(community)).Description);
+        }
+
+        private static string SerializeCommunity(Card[] community) {
+            return String.Join(" ", community
+                .Where(card => card != null)
+                .Select(card => card.Serialize(true)));
+        }
+
+        private static void Main(string[] args) {
             Server.Init();
             Console.WriteLine("Commands: cleardb, decktest, handtest, quit");
             string input;
@@ -40,6 +58,9 @@ namespace CardGame.Server {
                         break;
                     case "handtest":
                         HandTest();
+                        break;
+                    case "gametest":
+                        TestGame();
                         break;
                 }
             } while (input != null && (input.Length == 0 || !"quit".StartsWith(input)));
