@@ -15,10 +15,12 @@ namespace CardGame.Server {
         private readonly string dataSource;
 
         private Database() {
-            //this.dataSource = String.Format("Data Source=C:\\cygwin\\home\\Taylor\\pubnub\\DevelopmentiOS\\CardGame\\server\\CardGameServer\\database.sqlite");
-            string[] delim = {"file:///"};
-            string dir = Assembly.GetExecutingAssembly().CodeBase;
-            this.dataSource = String.Format("Data Source={0}{1}{2}", Path.GetDirectoryName(dir.Split(delim, StringSplitOptions.None)[1]), Path.DirectorySeparatorChar, "game-database.sqlite");
+            string[] delim = {"file:" + Path.DirectorySeparatorChar};
+            string dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
+            this.dataSource = String.Format("Data Source={0}{1}{2}",
+                dir.Split(delim, StringSplitOptions.None)[1],
+                Path.DirectorySeparatorChar,
+                "game-database.sqlite");
             Console.WriteLine("Database created");
         }
 
