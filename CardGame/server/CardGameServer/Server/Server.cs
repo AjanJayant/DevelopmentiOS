@@ -10,10 +10,13 @@ namespace CardGame.Server {
     internal class Server {
         private static Server instance;
 
+        /**
+         * USE YOUR OWN KEYS HERE
+         **/
         private const string Channel = "PokerServer";
         private const string Uuid = "server";
-        private const string PubKey = "demo"; //"pub-c-b2d901ee-2a0f-4d89-8cd3-63039aa6dd90";
-        private const string SubKey = "demo"; //"sub-c-c74c7cd8-cc8b-11e2-a2ac-02ee2ddab7fe";
+        private const string PubKey = "demo";
+        private const string SubKey = "demo";
         private const string SecretKey = "mySecret";
 
         private readonly Database db;
@@ -160,6 +163,17 @@ namespace CardGame.Server {
                     response["success"] = success.ToString();
                     if (message != null) {
                         response["message"] = message;
+                    }
+                    this.SendMessage(msg["uuid"], response);
+                    break;
+                case "stats":
+                    Player p = this.GetPlayer(msg["uuid"]);
+                    if (p != null) {
+                        response = p.GetStats();
+                        response["success"] = true.ToString();
+                    }
+                    else {
+                        response["success"] = false.ToString();
                     }
                     this.SendMessage(msg["uuid"], response);
                     break;

@@ -152,9 +152,6 @@ namespace CardGame.Server {
                     if (this.responsesExpected == 0) {
                         Util.setTimeout(this.StartHand, 5000);
                     }
-                    else if (staying) {
-                        this.SendMessage(player.Uuid, this.getStats(player));
-                    }
                     break;
                 case "check":
                     player = this.GetPlayer(msg["uuid"]);
@@ -263,17 +260,6 @@ namespace CardGame.Server {
                 p.Bet = 0;
                 this.needToAct.Enqueue(p);
             }
-        }
-
-        private Dictionary<string, string> getStats(Player p) {
-            Dictionary<string, string> stats = new Dictionary<string, string>();
-            stats["type"] = "stats";
-            stats["hands-won"] = p.HandsWon.ToString();
-            stats["hands-played"] = p.HandsPlayed.ToString();
-            stats["life-winnings"] = p.LifetimeWinnings.ToString();
-            stats["highest-bet"] = p.HighestBet.ToString();
-            stats["funds"] = p.Funds.ToString();
-            return stats;
         }
 
         private void Dispose() {

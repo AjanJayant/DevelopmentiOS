@@ -23,9 +23,6 @@ namespace CardGame.GameElements {
                 this.cards[i] = this.cards[j];
                 this.cards[j] = temp;
             }
-            foreach (Card c in this.cards) {
-                Console.WriteLine(c);
-            }
 
             //int suit, value;
             //bool[,] added = new bool[4, 13];

@@ -1,6 +1,7 @@
 ﻿using CardGame.Server;
 using HoldemHand;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CardGame.GameElements {
@@ -72,6 +73,17 @@ namespace CardGame.GameElements {
             int before = this.Funds;
             this.Funds -= amt;
             return (before - this.Funds);
+        }
+
+        public Dictionary<string, string> GetStats() {
+            Dictionary<string, string> stats = new Dictionary<string, string>();
+            stats["type"] = "stats";
+            stats["hands-won"] = this.HandsWon.ToString();
+            stats["hands-thislayed"] = this.HandsPlayed.ToString();
+            stats["life-winnings"] = this.LifetimeWinnings.ToString();
+            stats["highest-bet"] = this.HighestBet.ToString();
+            stats["funds"] = this.Funds.ToString();
+            return stats;
         }
     }
 }
