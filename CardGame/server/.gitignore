@@ -1,4 +1,3 @@
 bin/
 obj/
 web-test/
-database.sqlite
