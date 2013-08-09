@@ -6,12 +6,25 @@ using System.Linq;
 namespace CardGame.Server {
     internal class Driver {
 
-        private static void DeckTest() {
-            Deck a = new Deck();
-            Deck b = new Deck();
-            while (!a.IsEmpty && !b.IsEmpty) {
-                Console.WriteLine("{0} --- {1}", a.Draw().Serialize(), b.Draw().Serialize());
+        private static int DeckTest() {
+            Deck d = new Deck();
+            Card drawn;
+            bool[,] exist = new bool[4,13];
+            int count = 0;
+            while (!d.IsEmpty) {
+                drawn = d.Draw();
+                exist[drawn.Suit, drawn.Rank] = true;
+                count++;
             }
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 13; j++) {
+                    if (!exist[i, j]) {
+                        Console.WriteLine("ERROR MISSING CARD: {0}{1}", i, j);
+                    }
+                }
+            }
+            Console.WriteLine("{0} cards drawn", count);
+            return 0;
         }
 
         private static void HandTest() {
@@ -54,7 +67,11 @@ namespace CardGame.Server {
                         Console.WriteLine(Database.getInstance().clear() + " rows deleted.");
                         break;
                     case "decktest":
-                        DeckTest();
+                        //int diff;
+                        //for (int i = 0; i < 100; i++) {
+                        //    diff = DeckTest();
+                        //}
+                        Console.WriteLine(DeckTest());
                         break;
                     case "handtest":
                         HandTest();

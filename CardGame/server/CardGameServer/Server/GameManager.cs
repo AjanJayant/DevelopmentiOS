@@ -118,10 +118,13 @@ namespace CardGame.Server {
                     if (success) {
                         Dictionary<string, string> pJoin = new Dictionary<string, string>(2);
                         pJoin["type"] = "player-join";
-                        this.Join(Server.GetInstance().GetPlayer(msg["uuid"]));
-                        // Tell new player who the existing players are
-                        pJoin["usernames"] = String.Join<string>(",", this.players.Select(p => p.Name).ToList());
-                        this.SendToPlayers(pJoin);
+                        Player joining = Server.GetInstance().GetPlayer(msg["uuid"]);
+                        if (joining != null) {
+                            this.Join(joining);
+                            // Tell new player who the existing players are
+                            pJoin["usernames"] = String.Join<string>(",", this.players.Select(p => p.Name).ToList());
+                            this.SendToPlayers(pJoin);
+                        }
                     }
                     //this.sendMessage(new Card(2, 0).Serialize(), msg["uuid"]);
                     break;
