@@ -79,7 +79,7 @@ namespace CardGame.GameElements {
             Dictionary<string, string> stats = new Dictionary<string, string>();
             stats["type"] = "stats";
             stats["hands-won"] = this.HandsWon.ToString();
-            stats["hands-thislayed"] = this.HandsPlayed.ToString();
+            stats["hands-played"] = this.HandsPlayed.ToString();
             stats["life-winnings"] = this.LifetimeWinnings.ToString();
             stats["highest-bet"] = this.HighestBet.ToString();
             stats["funds"] = this.Funds.ToString();
