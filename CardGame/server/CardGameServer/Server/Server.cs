@@ -66,117 +66,131 @@ namespace CardGame.Server {
             bool success;
 
             response["type"] = msg["type"];
-            switch (msg["type"]) {
-                case "create-user":
-                    success = !this.db.userExists(msg["username"]);
-                    response["success"] = success.ToString();
-                    if (success) {
-                        player = this.db.addUser(msg["username"], msg["uuid"]);
-                        if (player != null) {
-                            this.players.Add(player.Uuid, player);
+            try {
+                switch (msg["type"]) {
+                    case "create-user":
+                        bool uuidExists = this.db.uuidExists(msg["uuid"]);
+                        bool nameExists = this.db.userExists(msg["username"]);
+                        success = (!uuidExists && !nameExists);
+                        response["success"] = success.ToString();
+                        if (success) {
+                            player = this.db.addUser(msg["username"], msg["uuid"]);
+                            if (player != null) {
+                                this.players.Add(player.Uuid, player);
+                            }
                         }
-                    }
-                    else {
-                        response["message"] = String.Format("Username '{0}' is already taken.", msg["username"]);
-                    }
-                    response["username"] = msg["username"];
-                    this.SendMessage(msg["uuid"], response);
-                    break;
-                case "login":
-                    success = this.db.authenticateUser(msg["username"], msg["uuid"]);
-                    response["success"] = success.ToString();
-                    if (!success) {
-                        response["message"] = String.Format("The username '{0}' is not associated with your device.", msg["username"]);
-                    }
-                    else if (!this.players.ContainsKey(msg["uuid"])) {
-                        player = db.loadPlayer(msg["uuid"]);
-                        if (player != null) {
-                            this.players.Add(player.Uuid, player);
+                        else if (nameExists) {
+                            response["message"] = String.Format("Username '{0}' is already taken.", msg["username"]);
+                        }
+                        else if (uuidExists) {
+                            response["message"] = String.Format("You have already created a user for this device");
+                        }
+                        response["username"] = msg["username"];
+                        break;
+                    case "login":
+                        success = this.db.authenticateUser(msg["username"], msg["uuid"]);
+                        if (!success) {
+                            response["message"] = String.Format("The username '{0}' is not associated with your device.", msg["username"]);
+                        }
+                        else if (!this.players.ContainsKey(msg["uuid"])) {
+                            player = db.loadPlayer(msg["uuid"]);
+                            if (player != null) {
+                                this.players.Add(player.Uuid, player);
+                            }
+                            else {
+                                success = false;
+                                response["message"] = String.Format("An error occurred during login.");
+                            }
+                        }
+                        response["success"] = success.ToString();
+                        response["username"] = msg["username"];
+                        break;
+                    case "joinable":
+                        // Trying to join game
+                        bool publicGame = true;
+                        if (msg.ContainsKey("game") && msg["game"].Length > 0) {
+                            gameName = msg["game"];
+                            publicGame = false;
+                        }
+                        else {
+                            gameName = GameManager.FindPublicGame();
+                        }
+                        message = null;
+                        success = true;
+                        game = GameManager.GetGame(gameName);
+                        if (game != null) {
+                            success = game.MemberCount < GameManager.MEMBER_LIMIT;
+                            if (!success) {
+                                message = String.Format("Game '{0}' is full.", gameName);
+                            }
+                            else {
+                                // Success is true
+                                response["channel"] = game.GameChannel;
+                                response["message"] = game.MemberCount.ToString();
+
+                                // If trying to join private game, notify creator to allow access for new person
+                                if (!publicGame) {
+                                    Dictionary<string, string> promptAuth = new Dictionary<string, string>(3);
+                                    promptAuth["type"] = "authrequest";
+                                    promptAuth["requester-name"] = msg["username"];
+                                    promptAuth["requester-uuid"] = msg["uuid"];
+                                    this.SendMessage(game.CreatorUuid, promptAuth);
+                                }
+                            }
                         }
                         else {
                             success = false;
-                            response["message"] = String.Format("An error occurred during login.");
+                            message = String.Format("Game '{0}' does not exist", gameName);
                         }
-                    }
-                    this.SendMessage(msg["uuid"], response);
-                    break;
-                case "joinable":
-                    // Trying to join game
-                    bool publicGame = true;
-                    if (msg.ContainsKey("game") && msg["game"].Length > 0) {
+                        response["success"] = success.ToString();
+                        if (message != null) {
+                            response["message"] = message;
+                        }
+                        break;
+                    case "create":
+                        // Creating a new game
                         gameName = msg["game"];
-                        publicGame = false;
-                    }
-                    else {
-                        gameName = GameManager.FindPublicGame();
-                    }
-                    message = null;
-                    success = true;
-                    game = GameManager.GetGame(gameName);
-                    if (game != null) {
-                        success = game.MemberCount < GameManager.MEMBER_LIMIT;
-                        if (!success) {
-                            message = String.Format("Game '{0}' is full.", gameName);
+                        message = null;
+                        success = true;
+                        game = GameManager.GetGame(gameName);
+                        player = this.GetPlayer(msg["uuid"]);
+                        if (player == null) {
+                            success = false;
+                            message = String.Format("{0} is not a logged in user", msg["username"]);
+                        }
+                        else if (game == null) {
+                            success = true;
+                            GameManager.CreateGame(gameName, msg["uuid"]);
+                            game = GameManager.GetGame(gameName);
+                            game.Join(player);
+                            response["channel"] = game.GameChannel;
                         }
                         else {
-                            // Success is true
-                            response["channel"] = game.GameChannel;
-                            response["message"] = game.MemberCount.ToString();
-
-                            // If trying to join private game, notify creator to allow access for new person
-                            if (!publicGame) {
-                                Dictionary<string, string> promptAuth = new Dictionary<string, string>(3);
-                                promptAuth["type"] = "authrequest";
-                                promptAuth["requester-name"] = msg["username"];
-                                promptAuth["requester-uuid"] = msg["uuid"];
-                                this.SendMessage(game.CreatorUuid, promptAuth);
-                            }
+                            success = false;
+                            message = String.Format("Game '{0}' exists already", gameName);
                         }
-                    }
-                    else {
-                        success = false;
-                        message = String.Format("Game '{0}' does not exist", gameName);
-                    }
-                    response["success"] = success.ToString();
-                    if (message != null) {
-                        response["message"] = message;
-                    }
-                    this.SendMessage(msg["uuid"], response);
-                    break;
-                case "create":
-                    // Creating a new game
-                    gameName = msg["game"];
-                    message = null;
-                    success = true;
-                    game = GameManager.GetGame(gameName);
-                    if (game == null) {
-                        success = true;
-                        GameManager.CreateGame(gameName, msg["uuid"]);
-                        game = GameManager.GetGame(gameName);
-                        game.Join(this.players[msg["uuid"]]);
-                        response["channel"] = game.GameChannel;
-                    }
-                    else {
-                        success = false;
-                        message = String.Format("Game '{0}' exists already", gameName);
-                    }
-                    response["success"] = success.ToString();
-                    if (message != null) {
-                        response["message"] = message;
-                    }
-                    this.SendMessage(msg["uuid"], response);
-                    break;
-                case "stats":
-                    Player p = this.GetPlayer(msg["uuid"]);
-                    if (p != null) {
-                        response = p.GetStats();
-                        response["success"] = true.ToString();
-                    }
-                    else {
-                        response["success"] = false.ToString();
-                    }
-                    this.SendMessage(msg["uuid"], response);
-                    break;
+                        response["success"] = success.ToString();
+                        if (message != null) {
+                            response["message"] = message;
+                        }
+                        break;
+                    case "stats":
+                        player = this.GetPlayer(msg["uuid"]);
+                        if (player != null) {
+                            response = player.GetStats();
+                            response["success"] = true.ToString();
+                        }
+                        else {
+                            response["success"] = false.ToString();
+                        }
+                        break;
+                }
+            }
+            catch (Exception e) {
+                response["type"] = "exception";
+            }
+            finally {
+                this.SendMessage(msg["uuid"], response);
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using CardGame.GameElements;
 using HoldemHand;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CardGame.Server {
@@ -56,6 +57,16 @@ namespace CardGame.Server {
         }
 
         private static void Main(string[] args) {
+            List<int> l = new List<int>();
+            l.Add(3);
+            l.Add(10);
+            l.Add(1);
+            l.Add(20);
+            l.Sort((a, b) => {
+                if (a == 20) return 1;
+                return b - a;
+            });
+            Console.WriteLine(l);
             Server.Init();
             Console.WriteLine("Commands: cleardb, decktest, handtest, quit");
             string input;

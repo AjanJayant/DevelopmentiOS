@@ -23,6 +23,7 @@ namespace CardGame.Server {
         public enum Round { Preflop, Flop, Turn, River };
 
         private Round round;
+        private bool started = false;
 
         private readonly string channel = System.Guid.NewGuid().ToString();
         private readonly string name;
@@ -33,6 +34,7 @@ namespace CardGame.Server {
         private readonly List<Player> players = new List<Player>(GameManager.MEMBER_LIMIT);
         private readonly Queue<Player> needToAct = new Queue<Player>(GameManager.MEMBER_LIMIT);
         private readonly Dictionary<string, Boolean> leaving = new Dictionary<string, bool>();
+        private readonly Queue<Player> waitList = new Queue<Player>(GameManager.MEMBER_LIMIT);
 
         private int responsesExpected = 0;
         private int pot = 0;
@@ -63,7 +65,7 @@ namespace CardGame.Server {
         public string CreatorUuid { get; private set; }
 
         public bool Full {
-            get { return (this.players.Count == GameManager.MEMBER_LIMIT); }
+            get { return ((this.players.Count + this.waitList.Count) == GameManager.MEMBER_LIMIT); }
         }
 
         #endregion Properties
@@ -71,7 +73,15 @@ namespace CardGame.Server {
         #region Public Methods
 
         public bool Join(Player p) {
-            this.players.Add(p);
+            if (this.started) {
+                if (this.waitList.FirstOrDefault(test => (test == p)) == null) {
+                    this.waitList.Enqueue(p);
+                    return false;
+                }
+            }
+            if (this.players.Find(test => (test == p)) == null) {
+                this.players.Add(p);
+            }
             return true;
         }
 
@@ -120,10 +130,15 @@ namespace CardGame.Server {
                         pJoin["type"] = "player-join";
                         Player joining = Server.GetInstance().GetPlayer(msg["uuid"]);
                         if (joining != null) {
-                            this.Join(joining);
-                            // Tell new player who the existing players are
-                            pJoin["usernames"] = String.Join<string>(",", this.players.Select(p => p.Name).ToList());
-                            this.SendToPlayers(pJoin);
+                            if (this.Join(joining)) {
+                                // Tell new player who the existing players are
+                                pJoin["usernames"] = String.Join<string>(",", this.players.Select(p => p.Name).ToList());
+                                this.SendToPlayers(pJoin);
+                            }
+                            else {
+                                pJoin["usernames"] = String.Join<string>(",", this.players.Select(p => p.Name).ToList());
+                                this.SendMessage(joining.Uuid, pJoin);
+                            }
                         }
                     }
                     //this.sendMessage(new Card(2, 0).Serialize(), msg["uuid"]);
@@ -136,7 +151,7 @@ namespace CardGame.Server {
                     bool staying = Boolean.Parse(msg["yes"]);
 
                     // Don't handle duplicate responses
-                    if (player.Responded) {
+                    if (player == null || player.Responded) {
                         return;
                     }
                     player.Responded = true;
@@ -144,12 +159,18 @@ namespace CardGame.Server {
                     if (!staying) {
                         this.HandleLeave(player);
                     }
-                    Dictionary<string, string> membersUpdate = new Dictionary<string, string>(2);
-                    membersUpdate["type"] = "player-join";
-                    membersUpdate["usernames"] = String.Join(",", this.players.Select(p => p.Name));
-                    this.SendToPlayers(membersUpdate);
                     // If everyone has made a decision on whether to play again, we can automatically start
                     if (this.responsesExpected == 0) {
+                        Dictionary<string, string> membersUpdate = new Dictionary<string, string>(2);
+                        if (this.players.Count == 1) {
+                            membersUpdate["type"] = "disband";
+                            this.SendToPlayers(membersUpdate);
+                            this.Dispose();
+                            return;
+                        }
+                        membersUpdate["type"] = "player-join";
+                        membersUpdate["usernames"] = String.Join(",", this.players.Select(p => p.Name));
+                        this.SendToPlayers(membersUpdate);
                         Util.setTimeout(this.StartHand, 5000);
                     }
                     break;
@@ -263,6 +284,7 @@ namespace CardGame.Server {
         }
 
         private void Dispose() {
+            GameManager.Instances.Remove(this.name);
             //Server.GetInstance().Pubnub.PresenceUnsubscribe<string>(this.GameChannel, this.DefaultCallback, this.DefaultCallback, this.DefaultCallback, this.DefaultCallback);
             //Server.GetInstance().Pubnub.Unsubscribe<string>(this.GameChannel, this.DefaultCallback, this.DefaultCallback, this.DefaultCallback, this.DefaultCallback);
         }
@@ -276,6 +298,7 @@ namespace CardGame.Server {
         /// deals him a two card hand.
         /// </summary>
         private void StartHand() {
+            this.started = true;
             Console.WriteLine("{0} starting game...", this);
             this.InitVars();
             Player p;
@@ -349,7 +372,14 @@ namespace CardGame.Server {
                 p.Responded = false;
                 this.responsesExpected++;
             }
+            Player waiting;
+            while (this.waitList.Count > 0) {
+                waiting = this.waitList.Dequeue();
+                waiting.Responded = true;
+                this.Join(waiting);
+            }
             this.SendToPlayers(end);
+            this.started = false;
         }
 
         private void UpdateClients() {
@@ -401,6 +431,7 @@ namespace CardGame.Server {
         }
 
         private void QueueActors() {
+            this.needToAct.Clear();
             foreach (Player p in this.players.Where(p => !p.Folded)) {
                 this.needToAct.Enqueue(p);
             }
@@ -471,7 +502,6 @@ namespace CardGame.Server {
             this.players.Remove(player);
             if (this.players.Count == 1) {
                 // Everybody left, scrap this game
-                GameManager.Instances.Remove(this.name);
                 this.Dispose();
             }
             else if (this.CreatorUuid == player.Uuid) {

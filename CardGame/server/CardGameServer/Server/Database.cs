@@ -78,6 +78,10 @@ namespace CardGame.Server {
             return "" != this.execScalar(String.Format("SELECT name FROM users WHERE name='{0}';", username));
         }
 
+        public bool uuidExists(string uuid) {
+            return "" != this.execScalar(String.Format("SELECT uuid FROM users WHERE uuid='{0}';", uuid));
+        }
+
         public bool authenticateUser(string username, string uuid) {
             return uuid == this.execScalar(String.Format("SELECT uuid FROM users WHERE name='{0}';", username));
         }
