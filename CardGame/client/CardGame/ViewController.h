@@ -40,19 +40,12 @@
 
 @property (weak, nonatomic) IBOutlet UIButton *joinPrivateGameButton;
 
-@property (weak, nonatomic) IBOutlet UIButton *joinPublicGameButton;
-
-@property (weak, nonatomic) IBOutlet UIButton *settings;
 
 @property (weak, nonatomic) IBOutlet UIImageView *bgImageView;
 
 - (IBAction)createGameButton:(id)sender;
 
 - (IBAction)joinPrivateGameButton:(id)sender;
-
-- (IBAction)joinPublicGameButton:(id)sender;
-
-- (IBAction)settings:(id)sender;
 
 /////////////////////////
 // Load room properties//
@@ -130,7 +123,7 @@
 
 // Aux functions
 
--(void) enableInteraction:(BOOL) shouldInteract;
+-(void) enableInteraction:(BOOL) shouldInteract arrayOfViews:(NSArray *)arrayOfViews;
 
 -(void) setCards :(NSString *) card cardView:(UIImageView *) cardView;
 

@@ -18,6 +18,8 @@
 
 @property (strong, nonatomic) NSString * userName;
 
+@property BOOL isCreator;
+
 + (Globals *)sharedInstance;
 
 -(void)setuDID: (NSString *) str;
@@ -25,6 +27,8 @@
 -(void)setUserName: (NSString *) str;
 
 -(void)setGameChannel: (PNChannel *) chan;
+
+-(void) setCreator:(BOOL) flag;
 
 -(void) saveVariables;
 

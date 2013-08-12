@@ -14,8 +14,11 @@
 
 @property (strong, nonatomic) UIWindow *window;
 
-@property (nonatomic, strong) ViewController *loadViewController;
+@property (nonatomic, strong) ViewController *loginViewController;
 
+@property (nonatomic, strong) ViewController *homeViewController;
+
+@property (nonatomic, strong) ViewController *loadViewController;
 
 @property (nonatomic, strong) ViewController *roomViewController;
 

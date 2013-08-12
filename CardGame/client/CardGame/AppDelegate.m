@@ -10,25 +10,58 @@
 
 @implementation AppDelegate
 
+@synthesize loginViewController;
+
+@synthesize homeViewController;
+
 @synthesize loadViewController;
 
 @synthesize roomViewController;
 
 NSString * reqUUID;
 
+BOOL shouldGoToHome;
+
+UIAlertView * endAlert;
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    
+    shouldGoToHome = YES;
     [[Globals sharedInstance] loadVariables];
     [PubNub setConfiguration:[PNConfiguration configurationForOrigin:@"pubsub.pubnub.com" publishKey:@"demo" subscribeKey:@"demo" secretKey:@"mySecret"]];
     [PubNub connect];
     [PubNub setDelegate:self];
     
+    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle: nil];
+    loginViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"login"];
+    homeViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"home"];
+    loadViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"load"];
+    roomViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"room"];
+    
+    if(![[[Globals sharedInstance] userName] isEqualToString: @""])
+    {
+        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+        
+        [dict setObject: [[Globals sharedInstance] userName] forKey: @"username"];
+        [dict setObject: [[Globals sharedInstance] udid] forKey:@"uuid"];
+        [dict setObject: @"login" forKey:@"type"];
+        
+        [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] serverChannel]];
+    }
+    else {
+        self.window.rootViewController = loginViewController;
+    }
+    [PubNub setClientIdentifier: [[Globals sharedInstance] udid]];
+    PNChannel *channel_self = [PNChannel channelWithName: [[Globals sharedInstance] udid]];
+    [PubNub subscribeOnChannel: channel_self];
+    
     return YES;
 }
 
 - (void)pubnubClient:(PubNub *)client didReceiveMessage:(PNMessage *)message
-{        
+{
     NSString * type = [message.message objectForKey: @"type"];
     
     if([type isEqualToString: @"create-user"])
@@ -53,7 +86,8 @@ NSString * reqUUID;
         [self handleTakeTurn: message.message];
     else if([type isEqualToString: @"end"])
         [self handleEnd: message.message];
-
+    else if([type isEqualToString: @"exception"])
+        [self handleException: message.message];
 }
 
 -(void) handleCreateUser: (NSDictionary *) dict {
@@ -66,37 +100,13 @@ NSString * reqUUID;
     [self handleGenericLogin: dict];
 }
 
--(void) handleEnd: (NSDictionary *) dict {
-    NSString * msg = [dict objectForKey: @"message"];
-
-    UIAlertView * alert = [[UIAlertView alloc] initWithTitle: msg message: @"You will be taken back to the menu" delegate:self cancelButtonTitle:@"Return" otherButtonTitles: nil];
-    [alert show];
-
-}
-
 
 -(void) handleLogin: (NSDictionary *) dict {
     [self handleGenericLogin: dict];
 }
 
--(void) handleGenericLogin: (NSDictionary *) dict{
-    
-    NSString * suc = [dict objectForKey: @"success"];
-    
-    if([suc isEqualToString: @"True"]){
-        UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle: nil];
-        ViewController* home = [mainStoryboard instantiateViewControllerWithIdentifier:@"home"];
-        [self.window.rootViewController presentViewController:home animated:NO completion:nil];       
-    }
-    else if([suc isEqualToString: @"False"]){
-        NSString * mess = [dict objectForKey: @"message"];
-        
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Game did not initialise :(" message: mess delegate:self cancelButtonTitle:@"Try Again!" otherButtonTitles: nil];
-        [alert show];
-    }
-}
-
 -(void) handleCreate: (NSDictionary *) dict {
+    
     NSString * suc = [dict objectForKey: @"success"];
     NSString * mess = [dict objectForKey: @"message"];
     NSString * chanString = [dict objectForKey: @"channel"];
@@ -105,12 +115,9 @@ NSString * reqUUID;
         NSLog(@"This works");
         PNChannel * chan = [PNChannel channelWithName:chanString shouldObservePresence:YES];
         [[Globals sharedInstance] setGameChannel: chan];
-        //[PubNub subscribeOnChannel: [[Globals sharedInstance] gameChannel]];
-        UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle: nil];
-        ViewController *load = (ViewController *)[mainStoryboard instantiateViewControllerWithIdentifier:@"load"];
-        [self.window addSubview:load.view];
+        //[PubNub subscribeOnChannel: [[Globals sharedInstance] gameChannel]]
         
-        loadViewController = load;
+        loadViewController = [self goToLoad: homeViewController];
 
     }
     else if([suc isEqualToString: @"False"]){
@@ -130,12 +137,7 @@ NSString * reqUUID;
         PNChannel * chan = [PNChannel channelWithName:chanString shouldObservePresence:YES];
         [[Globals sharedInstance] setGameChannel: chan];
         
-        UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle: nil];
-        ViewController* load = [mainStoryboard instantiateViewControllerWithIdentifier:@"load"];
-        [self.window addSubview:load.view];
-        
-        loadViewController = load;
-
+        loadViewController = [self goToLoad: homeViewController];
     }
     else if([suc isEqualToString: @"False"]){
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Could not join" message: mess delegate:self cancelButtonTitle:@"Return" otherButtonTitles: nil];
@@ -148,46 +150,28 @@ NSString * reqUUID;
     
     NSString * name = [dict objectForKey: @"usernames"];
     NSArray * list = [name componentsSeparatedByString:@","];
+    NSArray * labelArray = [[NSArray alloc]initWithObjects:
+                                                         loadViewController.firstNameLabel
+                                                        ,loadViewController.secondNameLabel
+                                                        ,loadViewController.thirdnameLabel
+                                                        ,loadViewController.fourthNameLabel
+                                                        ,loadViewController.fifthNameLabel
+                                                        ,loadViewController.sixthNameLabel
+                                                        ,loadViewController.seventhNameLabel
+                                                        ,loadViewController.eightNameLabel
+                                                        ,nil];
+
     
-    int i = 1;
+    int i = 0;
     for(id appelo in list){
-        if(i == 1) {
-            loadViewController.firstNameLabel.hidden = NO;
-            loadViewController.firstNameLabel.text = appelo;
-            
-        }
-
-        if(i == 2) {
-            loadViewController.secondNameLabel.hidden = NO;
-            loadViewController.secondNameLabel.text = appelo;
+        UILabel*  temp = labelArray[i];
+        temp.hidden = NO;
+        temp.text = appelo;
+        
+        if(i == 1 && [[Globals sharedInstance] isCreator]){
             [loadViewController setGameButton];
-
         }
-        else if(i == 3) {
-            loadViewController.thirdnameLabel.hidden = NO;
-            loadViewController.thirdnameLabel.text = appelo;
-
-        }
-        else if(i == 4) {
-            loadViewController.fourthNameLabel.hidden = NO;
-            loadViewController.fourthNameLabel.text = appelo;
-        }
-        else if(i == 5) {
-            loadViewController.fifthNameLabel.hidden = NO;
-            loadViewController.fifthNameLabel.text = appelo;
-        }
-        else if(i == 6) {
-            loadViewController.sixthNameLabel.hidden = NO;
-            loadViewController.sixthNameLabel.text = appelo;
-        }
-        else if(i == 7) {
-            loadViewController.seventhNameLabel.hidden = NO;
-            loadViewController.seventhNameLabel.text = appelo;
-        }
-        else if(i == 8) {
-            loadViewController.eightNameLabel.hidden = NO;
-            loadViewController.eightNameLabel.text = appelo;
-        }
+        
         i++;
     }
 }
@@ -280,7 +264,6 @@ NSString * reqUUID;
             [roomViewController setCards:list[4] cardView:roomViewController.deckCard5];
             roomViewController.deckCard5.hidden = NO;
         }
-
     }
 }
 
@@ -297,9 +280,34 @@ NSString * reqUUID;
     [roomViewController removeBlind];
     roomViewController.raiseTextField.placeholder = [@"Min-raise:" stringByAppendingString: minraise];
     
-    [roomViewController enableInteraction:YES];
-    
+    [roomViewController enableInteraction:YES arrayOfViews:[[NSArray alloc]initWithObjects:
+                                                           roomViewController.raiseTextField,
+                                                           roomViewController.raiseButton,
+                                                           roomViewController.callButton,
+                                                           roomViewController.foldButton,
+                                                           nil]];
 }
+
+-(void) handleEnd: (NSDictionary *) dict {
+    NSString * msg = [dict objectForKey: @"message"];
+    
+    shouldGoToHome = YES;
+    endAlert = [[UIAlertView alloc] initWithTitle: msg message: @"Please choose wether to continue or weather to exit" delegate:self cancelButtonTitle:@"Exit" otherButtonTitles:@"Continue", nil];
+    endAlert.tag = 6;
+    [endAlert show];
+    
+    [NSTimer scheduledTimerWithTimeInterval:15.0
+                                     target:self
+                                   selector:@selector(goToHome)
+                                   userInfo:nil
+                                    repeats:NO];
+}
+
+-(void) handleException: (NSDictionary *) dict {
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Server Exception Occoured" message: @"Game will exit shortly" delegate:self cancelButtonTitle:@"Return" otherButtonTitles: nil];
+    [alert show];
+}
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -327,11 +335,20 @@ NSString * reqUUID;
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+// Auxilliary Functions
+
 - (void)alertView:(UIAlertView *)alertView
 clickedButtonAtIndex:(NSInteger) buttonIndex
 {
     if(alertView.tag == 1) {
         if(buttonIndex == 0){
+            [homeViewController enableInteraction:YES arrayOfViews:[[NSArray alloc]initWithObjects:
+                                                                    homeViewController.gameName,
+                                                                    homeViewController.joinPrivateGameButton,
+                                                                    homeViewController.createGameButton,
+                                                                    nil]];
+            
+
             return;
         }
     }
@@ -343,7 +360,7 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
     else if(alertView.tag == 3) {
         NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
         [dict setObject:@"" forKey: @"game"];
-        [dict setObject:@"AjanJ" forKey: @"creator"];
+        [dict setObject:[[Globals sharedInstance] userName] forKey: @"creator"];
         [dict setObject:@"authresponse" forKey:@"type"];
 
         if(buttonIndex == 0){
@@ -357,19 +374,13 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
     }
     else if(alertView.tag == 4) {
         if(buttonIndex == 0){
-            UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle: nil];
-            ViewController *home = (ViewController *)[mainStoryboard instantiateViewControllerWithIdentifier:@"home"];
-            [self.window addSubview:home.view];
+            [self goToHome:loadViewController];
         }
-
-
     }
     else if(alertView.tag == 5) {
-        UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle: nil];
-        ViewController *load = (ViewController *)[mainStoryboard instantiateViewControllerWithIdentifier:@"load"];
-        [self.window addSubview:load.view];
         
-        loadViewController = load;
+        loadViewController = [self goToLoad: homeViewController];
+    
         NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
         
         [dict setObject:[[Globals sharedInstance] udid] forKey: @"uuid"];
@@ -377,6 +388,112 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
         [dict setObject:@"join" forKey:@"type"];
         [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
 
+    }
+    else if(alertView.tag == 6) {
+        if(buttonIndex == 0){
+            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+            
+            [dict setObject:[[Globals sharedInstance] udid] forKey: @"uuid"];
+            [dict setObject:[[Globals sharedInstance] userName] forKey: @"username"];
+            [dict setObject:@"play-again" forKey:@"type"];
+            [dict setObject:@"false" forKey:@"yes"];
+            [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
+
+            [self goToHome: roomViewController];
+        }
+        else if(buttonIndex == 1) {
+            shouldGoToHome = NO;
+            
+            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+            
+            [dict setObject:[[Globals sharedInstance] udid] forKey: @"uuid"];
+            [dict setObject:[[Globals sharedInstance] userName] forKey: @"username"];
+            [dict setObject:@"play-again" forKey:@"type"];
+            [dict setObject:@"true" forKey:@"yes"];
+            [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
+            
+            [self goToLoad:roomViewController];
+
+        }
+    }
+}
+
+-(void) handleGenericLogin: (NSDictionary *) dict{
+    
+    NSString * suc = [dict objectForKey: @"success"];
+
+    
+    if([suc isEqualToString: @"True"]){
+        NSString * userName = [dict objectForKey: @"username"];
+        [[Globals sharedInstance] setUserName: userName];
+        
+        [self goToHome: loginViewController];
+    }
+    else if([suc isEqualToString: @"False"]){
+        NSString * mess = [dict objectForKey: @"message"];
+        
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"User unreachable :(" message: mess delegate:self cancelButtonTitle:@"Try Again!" otherButtonTitles: nil];
+        [alert show];
+    }
+}
+
+-(ViewController *) goToHome {
+    
+    if(shouldGoToHome) {
+        
+        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+        
+        [dict setObject:[[Globals sharedInstance] udid] forKey: @"uuid"];
+        [dict setObject:[[Globals sharedInstance] userName] forKey: @"username"];
+        [dict setObject:@"play-again" forKey:@"type"];
+        [dict setObject:@"false" forKey:@"yes"];
+        [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
+        
+        [roomViewController.view removeFromSuperview];
+        
+        [homeViewController enableInteraction:YES arrayOfViews:[[NSArray alloc]initWithObjects: homeViewController.createGameButton, homeViewController.gameName, homeViewController.joinPrivateGameButton, nil]] ;
+        
+        [self.window addSubview:homeViewController.view];
+        
+        [endAlert dismissWithClickedButtonIndex:0 animated:YES];
+
+        return homeViewController;
+        
+    }
+    else
+        return nil;
+}
+
+
+-(ViewController *) goToHome: (ViewController *)viewController{
+    
+        [viewController.view removeFromSuperview];
+        [self.window addSubview:homeViewController.view];
+        return homeViewController;
+}
+
+-(ViewController *) goToLoad: (ViewController *)viewController {
+
+    [homeViewController.view removeFromSuperview];
+
+    [self.window addSubview:loadViewController.view];
+    
+    return loadViewController;
+}
+
+-(void) setUIDAndUserName:(NSMutableDictionary *) dict {
+    [dict setObject: [[Globals sharedInstance] udid] forKey: @"uuid"];
+    [dict setObject: [[Globals sharedInstance] userName] forKey: @"username"];
+}
+
+-(void) setDictionary:(NSMutableDictionary *) dict keys:(NSArray *)keys values:(NSArray *)values{
+    if([keys count] != [values count]) {
+        [NSException raise:NSInvalidArgumentException
+                    format:@"The size of the key and value arguement array must be equal"];
+    }
+    
+    for(int i = 0; i < [keys count]; i++) {
+        [dict setObject: values[i] forKey: keys[i]];
     }
 }
 

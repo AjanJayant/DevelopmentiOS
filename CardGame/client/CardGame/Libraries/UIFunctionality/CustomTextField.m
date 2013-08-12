@@ -224,4 +224,9 @@ int originY;
 
 }
 
+- (void) drawPlaceholderInRect:(CGRect)rect {
+    [[UIColor darkGrayColor] setFill];
+    [[self placeholder] drawInRect:rect withFont:[UIFont systemFontOfSize:16]];
+}
+
 @end

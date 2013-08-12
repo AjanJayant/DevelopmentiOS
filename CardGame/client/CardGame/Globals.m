@@ -18,6 +18,7 @@
 
 @synthesize gameChannel;
 
+@synthesize isCreator;
 
 +(Globals *)sharedInstance {
     static Globals *myInstance = nil;
@@ -34,8 +35,9 @@
     if (self = [super init]) {
         
         self.udid = [[NSString alloc] init];
-        self.userName = @"AJ";
+        self.userName = @"";
         self.serverChannel = [PNChannel channelWithName:@"PokerServer" shouldObservePresence:YES];
+        self.isCreator = NO;
     }
     return self;
 }
@@ -50,6 +52,10 @@
 
 -(void)setGameChannel: (PNChannel *) chan {
     gameChannel = chan;
+}
+
+-(void)setCreator: (BOOL) flag {
+    isCreator = flag;
 }
 
 -(void) loadVariables {

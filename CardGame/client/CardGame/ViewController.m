@@ -29,10 +29,6 @@
 
 @synthesize joinPrivateGameButton;
 
-@synthesize joinPublicGameButton;
-
-@synthesize settings;
-
 @synthesize gameName;
 
 @synthesize bgImageView;
@@ -95,18 +91,16 @@
 
 @synthesize minRaise;
 
-BOOL isCreator;
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-    isCreator = NO;
     
     // Setup for login screen
     if([[self title] isEqualToString: @"login"]){
-        appLabel.text = @"PubNubPoker";
+        
+        appLabel.text = @"PubNub Poker";
         [loginField configureTextField: @"Type user name here" color:[UIColor blackColor] hideSelf:YES];
         [addUser setTitle:@"Add" forState:UIControlStateNormal];
         [loginUser setTitle:@"Login" forState:UIControlStateNormal];
@@ -116,23 +110,17 @@ BOOL isCreator;
             [[Globals sharedInstance] setuDID: uid];
         }
         
-        [PubNub setClientIdentifier: [[Globals sharedInstance] udid]];
-        PNChannel *channel_self = [PNChannel channelWithName: [[Globals sharedInstance] udid]];
-        [PubNub subscribeOnChannel: channel_self];
         loginProgress.hidden = YES;
     }
     // Setup for home screen
     // Setup for button
     else if([[self title] isEqualToString: @"home"]){
+        
         [createGameButton setTitle: @"Create a game" forState: UIControlStateNormal];
         [joinPrivateGameButton setTitle: @"Join private" forState:
          UIControlStateNormal];
-        [joinPublicGameButton setTitle: @"Join public" forState:
-         UIControlStateNormal];
-        [settings setTitle: @"Settings" forState:
-         UIControlStateNormal];
     
-        [gameName configureTextField: @"Type game name here" color:[UIColor whiteColor]returnHidesKB:YES movesLeft:NO hideOthers:[NSArray arrayWithObjects:createGameButton, joinPrivateGameButton, joinPublicGameButton, settings, nil]];
+        [gameName configureTextField: @"Type game name here" color:[UIColor whiteColor]returnHidesKB:YES movesLeft:NO hideOthers:[NSArray arrayWithObjects:createGameButton, joinPrivateGameButton, nil]];
     }
     // Make all labels hidden
     else if([[self title] isEqualToString: @"load"]){
@@ -148,8 +136,6 @@ BOOL isCreator;
         startGameButton.hidden = YES;
         [startGameButton setTitle:@"Start!" forState:UIControlStateNormal];
         
-        if(isCreator)
-            [self setGameButton];
     }
     // For game setup
     else if([[self title] isEqualToString: @"room"]) {
@@ -171,6 +157,7 @@ BOOL isCreator;
         
         [raiseButton setTitle:@"Raise" forState:UIControlStateNormal];
         [callButton setTitle:@"Call" forState:UIControlStateNormal];
+        [foldButton setTitle:@"Fold" forState:UIControlStateNormal];
     }
     
     [NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(saveVaraiables) userInfo:nil repeats:YES];
@@ -185,17 +172,6 @@ BOOL isCreator;
 }
 
 #pragma mark - Start screen buttons
-
-- (IBAction)createGameButton:(id)sender {
-    
-    if([gameName.text isEqualToString:@""]) {
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Game could not be joined" message: @"Please type a game name" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
-        [alert show];
-    }
-    else
-        [self doGameSetup:@"create" game:gameName.text];
-    isCreator = YES;
-}
 
 - (IBAction)addUser:(id)sender {
     [self checkIfHereNow];
@@ -212,6 +188,22 @@ BOOL isCreator;
 
 #pragma mark - Home screen buttons
 
+- (IBAction)createGameButton:(id)sender {
+    
+    if([gameName.text isEqualToString:@""]) {
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Game could not be joined" message: @"Please type a game name" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+        [alert show];
+    }
+    else
+    {
+        [[Globals sharedInstance] setCreator: YES];
+        [self doGameSetup:@"create" game:gameName.text];
+        [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: createGameButton, gameName, joinPrivateGameButton, nil]] ;
+        [self checkIfHereNow];
+
+    }
+}
+
 - (IBAction)joinPrivateGameButton:(id)sender {
     
     if([gameName.text isEqualToString:@""]) {
@@ -219,16 +211,13 @@ BOOL isCreator;
         [alert show];
     }
     else
+    {
         [self doGameSetup:@"joinable" game:gameName.text];
-}
+        [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: createGameButton, gameName, joinPrivateGameButton, nil]];
+        [self checkIfHereNow];
+    }
 
-- (IBAction)joinPublicGameButton:(id)sender {
-    [self doGameSetup:@"join" game:@"public"];
 }
-
-- (IBAction)settings:(id)sender {
-}
-
 
 #pragma mark - Load screen buttons
 
@@ -243,6 +232,10 @@ BOOL isCreator;
     [dict setObject:user forKey:@"username"];
     
     [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
+    
+    [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects:startGameButton, nil]];
+    
+    [self checkIfHereNow];
 
 }
 
@@ -257,6 +250,23 @@ BOOL isCreator;
         return;
     }
     
+    int raise = [raiseTextField.text intValue];
+        
+    int maxRaise = [bankLabel.text intValue];
+    
+    if(raise < minRaise){
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Invalid raise amount" message: @"The value is less than the minimum raise" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
+        [alert show];
+        return;
+        
+    }
+
+    if(raise > maxRaise){
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Invalid raise amount" message: @"The value is greater than the money you have" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
+        [alert show];
+        return;
+    }
+    
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     
     [dict setObject:@"raise" forKey:@"type"];
@@ -267,38 +277,55 @@ BOOL isCreator;
     
     [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
     
-    [self enableInteraction:NO];
+    [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: raiseTextField, raiseButton, callButton, foldButton, nil]];
     
     raiseTextField.text = @"";
+    
+    [self checkIfHereNow];
+
 }
 
 - (IBAction)callButton:(id)sender {
+    
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    
+    [dict setObject:@"call" forKey:@"type"];
+        
+    [self setUIDAndUserName:dict];
+    
+    [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
+    
+    [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: raiseTextField, raiseButton, callButton, foldButton, nil]];
+
+    [self checkIfHereNow];
+
 }
 
 - (IBAction)foldButton:(id)sender {
     
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     
-    [dict setObject:@"call" forKey:@"type"];
-    
-    [dict setObject:raiseTextField.text  forKey:@"amount"];
+    [dict setObject:@"fold" forKey:@"type"];
     
     [self setUIDAndUserName:dict];
     
     [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
     
-    [self enableInteraction:NO];
+    [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: raiseTextField, raiseButton, callButton, foldButton, nil]];
+    
+    [self checkIfHereNow];
 }
 
 
 // Helper Funtions
 #pragma mark - Auxilliary Functions
 
--(void) enableInteraction:(BOOL) shouldInteract{
-    [raiseTextField setUserInteractionEnabled:shouldInteract];
-    [raiseButton setUserInteractionEnabled:shouldInteract];
-    [callButton setUserInteractionEnabled:shouldInteract];
-    [foldButton setUserInteractionEnabled:shouldInteract];
+-(void) enableInteraction:(BOOL) shouldInteract arrayOfViews:(NSArray *)arrayOfViews{
+    
+    for(UIView * view in arrayOfViews){
+        [view setUserInteractionEnabled:shouldInteract];
+
+    }
 }
 
 -(void) genericLogin:(NSString *) type {
@@ -339,17 +366,6 @@ BOOL isCreator;
     
 }
 
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
-    
-    // change background here
-    if(UIInterfaceOrientationIsPortrait(fromInterfaceOrientation))
-    {
-        bgImageView.image = [UIImage imageNamed:@"awesome_poker3.png"];
-    }
-    else
-        bgImageView.image = [UIImage imageNamed:@"awesome_poker2.png"];
-}
-
 -(void) setCards :(NSString *) card cardView:(UIImageView *) cardView{
     
     card = [card stringByAppendingString: @".png"];
@@ -375,6 +391,7 @@ BOOL isCreator;
 
 -(void) setGameButton {
     startGameButton.hidden = NO;
+    startGameButton.enabled = YES;
 }
 
 -(void) saveVaraiables {
@@ -393,7 +410,7 @@ BOOL isCreator;
     bankLabel.text = myFunds;
     bankLabel.hidden = NO;
     
-    [raiseTextField configureTextField: [@"Curent bet: " stringByAppendingString: currentBet] color:[UIColor blackColor] returnHidesKB: YES movesLeft:NO hideOthers:[NSArray arrayWithObjects:ownCardOneView, ownCardTwoView, ownCardTwoView, deckCardOne, deckCard2, deckCard3, deckCard4, deckCard5, potImageView, recentBetLabel, potImageView, initialBankLabel, bankLabel, raiseButton, callButton, foldButton,  nil]];
+    [raiseTextField configureTextField: [@"Curent bet: " stringByAppendingString: currentBet] color:[UIColor blackColor] returnHidesKB: YES movesLeft:NO hideOthers:[NSArray arrayWithObjects:potLabel, ownCardOneView, ownCardTwoView, ownCardTwoView, deckCardOne, deckCard2, deckCard3, deckCard4, deckCard5, potImageView, recentBetLabel, potImageView, initialBankLabel, bankLabel, raiseButton, callButton, foldButton,  nil]];
     
     raiseTextField.hidden = NO;
     
@@ -408,7 +425,6 @@ BOOL isCreator;
 
     foldButton.hidden = NO;
     
-    [foldButton setTitle:@"Fold" forState:UIControlStateNormal];
 }
 
         
@@ -421,8 +437,11 @@ BOOL isCreator;
             
             if([udids count] == 0) {
                 UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Server not running :(" message: @"There seems to be a error in the space time continuum" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+                alert.tag = 1;
                 [alert show];
                 loginProgress.hidden = YES;
+                
+                
             }
         }
         else {  
@@ -436,4 +455,15 @@ BOOL isCreator;
     [dict setObject: [[Globals sharedInstance] udid] forKey: @"uuid"];
     [dict setObject: [[Globals sharedInstance] userName] forKey: @"username"];
 }
+
+- (void)alertView:(UIAlertView *)alertView
+clickedButtonAtIndex:(NSInteger) buttonIndex
+{
+    if(alertView.tag == 1) {
+        if(buttonIndex == 0){
+            [self enableInteraction:YES arrayOfViews:[[NSArray alloc]initWithObjects: createGameButton, gameName, joinPrivateGameButton, raiseTextField, startGameButton, raiseButton, callButton, foldButton, nil]];
+        }
+    }
+}
+
 @end
