@@ -200,6 +200,9 @@ int originY;
         
         self.frame = textRect;
         
+        originX = 0;
+        originY = 0;
+        
     }];
     
     if(shouldHide){

@@ -35,6 +35,8 @@ UIAlertView * endAlert;
     [PubNub setDelegate:self];
     
     UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle: nil];
+    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+    
     loginViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"login"];
     homeViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"home"];
     loadViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"load"];
@@ -53,9 +55,12 @@ UIAlertView * endAlert;
     else {
         self.window.rootViewController = loginViewController;
     }
+    
     [PubNub setClientIdentifier: [[Globals sharedInstance] udid]];
     PNChannel *channel_self = [PNChannel channelWithName: [[Globals sharedInstance] udid]];
     [PubNub subscribeOnChannel: channel_self];
+    
+    [self.window makeKeyAndVisible];
     
     return YES;
 }
@@ -434,6 +439,11 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
         
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"User unreachable :(" message: mess delegate:self cancelButtonTitle:@"Try Again!" otherButtonTitles: nil];
         [alert show];
+        
+        self.window.rootViewController = loginViewController;
+        
+        [self.window makeKeyAndVisible];
+
     }
 }
 

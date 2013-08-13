@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12E55" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="kz7-QT-zBT">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12E55" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="2083"/>
     </dependencies>
@@ -323,7 +323,11 @@
                                     <constraint firstAttribute="height" constant="135" id="TFr-nZ-BBf"/>
                                 </constraints>
                             </imageView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7fF-t3-AfI"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7fF-t3-AfI">
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="iCT-Zg-Kp6"/>
+                                </constraints>
+                            </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ns4-Gs-c2h">
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="96C-8Y-UdQ"/>
@@ -358,14 +362,6 @@
                                     <action selector="foldButton:" destination="Bqa-g1-5zz" eventType="touchUpInside" id="iW8-FR-lhk"/>
                                 </connections>
                             </button>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" placeholder="Raise here!" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="MGA-7v-EQ5" customClass="CustomTextField">
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="97" id="TYD-7C-pas"/>
-                                    <constraint firstAttribute="height" constant="30" id="YOV-dg-9MC"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="Poker Pot Odds.png" translatesAutoresizingMaskIntoConstraints="NO" id="Son-Kd-CV6"/>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BTG-ej-VXS">
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -374,6 +370,7 @@
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="90" translatesAutoresizingMaskIntoConstraints="NO" id="h8s-IO-F5p">
                                 <constraints>
+                                    <constraint firstAttribute="width" constant="90" id="P3U-uS-HY8"/>
                                     <constraint firstAttribute="height" constant="5412" id="dJG-jk-05T"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="Helvetica" family="Helvetica" pointSize="17"/>
@@ -433,36 +430,42 @@
                                     <action selector="callButton:" destination="Bqa-g1-5zz" eventType="touchUpInside" id="I7U-AK-yOW"/>
                                 </connections>
                             </button>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="line" placeholder="Raise here!" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hxu-1i-Pw9" customClass="CustomTextField">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="jLV-PY-CRr"/>
+                                    <constraint firstAttribute="width" constant="97" id="pmH-pM-zdg"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="h8s-IO-F5p" firstAttribute="top" secondItem="uKb-cK-Bqy" secondAttribute="top" constant="-2451" id="0s1-6T-itj"/>
+                            <constraint firstItem="hxu-1i-Pw9" firstAttribute="centerX" secondItem="g9S-h0-ScZ" secondAttribute="centerX" type="default" id="0yT-b6-Tn7"/>
                             <constraint firstItem="I1V-QY-fph" firstAttribute="top" secondItem="uKb-cK-Bqy" secondAttribute="top" type="default" id="29m-bI-nF4"/>
                             <constraint firstAttribute="bottom" secondItem="UgN-2j-CG4" secondAttribute="bottom" constant="58" id="3nM-ul-e6v"/>
                             <constraint firstItem="QVB-a2-Yq1" firstAttribute="trailing" secondItem="uKb-cK-Bqy" secondAttribute="trailing" type="default" id="4iT-HH-341"/>
                             <constraint firstItem="Dxn-Sk-8B5" firstAttribute="top" secondItem="uKb-cK-Bqy" secondAttribute="top" constant="137" id="4iv-GB-ROW"/>
-                            <constraint firstItem="MGA-7v-EQ5" firstAttribute="centerX" secondItem="Son-Kd-CV6" secondAttribute="centerX" type="default" id="5KM-Jc-Zub"/>
+                            <constraint firstItem="h8s-IO-F5p" firstAttribute="leading" secondItem="uKb-cK-Bqy" secondAttribute="leading" constant="38" id="4pl-8U-hN4"/>
                             <constraint firstItem="h8x-wB-rT2" firstAttribute="centerX" secondItem="7fF-t3-AfI" secondAttribute="centerX" type="default" id="5rT-bp-gxE"/>
                             <constraint firstItem="IMb-AD-N1m" firstAttribute="centerX" secondItem="m70-iZ-Y30" secondAttribute="centerX" type="default" id="5sz-9a-MBR"/>
                             <constraint firstItem="Dxn-Sk-8B5" firstAttribute="leading" secondItem="uKb-cK-Bqy" secondAttribute="leading" type="default" id="7I8-5p-js8"/>
-                            <constraint firstItem="MGA-7v-EQ5" firstAttribute="centerX" secondItem="g9S-h0-ScZ" secondAttribute="centerX" type="default" id="8AF-fZ-DQ0"/>
                             <constraint firstItem="tXP-ZI-S8J" firstAttribute="trailing" secondItem="h8x-wB-rT2" secondAttribute="trailing" type="default" id="9NA-uf-8rA"/>
                             <constraint firstItem="g9S-h0-ScZ" firstAttribute="top" secondItem="uKb-cK-Bqy" secondAttribute="top" type="default" id="9b0-5a-lm0"/>
-                            <constraint firstAttribute="bottom" secondItem="h81-Nb-MKe" secondAttribute="bottom" constant="106" id="ChQ-hE-ODW"/>
                             <constraint firstItem="QVB-a2-Yq1" firstAttribute="leading" secondItem="I1V-QY-fph" secondAttribute="leading" type="default" id="DGX-En-pVc"/>
                             <constraint firstItem="I1V-QY-fph" firstAttribute="trailing" secondItem="uKb-cK-Bqy" secondAttribute="trailing" type="default" id="Dlb-sd-vzq"/>
                             <constraint firstItem="7fF-t3-AfI" firstAttribute="trailing" secondItem="uKb-cK-Bqy" secondAttribute="trailing" type="default" id="Fix-oX-Bih"/>
-                            <constraint firstAttribute="trailing" secondItem="tXP-ZI-S8J" secondAttribute="trailing" constant="3" id="GgU-Po-lMh"/>
+                            <constraint firstItem="h8s-IO-F5p" firstAttribute="top" secondItem="uKb-cK-Bqy" secondAttribute="top" constant="-2459" id="Iq7-Kq-D1O"/>
                             <constraint firstItem="UgN-2j-CG4" firstAttribute="top" secondItem="IMb-AD-N1m" secondAttribute="top" type="default" id="L3S-sn-cIW"/>
-                            <constraint firstItem="m70-iZ-Y30" firstAttribute="trailing" secondItem="MGA-7v-EQ5" secondAttribute="trailing" type="default" id="QYs-bl-gub"/>
+                            <constraint firstItem="hxu-1i-Pw9" firstAttribute="centerX" secondItem="Son-Kd-CV6" secondAttribute="centerX" type="default" id="LRw-iD-4di"/>
                             <constraint firstItem="UgN-2j-CG4" firstAttribute="trailing" secondItem="qYk-bc-S57" secondAttribute="trailing" type="default" id="QpT-vx-6Cz"/>
                             <constraint firstItem="m70-iZ-Y30" firstAttribute="bottom" secondItem="I1V-QY-fph" secondAttribute="bottom" type="default" id="RTi-Uy-bPa"/>
                             <constraint firstItem="m70-iZ-Y30" firstAttribute="top" secondItem="uKb-cK-Bqy" secondAttribute="top" type="default" id="U0E-WQ-elY"/>
-                            <constraint firstItem="h8s-IO-F5p" firstAttribute="leading" secondItem="Son-Kd-CV6" secondAttribute="leading" type="default" id="X5g-Lt-mUp"/>
+                            <constraint firstItem="hxu-1i-Pw9" firstAttribute="trailing" secondItem="m70-iZ-Y30" secondAttribute="trailing" type="default" id="Xl4-ap-NM6"/>
                             <constraint firstItem="BTG-ej-VXS" firstAttribute="centerY" secondItem="Son-Kd-CV6" secondAttribute="centerY" type="default" id="YVA-dQ-O1V"/>
                             <constraint firstItem="Ns4-Gs-c2h" firstAttribute="top" secondItem="uKb-cK-Bqy" secondAttribute="top" type="default" id="Yqd-gy-Npa"/>
-                            <constraint firstItem="h81-Nb-MKe" firstAttribute="top" secondItem="MGA-7v-EQ5" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="a2F-67-tjy"/>
                             <constraint firstItem="QVB-a2-Yq1" firstAttribute="leading" secondItem="7fF-t3-AfI" secondAttribute="leading" type="default" id="adL-mJ-SML"/>
+                            <constraint firstItem="hxu-1i-Pw9" firstAttribute="leading" secondItem="h81-Nb-MKe" secondAttribute="leading" type="default" id="arE-4Y-XJw"/>
                             <constraint firstItem="g9S-h0-ScZ" firstAttribute="leading" secondItem="uKb-cK-Bqy" secondAttribute="leading" type="default" id="bKf-XZ-EuC"/>
                             <constraint firstItem="uGF-9v-w5A" firstAttribute="leading" secondItem="uKb-cK-Bqy" secondAttribute="leading" type="default" id="bgu-sn-xuK"/>
                             <constraint firstItem="7fF-t3-AfI" firstAttribute="top" secondItem="h8x-wB-rT2" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="cex-oe-9FL"/>
@@ -473,18 +476,18 @@
                             <constraint firstItem="Dxn-Sk-8B5" firstAttribute="bottom" secondItem="QVB-a2-Yq1" secondAttribute="bottom" type="default" id="ehu-nw-kGm"/>
                             <constraint firstItem="UgN-2j-CG4" firstAttribute="leading" secondItem="qYk-bc-S57" secondAttribute="leading" type="default" id="f2L-4G-An3"/>
                             <constraint firstItem="tXP-ZI-S8J" firstAttribute="leading" secondItem="h8x-wB-rT2" secondAttribute="leading" type="default" id="fmB-W3-28m"/>
-                            <constraint firstItem="h81-Nb-MKe" firstAttribute="leading" secondItem="MGA-7v-EQ5" secondAttribute="leading" type="default" id="k5q-xc-a64"/>
                             <constraint firstItem="uGF-9v-w5A" firstAttribute="top" secondItem="7fF-t3-AfI" secondAttribute="top" type="default" id="lII-CT-2n8"/>
                             <constraint firstItem="Dxn-Sk-8B5" firstAttribute="trailing" secondItem="uGF-9v-w5A" secondAttribute="trailing" type="default" id="nNl-bL-f5w"/>
                             <constraint firstItem="Ns4-Gs-c2h" firstAttribute="leading" secondItem="uKb-cK-Bqy" secondAttribute="leading" type="default" id="nQe-dx-lpx"/>
                             <constraint firstAttribute="bottom" secondItem="tXP-ZI-S8J" secondAttribute="bottom" constant="167" id="ozK-Ua-Rsg"/>
                             <constraint firstItem="uGF-9v-w5A" firstAttribute="bottom" secondItem="uKb-cK-Bqy" secondAttribute="bottom" type="default" id="phx-bp-4Z9"/>
-                            <constraint firstItem="h8s-IO-F5p" firstAttribute="trailing" secondItem="Son-Kd-CV6" secondAttribute="trailing" type="default" id="qNy-c9-ksR"/>
                             <constraint firstItem="Son-Kd-CV6" firstAttribute="top" secondItem="m70-iZ-Y30" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="sWY-ax-3gU"/>
                             <constraint firstAttribute="bottom" secondItem="qYk-bc-S57" secondAttribute="bottom" constant="6" id="stU-fL-oEI"/>
+                            <constraint firstAttribute="bottom" secondItem="hxu-1i-Pw9" secondAttribute="bottom" constant="149" id="voQ-6P-3hE"/>
                             <constraint firstItem="g9S-h0-ScZ" firstAttribute="bottom" secondItem="uKb-cK-Bqy" secondAttribute="bottom" type="default" id="xDd-gt-5c1"/>
                             <constraint firstItem="UgN-2j-CG4" firstAttribute="leading" secondItem="h81-Nb-MKe" secondAttribute="leading" type="default" id="xI6-CN-2eD"/>
                             <constraint firstItem="UgN-2j-CG4" firstAttribute="trailing" secondItem="h81-Nb-MKe" secondAttribute="trailing" type="default" id="xXn-5S-D26"/>
+                            <constraint firstAttribute="bottom" secondItem="h81-Nb-MKe" secondAttribute="bottom" constant="106" id="xYW-VI-iiy"/>
                             <constraint firstItem="UgN-2j-CG4" firstAttribute="bottom" secondItem="IMb-AD-N1m" secondAttribute="bottom" type="default" id="xwA-2i-woT"/>
                             <constraint firstItem="BTG-ej-VXS" firstAttribute="leading" secondItem="IMb-AD-N1m" secondAttribute="leading" type="default" id="yUX-9j-t0u"/>
                         </constraints>
@@ -506,7 +509,6 @@
                         <outlet property="potImageView" destination="Son-Kd-CV6" id="x0N-8A-awi"/>
                         <outlet property="potLabel" destination="BTG-ej-VXS" id="ph3-aA-mFS"/>
                         <outlet property="raiseButton" destination="h81-Nb-MKe" id="8No-jd-lwL"/>
-                        <outlet property="raiseTextField" destination="MGA-7v-EQ5" id="86y-4F-sMP"/>
                         <outlet property="recentBetLabel" destination="h8s-IO-F5p" id="Uri-at-9p9"/>
                     </connections>
                 </viewController>
@@ -594,6 +596,72 @@
         <image name="load.png" width="320" height="480"/>
         <image name="poker_stats.png" width="320" height="480"/>
     </resources>
+    <classes>
+        <class className="ADCustomTableView" superclassName="UITableView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ADCustomTableView.h"/>
+        </class>
+        <class className="CustomCell" superclassName="UITableViewCell">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/CustomCell.h"/>
+            <relationships>
+                <relationship kind="outlet" name="nameLabel" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="CustomTextField" superclassName="UITextField">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/CustomTextField.h"/>
+        </class>
+        <class className="NSLayoutConstraint" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
+        </class>
+        <class className="ViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="addUser:"/>
+                <relationship kind="action" name="callButton:"/>
+                <relationship kind="action" name="createGameButton:"/>
+                <relationship kind="action" name="foldButton:"/>
+                <relationship kind="action" name="joinPrivateGameButton:"/>
+                <relationship kind="action" name="loginUser:"/>
+                <relationship kind="action" name="raiseButton:"/>
+                <relationship kind="action" name="startButton:"/>
+                <relationship kind="outlet" name="addUser" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="appLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="bankLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="bgImageView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="blindImage" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="callButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="createGameButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="deckCard2" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="deckCard3" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="deckCard4" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="deckCard5" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="deckCardOne" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="eightNameLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="fifthNameLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="firstNameLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="foldButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="fourthNameLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="gameName" candidateClass="CustomTextField"/>
+                <relationship kind="outlet" name="initialBankLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="joinPrivateGameButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="loginField" candidateClass="CustomTextField"/>
+                <relationship kind="outlet" name="loginProgress" candidateClass="UIActivityIndicatorView"/>
+                <relationship kind="outlet" name="loginUser" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="mainView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="ownCardOneView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="ownCardTwoView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="potImageView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="potLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="raiseButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="raiseTextField" candidateClass="CustomTextField"/>
+                <relationship kind="outlet" name="recentBetLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="secondNameLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="seventhNameLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="sixthNameLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="startGameButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="thirdnameLabel" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
