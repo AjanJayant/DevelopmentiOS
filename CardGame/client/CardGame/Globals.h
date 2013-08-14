@@ -10,6 +10,8 @@
 
 @interface Globals : NSObject
 
+@property BOOL serverIsRunning;
+
 @property (strong, nonatomic) NSString * udid;
 
 @property (strong, nonatomic) PNChannel * serverChannel;
@@ -33,5 +35,7 @@
 -(void) saveVariables;
 
 -(void) loadVariables;
+
+-(void) checkIfHereNow;
 
 @end

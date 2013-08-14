@@ -15,6 +15,8 @@
 
 @implementation ViewController
 
+@synthesize serverErrModel;
+
 @synthesize appLabel;
 
 @synthesize loginField;
@@ -91,13 +93,15 @@
 
 @synthesize minRaise;
 
+@synthesize messageNotifyingUser;
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-    
     // Setup for login screen
+
     if([[self title] isEqualToString: @"login"]){
         
         appLabel.text = @"PubNub Poker";
@@ -108,6 +112,7 @@
             CFUUIDRef uuidObject = CFUUIDCreate(kCFAllocatorDefault);
             NSString * uid = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuidObject) ;
             [[Globals sharedInstance] setuDID: uid];
+            
         }
         
         loginProgress.hidden = YES;
@@ -160,6 +165,13 @@
         [foldButton setTitle:@"Fold" forState:UIControlStateNormal];
     }
     
+    else if([[self title] isEqualToString: @"serverError"]) {
+        
+        serverErrModel = [[ServerErrorModel alloc] init];
+
+        messageNotifyingUser.text = @"Server not running :( \n There seems to be a error in the space time continuum; we're doing everything we can to rectify it";
+    }
+        
     [NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(saveVaraiables) userInfo:nil repeats:YES];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeBlind:) name:@"removeBlind" object:nil];
@@ -174,14 +186,14 @@
 #pragma mark - Start screen buttons
 
 - (IBAction)addUser:(id)sender {
-    [self checkIfHereNow];
+    [[Globals sharedInstance] checkIfHereNow];
 
     [self genericLogin:@"create-user"];
 }
 
 - (IBAction)loginUser:(id)sender {
     
-    [self checkIfHereNow];
+    [[Globals sharedInstance] checkIfHereNow];
     
     [self genericLogin:@"login"];
 }
@@ -199,7 +211,7 @@
         [[Globals sharedInstance] setCreator: YES];
         [self doGameSetup:@"create" game:gameName.text];
         [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: createGameButton, gameName, joinPrivateGameButton, nil]] ;
-        [self checkIfHereNow];
+        [[Globals sharedInstance] checkIfHereNow];
 
     }
 }
@@ -214,7 +226,7 @@
     {
         [self doGameSetup:@"joinable" game:gameName.text];
         [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: createGameButton, gameName, joinPrivateGameButton, nil]];
-        [self checkIfHereNow];
+        [[Globals sharedInstance] checkIfHereNow];
     }
 
 }
@@ -235,7 +247,7 @@
     
     [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects:startGameButton, nil]];
     
-    [self checkIfHereNow];
+    [[Globals sharedInstance] checkIfHereNow];
 
 }
 
@@ -281,7 +293,7 @@
     
     raiseTextField.text = @"";
     
-    [self checkIfHereNow];
+    [[Globals sharedInstance] checkIfHereNow];
 
 }
 
@@ -297,7 +309,7 @@
     
     [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: raiseTextField, raiseButton, callButton, foldButton, nil]];
 
-    [self checkIfHereNow];
+    [[Globals sharedInstance] checkIfHereNow];
 
 }
 
@@ -313,7 +325,7 @@
     
     [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: raiseTextField, raiseButton, callButton, foldButton, nil]];
     
-    [self checkIfHereNow];
+    [[Globals sharedInstance] checkIfHereNow];
 }
 
 
@@ -375,21 +387,23 @@
 }
 
 -(void) setInitialFunds:(NSString *) initialFunds {
+    
     initialBankLabel.hidden = NO;
     initialBankLabel.text = initialFunds;
 }
 
 -(void) setBlind: (NSString *) img {
+    
     blindImage.hidden = NO;
     img = [img stringByAppendingString: @".png"];
     
     UIImage *image1 = [UIImage imageNamed:img];
     
     [blindImage setImage:image1];
-    
 }
 
 -(void) setGameButton {
+
     startGameButton.hidden = NO;
     startGameButton.enabled = YES;
 }
@@ -425,30 +439,6 @@
 
     foldButton.hidden = NO;
     
-}
-
-        
-
--(void) checkIfHereNow{
-    [PubNub requestParticipantsListForChannel:[[Globals sharedInstance] serverChannel]withCompletionBlock:^(NSArray *udids,
-                                                                                                            PNChannel *channel,
-                                                                                                            PNError *error) {
-        if (error == nil) {
-            
-            if([udids count] == 0) {
-                UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Server not running :(" message: @"There seems to be a error in the space time continuum" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
-                alert.tag = 1;
-                [alert show];
-                loginProgress.hidden = YES;
-                
-                
-            }
-        }
-        else {  
-            
-            // Handle participants request error  
-        }  
-    }];;
 }
 
 -(void) setUIDAndUserName:(NSMutableDictionary *) dict {

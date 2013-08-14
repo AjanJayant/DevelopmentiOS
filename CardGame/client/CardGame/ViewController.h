@@ -9,8 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "Globals.h"
 #import "UIFunctionality.h"
+#import "ServerErrorModel.h"
+
+@class AppDelegate;
 
 @interface ViewController : UIViewController
+
+@property ServerErrorModel *serverErrModel;
 
 ////////////////////////////
 // Login screen properties//
@@ -120,6 +125,13 @@
 @property BOOL isBlind;
 
 @property int minRaise;
+
+//////////////////
+// Server Error //
+
+//////////////////
+
+@property (weak, nonatomic) IBOutlet UILabel *messageNotifyingUser;
 
 // Aux functions
 

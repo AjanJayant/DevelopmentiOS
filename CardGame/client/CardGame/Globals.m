@@ -10,6 +10,8 @@
 
 @implementation Globals
 
+@synthesize serverIsRunning;
+
 @synthesize udid;
 
 @synthesize userName;
@@ -97,6 +99,32 @@
         [plistData writeToFile:plistPath atomically:YES];
     }
     
+}
+
+-(void) checkIfHereNow{
+    
+    [PubNub requestParticipantsListForChannel:[[Globals sharedInstance] serverChannel]withCompletionBlock:^(NSArray *udids,
+                                                                                                            PNChannel *channel,
+                                                                                                            PNError *error) {
+        if (error == nil) {
+            
+            if([udids count] == 0) {
+                
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"serverNotRunning" object:self];
+                
+                serverIsRunning = NO;
+            }
+            else {
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"serverIsRunning" object:self];
+                
+                serverIsRunning = YES;
+            }
+        }
+        else {
+            
+            // Handle participants request error
+        }
+    }];;
 }
 
 

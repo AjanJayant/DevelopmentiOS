@@ -587,6 +587,42 @@
             </objects>
             <point key="canvasLocation" x="1354" y="-1"/>
         </scene>
+        <!--View Controller - serverError-->
+        <scene sceneID="gDA-6l-9Dx">
+            <objects>
+                <viewController storyboardIdentifier="serverError" title="serverError" id="xZP-AU-NbE" customClass="ViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Ut3-iJ-JoK">
+                        <rect key="frame" x="0.0" y="20" width="320" height="548"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="mochaGrunge.png" translatesAutoresizingMaskIntoConstraints="NO" id="i2O-V2-oek"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="14" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="180" translatesAutoresizingMaskIntoConstraints="NO" id="wBf-s2-GLu">
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="180" id="ncM-Mc-W1t"/>
+                                    <constraint firstAttribute="height" constant="340" id="wgx-nj-c4b"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="25"/>
+                                <color key="textColor" red="0.31240200530000001" green="0.9412516836" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="i2O-V2-oek" firstAttribute="leading" secondItem="Ut3-iJ-JoK" secondAttribute="leading" type="default" id="Mnf-Wp-uGP"/>
+                            <constraint firstItem="wBf-s2-GLu" firstAttribute="top" secondItem="Ut3-iJ-JoK" secondAttribute="top" constant="40" id="NDP-nT-UYC"/>
+                            <constraint firstItem="i2O-V2-oek" firstAttribute="bottom" secondItem="Ut3-iJ-JoK" secondAttribute="bottom" type="default" id="Rag-qf-3xD"/>
+                            <constraint firstItem="wBf-s2-GLu" firstAttribute="centerX" secondItem="i2O-V2-oek" secondAttribute="centerX" type="default" id="cc2-VF-UUf"/>
+                            <constraint firstItem="i2O-V2-oek" firstAttribute="top" secondItem="Ut3-iJ-JoK" secondAttribute="top" type="default" id="v30-e6-Bt7"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="messageNotifyingUser" destination="wBf-s2-GLu" id="3fG-0i-9X4"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="18v-3v-XKi" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1948" y="-1"/>
+        </scene>
     </scenes>
     <resources>
         <image name="Poker Pot Odds.png" width="90" height="83"/>
@@ -594,74 +630,9 @@
         <image name="game.png" width="320" height="480"/>
         <image name="home.png" width="320" height="480"/>
         <image name="load.png" width="320" height="480"/>
+        <image name="mochaGrunge.png" width="320" height="480"/>
         <image name="poker_stats.png" width="320" height="480"/>
     </resources>
-    <classes>
-        <class className="ADCustomTableView" superclassName="UITableView">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ADCustomTableView.h"/>
-        </class>
-        <class className="CustomCell" superclassName="UITableViewCell">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/CustomCell.h"/>
-            <relationships>
-                <relationship kind="outlet" name="nameLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-        <class className="CustomTextField" superclassName="UITextField">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/CustomTextField.h"/>
-        </class>
-        <class className="NSLayoutConstraint" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
-        </class>
-        <class className="ViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="addUser:"/>
-                <relationship kind="action" name="callButton:"/>
-                <relationship kind="action" name="createGameButton:"/>
-                <relationship kind="action" name="foldButton:"/>
-                <relationship kind="action" name="joinPrivateGameButton:"/>
-                <relationship kind="action" name="loginUser:"/>
-                <relationship kind="action" name="raiseButton:"/>
-                <relationship kind="action" name="startButton:"/>
-                <relationship kind="outlet" name="addUser" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="appLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="bankLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="bgImageView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="blindImage" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="callButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="createGameButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="deckCard2" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="deckCard3" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="deckCard4" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="deckCard5" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="deckCardOne" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="eightNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="fifthNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="firstNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="foldButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="fourthNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="gameName" candidateClass="CustomTextField"/>
-                <relationship kind="outlet" name="initialBankLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="joinPrivateGameButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="loginField" candidateClass="CustomTextField"/>
-                <relationship kind="outlet" name="loginProgress" candidateClass="UIActivityIndicatorView"/>
-                <relationship kind="outlet" name="loginUser" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="mainView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="ownCardOneView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="ownCardTwoView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="potImageView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="potLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="raiseButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="raiseTextField" candidateClass="CustomTextField"/>
-                <relationship kind="outlet" name="recentBetLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="secondNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="seventhNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="sixthNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="startGameButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="thirdnameLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

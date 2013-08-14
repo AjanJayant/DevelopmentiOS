@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import <UIKit/UIKit.h>
 #import "Globals.h"
+#import "StartupModel.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate, PNDelegate>
 
@@ -21,5 +22,9 @@
 @property (nonatomic, strong) ViewController *loadViewController;
 
 @property (nonatomic, strong) ViewController *roomViewController;
+
+@property (nonatomic, strong) ViewController *serverErrorController;
+
+@property (strong) StartupModel * startUp;
 
 @end

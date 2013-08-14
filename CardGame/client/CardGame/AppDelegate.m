@@ -18,52 +18,99 @@
 
 @synthesize roomViewController;
 
+@synthesize serverErrorController;
+
+@synthesize startUp;
+
+UIStoryboard *mainStoryboard;
+
 NSString * reqUUID;
 
 BOOL shouldGoToHome;
 
 UIAlertView * endAlert;
 
+NSTimer * autoTimer;
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
     
+    // AppDelegate setup
+    
+    self.window=[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    
+    // Variables, storyboard Loading Setup
+    
+    //[[Globals sharedInstance] loadVariables];
     shouldGoToHome = YES;
-    [[Globals sharedInstance] loadVariables];
+    mainStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle: nil];
+
+    // pubNub Setup
+    
     [PubNub setConfiguration:[PNConfiguration configurationForOrigin:@"pubsub.pubnub.com" publishKey:@"demo" subscribeKey:@"demo" secretKey:@"mySecret"]];
     [PubNub connect];
     [PubNub setDelegate:self];
+
+    // Startup Setup
     
-    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle: nil];
-    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
-    
-    loginViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"login"];
-    homeViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"home"];
-    loadViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"load"];
-    roomViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"room"];
-    
-    if(![[[Globals sharedInstance] userName] isEqualToString: @""])
-    {
-        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-        
-        [dict setObject: [[Globals sharedInstance] userName] forKey: @"username"];
-        [dict setObject: [[Globals sharedInstance] udid] forKey:@"uuid"];
-        [dict setObject: @"login" forKey:@"type"];
-        
-        [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] serverChannel]];
-    }
-    else {
-        self.window.rootViewController = loginViewController;
-    }
-    
-    [PubNub setClientIdentifier: [[Globals sharedInstance] udid]];
-    PNChannel *channel_self = [PNChannel channelWithName: [[Globals sharedInstance] udid]];
-    [PubNub subscribeOnChannel: channel_self];
-    
-    [self.window makeKeyAndVisible];
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToServerError) name:@"serverNotLoaded" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ascertainFirstController) name:@"serverRestarted" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ascertainFirstController) name:@"serverLoaded" object:nil];
+    autoTimer = [NSTimer scheduledTimerWithTimeInterval:(3.0)
+                                                 target:self
+                                               selector:@selector(checkIfServerRunning)
+                                               userInfo:nil
+                                                repeats:YES];
+
+    startUp = [[StartupModel alloc] init];
+
     return YES;
 }
+
+-(void) checkIfServerRunning{
+    
+    [[Globals sharedInstance] checkIfHereNow];
+}
+
+-(void) ascertainFirstController{
+    
+    NSString * first = [startUp findFirstController];
+        
+    if([first isEqualToString: @"login"]) {
+        [self loadLoginAsInitialController];
+    }
+    else if([first isEqualToString: @"unsure"]) {
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadLoginAsInitialControlleru) name:@"loadLoginAsInitialController" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadHomeAsInitialController) name:@"loadHomeAsInitialController" object:nil];
+    }
+}
+
+- (void) loadLoginAsInitialController{
+
+    loginViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"login"];
+    self.window.rootViewController = loginViewController;
+    
+    [self.window addSubview:loginViewController.view];
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"loadLoginAsInitialController" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"serverLoaded" object:nil];
+
+}
+
+- (void) loadHomeAsInitialController{
+    
+    homeViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"home"];
+    self.window.rootViewController = homeViewController;
+    
+    [self.window addSubview:loginViewController.view];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"loadHomeAsInitialController" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"serverLoaded" object:nil];
+
+}
+
 
 - (void)pubnubClient:(PubNub *)client didReceiveMessage:(PNMessage *)message
 {
@@ -440,10 +487,7 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"User unreachable :(" message: mess delegate:self cancelButtonTitle:@"Try Again!" otherButtonTitles: nil];
         [alert show];
         
-        self.window.rootViewController = loginViewController;
-        
-        [self.window makeKeyAndVisible];
-
+        [self setInitialViewController: homeViewController];
     }
 }
 
@@ -482,6 +526,15 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
         return homeViewController;
 }
 
+-(ViewController *) goToServerError{
+    
+    serverErrorController = [mainStoryboard instantiateViewControllerWithIdentifier:@"serverError"];
+
+    [self.window addSubview:serverErrorController.view];
+    return serverErrorController;
+}
+
+
 -(ViewController *) goToLoad: (ViewController *)viewController {
 
     [homeViewController.view removeFromSuperview];
@@ -505,6 +558,14 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
     for(int i = 0; i < [keys count]; i++) {
         [dict setObject: values[i] forKey: keys[i]];
     }
+}
+
+-(void) setInitialViewController:(ViewController *) viewCtrlr {
+    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+    
+    self.window.rootViewController = viewCtrlr;
+    [self.window makeKeyAndVisible];
+
 }
 
 @end
