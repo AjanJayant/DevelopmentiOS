@@ -19,6 +19,8 @@
 
 @synthesize logModel;
 
+@synthesize homeModel;
+
 @synthesize appLabel;
 
 @synthesize loginField;
@@ -131,6 +133,8 @@
          UIControlStateNormal];
     
         [gameName configureTextField: @"Type game name here" color:[UIColor whiteColor]returnHidesKB:YES movesLeft:NO hideOthers:[NSArray arrayWithObjects:createGameButton, joinPrivateGameButton, nil]];
+        
+        homeModel = [[HomeModel alloc] init];
     }
     // Make all labels hidden
     else if([[self title] isEqualToString: @"load"]){

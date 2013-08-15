@@ -60,6 +60,8 @@ NSTimer * autoTimer;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ascertainFirstController) name:@"serverRestarted" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ascertainFirstController) name:@"serverLoaded" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToHome) name:@"goToHome" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToLoad) name:@"goToLoad" object:nil];
+
     autoTimer = [NSTimer scheduledTimerWithTimeInterval:(3.0)
                                                  target:self
                                                selector:@selector(checkIfServerRunning)
@@ -171,7 +173,7 @@ NSTimer * autoTimer;
         [[Globals sharedInstance] setGameChannel: chan];
         //[PubNub subscribeOnChannel: [[Globals sharedInstance] gameChannel]]
         
-        loadViewController = [self goToLoad: homeViewController];
+        loadViewController = [self goToLoad];
 
     }
     else if([suc isEqualToString: @"False"]){
@@ -191,7 +193,7 @@ NSTimer * autoTimer;
         PNChannel * chan = [PNChannel channelWithName:chanString shouldObservePresence:YES];
         [[Globals sharedInstance] setGameChannel: chan];
         
-        loadViewController = [self goToLoad: homeViewController];
+        loadViewController = [self goToLoad];
     }
     else if([suc isEqualToString: @"False"]){
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Could not join" message: mess delegate:self cancelButtonTitle:@"Return" otherButtonTitles: nil];
@@ -433,7 +435,7 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
     }
     else if(alertView.tag == 5) {
         
-        loadViewController = [self goToLoad: homeViewController];
+        loadViewController = [self goToLoad];
     
         NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
         
@@ -466,7 +468,7 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
             [dict setObject:@"true" forKey:@"yes"];
             [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
             
-            [self goToLoad:roomViewController];
+            [self goToLoad];
 
         }
     }
@@ -537,13 +539,12 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
 }
 
 
--(ViewController *) goToLoad: (ViewController *)viewController {
-
-    [homeViewController.view removeFromSuperview];
-
-    [self.window addSubview:loadViewController.view];
+-(ViewController *) goToLoad{
+        
+    loadViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"load"];
     
-    return loadViewController;
+    [self.window addSubview:loadViewController.view];
+    return serverErrorController;
 }
 
 -(void) setUIDAndUserName:(NSMutableDictionary *) dict {

@@ -11,6 +11,7 @@
 #import "UIFunctionality.h"
 #import "ServerErrorModel.h"
 #import "LoginModel.h"
+#import "HomeModel.h"
 
 
 @class AppDelegate;
@@ -20,6 +21,9 @@
 @property ServerErrorModel *serverErrModel;
 
 @property LoginModel *logModel;
+
+@property HomeModel *homeModel;
+
 
 ////////////////////////////
 // Login screen properties//
