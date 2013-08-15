@@ -307,7 +307,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Js1-5z-98Z" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="361" y="15"/>
+            <point key="canvasLocation" x="361" y="-1"/>
         </scene>
         <!--View Controller - room-->
         <scene sceneID="wWV-nK-csN">
@@ -585,7 +585,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dvo-cb-LWC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1354" y="-1"/>
+            <point key="canvasLocation" x="1298" y="-1"/>
         </scene>
         <!--View Controller - serverError-->
         <scene sceneID="gDA-6l-9Dx">
@@ -621,7 +621,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="18v-3v-XKi" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1948" y="-1"/>
+            <point key="canvasLocation" x="1724" y="-1"/>
         </scene>
     </scenes>
     <resources>

@@ -17,6 +17,8 @@
 
 @synthesize serverErrModel;
 
+@synthesize logModel;
+
 @synthesize appLabel;
 
 @synthesize loginField;
@@ -116,6 +118,9 @@
         }
         
         loginProgress.hidden = YES;
+        
+        logModel = [[LoginModel alloc] init];
+        
     }
     // Setup for home screen
     // Setup for button
@@ -186,14 +191,11 @@
 #pragma mark - Start screen buttons
 
 - (IBAction)addUser:(id)sender {
-    [[Globals sharedInstance] checkIfHereNow];
-
     [self genericLogin:@"create-user"];
 }
 
 - (IBAction)loginUser:(id)sender {
     
-    [[Globals sharedInstance] checkIfHereNow];
     
     [self genericLogin:@"login"];
 }
@@ -353,7 +355,7 @@
         [dict setObject:loginField.text forKey: @"username"];
         [dict setObject: [[Globals sharedInstance] udid] forKey:@"uuid"];
         [dict setObject: type forKey:@"type"];
-        
+
         [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] serverChannel]];
         loginProgress.hidden = NO;
     }

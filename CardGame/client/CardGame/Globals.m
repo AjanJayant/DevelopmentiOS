@@ -45,7 +45,7 @@
 }
 
 -(void)setuDID: (NSString *) uid{
-    udid = [NSString stringWithString: uid];; //@"73BE398D-E3AE-449B-9327-4730DE2984C8"
+    udid = [NSString stringWithString: uid];
 }
 
 -(void)setUserName: (NSString *) str {
@@ -115,6 +115,7 @@
                 serverIsRunning = NO;
             }
             else {
+                
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"serverIsRunning" object:self];
                 
                 serverIsRunning = YES;

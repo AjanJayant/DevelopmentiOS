@@ -10,12 +10,16 @@
 #import "Globals.h"
 #import "UIFunctionality.h"
 #import "ServerErrorModel.h"
+#import "LoginModel.h"
+
 
 @class AppDelegate;
 
 @interface ViewController : UIViewController
 
 @property ServerErrorModel *serverErrModel;
+
+@property LoginModel *logModel;
 
 ////////////////////////////
 // Login screen properties//

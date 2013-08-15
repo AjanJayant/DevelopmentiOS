@@ -48,17 +48,13 @@
 }
 
 -(NSString*) findFirstController{
- 
+    
     if([[[Globals sharedInstance] userName] isEqualToString: @""] || [[[Globals sharedInstance] udid] isEqualToString: @""])
     {
         return @"login";
     }
     else
-    {
-        [PubNub setClientIdentifier: [[Globals sharedInstance] udid]];
-        PNChannel *channel_self = [PNChannel channelWithName: [[Globals sharedInstance] udid]];
-        [PubNub subscribeOnChannel: channel_self];
-        
+    {        
         NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
         
         [dict setObject: [[Globals sharedInstance] userName] forKey: @"username"];
@@ -66,6 +62,9 @@
         [dict setObject: @"login" forKey:@"type"];
         
         [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] serverChannel]];
+        
+        [PubNub sendMessage:dict toChannel:[PNChannel channelWithName:@"PokerServer" shouldObservePresence:YES]];
+
         
         return @"unsure";
     }

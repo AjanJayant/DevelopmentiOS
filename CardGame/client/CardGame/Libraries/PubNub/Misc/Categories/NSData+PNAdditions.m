@@ -13,6 +13,8 @@
 
 #pragma mark Static
 
+static NSUInteger GZIPWindowBits = 47;
+static NSUInteger DeflateWindowBits = -15;
 static const char encodeCharTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 static unsigned char decodeCharTable[256] =
@@ -34,6 +36,21 @@ static unsigned char decodeCharTable[256] =
     65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65,
     65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65,
 };
+
+
+#pragma mark - Private interface declaration
+
+@interface NSData (PNAdditionPrivate)
+
+
+#pragma mark - Instance methods
+
+- (NSData *)inflateWithWindow:(NSUInteger)windowBits;
+
+
+#pragma mark -
+
+@end
 
 
 #pragma mark - Public interface methods
@@ -147,7 +164,7 @@ static unsigned char decodeCharTable[256] =
     // Iterate over the bytes
     for (int i=0; i < [self length]*0.5f; ++i) {
 
-      [stringBuffer appendFormat:@"%02X", (NSUInteger)dataBuffer[i]];
+      [stringBuffer appendFormat:@"%02lX", (unsigned long)dataBuffer[i]];
     }
 
 
@@ -155,6 +172,17 @@ static unsigned char decodeCharTable[256] =
 }
 
 - (NSData *)GZIPInflate {
+
+    return [self inflateWithWindow:GZIPWindowBits];
+}
+
+- (NSData *)inflate {
+
+    return [self inflateWithWindow:DeflateWindowBits];
+}
+
+
+- (NSData *)inflateWithWindow:(NSUInteger)windowBits {
 
     NSData *inflatedData = nil;
 
@@ -164,19 +192,19 @@ static unsigned char decodeCharTable[256] =
     }
     else {
 
-        unsigned fullLength = [self length];
-        unsigned halfLength = [self length] / 2;
+        NSUInteger fullLength = [self length];
+        NSUInteger halfLength = [self length] / 2;
 
         NSMutableData *decompressed = [NSMutableData dataWithLength:fullLength + halfLength];
         BOOL done = NO;
         int status;
         z_stream stream;
         stream.next_in = (Bytef *)[self bytes];
-        stream.avail_in = [self length];
+        stream.avail_in = (uInt)fullLength;
         stream.total_out = 0;
         stream.zalloc = Z_NULL;
         stream.zfree = Z_NULL;
-        if (inflateInit2(&stream, (15 + 32)) == Z_OK) {
+        if (inflateInit2(&stream, windowBits) == Z_OK) {
 
             while (!done) {
 
@@ -186,7 +214,7 @@ static unsigned char decodeCharTable[256] =
                     [decompressed increaseLengthBy:halfLength];
                 }
                 stream.next_out = [decompressed mutableBytes] + stream.total_out;
-                stream.avail_out = [decompressed length] - stream.total_out;
+                stream.avail_out = (uInt)([decompressed length] - stream.total_out);
 
                 // Inflate another chunk.
                 status = inflate(&stream, Z_SYNC_FLUSH);

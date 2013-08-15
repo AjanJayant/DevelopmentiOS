@@ -42,7 +42,7 @@ NSTimer * autoTimer;
     
     // Variables, storyboard Loading Setup
     
-    //[[Globals sharedInstance] loadVariables];
+    [[Globals sharedInstance] loadVariables];
     shouldGoToHome = YES;
     mainStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle: nil];
 
@@ -50,13 +50,16 @@ NSTimer * autoTimer;
     
     [PubNub setConfiguration:[PNConfiguration configurationForOrigin:@"pubsub.pubnub.com" publishKey:@"demo" subscribeKey:@"demo" secretKey:@"mySecret"]];
     [PubNub connect];
-    [PubNub setDelegate:self];
+    [PubNub setClientIdentifier: [[Globals sharedInstance] udid]];
+    PNChannel *channel_self = [PNChannel channelWithName: [[Globals sharedInstance] udid]];
+    [PubNub subscribeOnChannel: channel_self];
 
     // Startup Setup
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToServerError) name:@"serverNotLoaded" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ascertainFirstController) name:@"serverRestarted" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ascertainFirstController) name:@"serverLoaded" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToHome) name:@"goToHome" object:nil];
     autoTimer = [NSTimer scheduledTimerWithTimeInterval:(3.0)
                                                  target:self
                                                selector:@selector(checkIfServerRunning)
@@ -82,7 +85,7 @@ NSTimer * autoTimer;
     }
     else if([first isEqualToString: @"unsure"]) {
         
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadLoginAsInitialControlleru) name:@"loadLoginAsInitialController" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadLoginAsInitialController) name:@"loadLoginAsInitialController" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadHomeAsInitialController) name:@"loadHomeAsInitialController" object:nil];
     }
 }
@@ -111,9 +114,8 @@ NSTimer * autoTimer;
 
 }
 
-
-- (void)pubnubClient:(PubNub *)client didReceiveMessage:(PNMessage *)message
-{
+- (void)pubnubClient:(PubNub *)client didReceiveMessage:(PNMessage *)message {
+    
     NSString * type = [message.message objectForKey: @"type"];
     
     if([type isEqualToString: @"create-user"])
