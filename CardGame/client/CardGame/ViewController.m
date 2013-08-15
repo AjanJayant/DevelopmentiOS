@@ -23,6 +23,8 @@
 
 @synthesize loadModel;
 
+@synthesize roomModel;
+
 @synthesize appLabel;
 
 @synthesize loginField;
@@ -95,10 +97,6 @@
 
 @synthesize blindImage;
 
-@synthesize isBlind;
-
-@synthesize minRaise;
-
 @synthesize messageNotifyingUser;
 
 - (void)viewDidLoad
@@ -160,6 +158,7 @@
     // For game setup
     else if([[self title] isEqualToString: @"room"]) {
         
+        roomModel =[[RoomModel alloc] init];
         deckCardOne.hidden = YES;
         deckCard2.hidden = YES;
         deckCard3.hidden = YES;
@@ -167,7 +166,7 @@
         deckCard5.hidden = YES;
         potLabel.hidden = YES;
         initialBankLabel.hidden = YES;
-        bankLabel.hidden = YES;
+         bankLabel.hidden = YES;
         recentBetLabel.hidden = YES;
         raiseTextField.hidden = YES;
         raiseButton.hidden = YES;
@@ -178,6 +177,33 @@
         [raiseButton setTitle:@"Raise" forState:UIControlStateNormal];
         [callButton setTitle:@"Call" forState:UIControlStateNormal];
         [foldButton setTitle:@"Fold" forState:UIControlStateNormal];
+        
+        [self setCards: roomModel.card1 cardView:ownCardOneView];
+        [self setCards: roomModel.card2 cardView:ownCardTwoView];
+        
+        if([roomModel.blind isEqualToString: @"smallblind"] || [roomModel.blind isEqualToString: @"bigblind"]){
+            [self setBlind: roomModel.blind];
+            roomModel.isBlind = YES;
+        }
+        
+        initialBankLabel.text = roomModel.initialFunds;
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setLabels) name:@"updateGameLabels" object:nil];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateFlopCards) name:@"updateFlopCards" object:nil];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTurnCard) name:@"updateTurnCard" object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateRiverCard) name:@"updateRiverCard" object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeBlind) name:@"removeBlind" object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeBlind) name:@"updateMinRaise" object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enableInteractionForTurn) name:@"enableInteractionForTurn" object:nil];
+
+        [raiseTextField configureTextField: @"Current Bet: $0" color:[UIColor blackColor] returnHidesKB: YES movesLeft:NO hideOthers:[NSArray arrayWithObjects:potLabel, ownCardOneView, ownCardTwoView, ownCardTwoView, deckCardOne, deckCard2, deckCard3, deckCard4, deckCard5, potImageView, recentBetLabel, potImageView, initialBankLabel, bankLabel, raiseButton, callButton, foldButton,  nil]];
+
     }
     
     else if([[self title] isEqualToString: @"serverError"]) {
@@ -189,7 +215,44 @@
         
     [NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(saveVaraiables) userInfo:nil repeats:YES];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeBlind:) name:@"removeBlind" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeBlind) name:@"removeBlind" object:nil];
+}
+
+-(void)enableInteractionForTurn{
+    [self enableInteraction:YES arrayOfViews:[[NSArray alloc]initWithObjects:
+                                                           raiseTextField,
+                                                            raiseButton,
+                                                            callButton,
+                                                            foldButton,
+                                                            nil]];
+
+}
+
+-(void)updateFlopCards{
+    
+    [self setCards:roomModel.communityCard1 cardView:deckCardOne];
+    deckCardOne.hidden = NO;
+    [self setCards:roomModel.communityCard2 cardView:deckCard2];
+    deckCard2.hidden = NO;
+    [self setCards:roomModel.communityCard3 cardView:deckCard3];
+    deckCard3.hidden = NO;
+}
+
+-(void)updateTurnCard{
+    [self setCards:roomModel.communityCard4 cardView:deckCard4];
+    deckCard4.hidden = NO;
+
+}
+
+-(void)updateRiverCard{
+    [self setCards:roomModel.communityCard5 cardView:deckCard5];
+    deckCard5.hidden = NO;
+
+}
+
+-(void)updateMinRaise{
+    raiseTextField.placeholder = roomModel.minRaise;
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -314,7 +377,7 @@
         
     int maxRaise = [bankLabel.text intValue];
     
-    if(raise < minRaise){
+    if(raise < [roomModel.minRaise intValue]){
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Invalid raise amount" message: @"The value is less than the minimum raise" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
         [alert show];
         return;
@@ -462,18 +525,18 @@
 }
 
 
-- (void)setLabels:pot lastAct:(NSString *) lastAct myFunds:(NSString *)myFunds  currentBet:(NSString *)currentBet {
+- (void)setLabels {
     
-    potLabel.text = pot;
+    potLabel.text = roomModel.pot;
     potLabel.hidden = NO;
     
-    recentBetLabel.text = lastAct;
+    recentBetLabel.text = roomModel.lastAct;
     recentBetLabel.hidden = NO;
     
-    bankLabel.text = myFunds;
+    bankLabel.text = roomModel.myFunds;
     bankLabel.hidden = NO;
     
-    [raiseTextField configureTextField: [@"Curent bet: " stringByAppendingString: currentBet] color:[UIColor blackColor] returnHidesKB: YES movesLeft:NO hideOthers:[NSArray arrayWithObjects:potLabel, ownCardOneView, ownCardTwoView, ownCardTwoView, deckCardOne, deckCard2, deckCard3, deckCard4, deckCard5, potImageView, recentBetLabel, potImageView, initialBankLabel, bankLabel, raiseButton, callButton, foldButton,  nil]];
+    raiseTextField.text = [@"Curent bet: " stringByAppendingString: roomModel.currBet];
     
     raiseTextField.hidden = NO;
     

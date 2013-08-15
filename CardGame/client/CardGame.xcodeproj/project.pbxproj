@@ -160,6 +160,7 @@
 		5EB9A25317BD566800163BA1 /* PNConnectionChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB9A21F17BD566800163BA1 /* PNConnectionChannel.m */; };
 		5EB9A25617BD620100163BA1 /* HomeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB9A25517BD620100163BA1 /* HomeModel.m */; };
 		5EB9A25917BD67AE00163BA1 /* LoadModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB9A25817BD67AD00163BA1 /* LoadModel.m */; };
+		5EB9A25C17BD777300163BA1 /* RoomModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EB9A25B17BD777200163BA1 /* RoomModel.m */; };
 		5EC1ED0717B44D58001E579A /* back_1.png in Resources */ = {isa = PBXBuildFile; fileRef = 5EC1ED0617B44D58001E579A /* back_1.png */; };
 		5EC1ED0917B45120001E579A /* home.png in Resources */ = {isa = PBXBuildFile; fileRef = 5EC1ED0817B45120001E579A /* home.png */; };
 		5EC1ED0B17B45663001E579A /* load.png in Resources */ = {isa = PBXBuildFile; fileRef = 5EC1ED0A17B45663001E579A /* load.png */; };
@@ -429,6 +430,8 @@
 		5EB9A25517BD620100163BA1 /* HomeModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeModel.m; sourceTree = "<group>"; };
 		5EB9A25717BD67AD00163BA1 /* LoadModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadModel.h; sourceTree = "<group>"; };
 		5EB9A25817BD67AD00163BA1 /* LoadModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoadModel.m; sourceTree = "<group>"; };
+		5EB9A25A17BD777100163BA1 /* RoomModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoomModel.h; sourceTree = "<group>"; };
+		5EB9A25B17BD777200163BA1 /* RoomModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoomModel.m; sourceTree = "<group>"; };
 		5EC1ED0617B44D58001E579A /* back_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = back_1.png; sourceTree = "<group>"; };
 		5EC1ED0817B45120001E579A /* home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = home.png; path = ../home.png; sourceTree = "<group>"; };
 		5EC1ED0A17B45663001E579A /* load.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = load.png; sourceTree = "<group>"; };
@@ -456,13 +459,9 @@
 		5E01129717AB1358007ACA23 /* CardGame */ = {
 			isa = PBXGroup;
 			children = (
+				5EB9A25E17BD88D100163BA1 /* Views */,
+				5EB9A25D17BD88AB00163BA1 /* ViewControllers */,
 				5EB9971317BAA33E00163BA1 /* Models */,
-				5E01129817AB1358007ACA23 /* AppDelegate.h */,
-				5E01129917AB1358007ACA23 /* AppDelegate.m */,
-				5E01139C17AB1359007ACA23 /* ViewController.h */,
-				5E01139D17AB1359007ACA23 /* ViewController.m */,
-				5E0112A217AB1359007ACA23 /* MainStoryboard_iPad.storyboard */,
-				5E0112A417AB1359007ACA23 /* MainStoryboard_iPhone.storyboard */,
 				5E618C2417AB2154005B2B0B /* Supporting Files */,
 				5E0112A817AB1359007ACA23 /* Images */,
 				5E0112F117AB1359007ACA23 /* Libraries */,
@@ -667,6 +666,8 @@
 				5EB9A25517BD620100163BA1 /* HomeModel.m */,
 				5EB9A25717BD67AD00163BA1 /* LoadModel.h */,
 				5EB9A25817BD67AD00163BA1 /* LoadModel.m */,
+				5EB9A25A17BD777100163BA1 /* RoomModel.h */,
+				5EB9A25B17BD777200163BA1 /* RoomModel.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -925,6 +926,26 @@
 			path = Transport;
 			sourceTree = "<group>";
 		};
+		5EB9A25D17BD88AB00163BA1 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				5E01129817AB1358007ACA23 /* AppDelegate.h */,
+				5E01129917AB1358007ACA23 /* AppDelegate.m */,
+				5E01139C17AB1359007ACA23 /* ViewController.h */,
+				5E01139D17AB1359007ACA23 /* ViewController.m */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		5EB9A25E17BD88D100163BA1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				5E0112A217AB1359007ACA23 /* MainStoryboard_iPad.storyboard */,
+				5E0112A417AB1359007ACA23 /* MainStoryboard_iPhone.storyboard */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1138,6 +1159,7 @@
 				5EB9A25317BD566800163BA1 /* PNConnectionChannel.m in Sources */,
 				5EB9A25617BD620100163BA1 /* HomeModel.m in Sources */,
 				5EB9A25917BD67AE00163BA1 /* LoadModel.m in Sources */,
+				5EB9A25C17BD777300163BA1 /* RoomModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

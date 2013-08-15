@@ -20,6 +20,14 @@
 
 @property (strong, nonatomic) NSString * userName;
 
+@property (strong, nonatomic) NSString * card1;
+
+@property (strong, nonatomic) NSString * card2;
+
+@property (strong, nonatomic) NSString * initialBlind;
+
+@property (strong, nonatomic) NSString * initialFunds;
+
 @property BOOL isCreator;
 
 + (Globals *)sharedInstance;

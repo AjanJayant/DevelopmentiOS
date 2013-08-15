@@ -32,6 +32,9 @@ NSString * reqUUID;
                                                                      [self handleAuthRequest: message.message];
                                                                  else if([type isEqualToString: @"authresponse"])
                                                                      [self handleAuthResponse: message.message];
+                                                                 else if([type isEqualToString: @"start"])
+                                                                     [self handleStart: message.message];
+
                                                              }];
         playerNames = [[NSMutableArray alloc]init];
         [[Globals sharedInstance] checkIfHereNow];
@@ -80,6 +83,30 @@ NSString * reqUUID;
         alert.tag = 5;
     }
     [alert show];
+}
+
+-(void) handleStart: (NSDictionary *) dict {
+    NSString * suc = [dict objectForKey: @"success"];
+    NSString * card1 = [dict objectForKey: @"card1"];
+    NSString * card2 = [dict objectForKey: @"card2"];
+    NSString * blind = [dict objectForKey: @"blind"];
+    NSString * initialFunds = [dict objectForKey: @"initial-funds"];
+    
+    if([suc isEqualToString: @"True"]){
+        
+        [[Globals sharedInstance] setCard1: card1];
+        [[Globals sharedInstance] setCard2: card2];
+        [[Globals sharedInstance] setInitialBlind: blind];
+        [[Globals sharedInstance] setInitialFunds: initialFunds];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"goToRoom" object:self];
+    }
+    else if([suc isEqualToString: @"False"]){
+        NSString * mess = [dict objectForKey: @"message"];
+        
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Game did not initialise :(" message: mess delegate:self cancelButtonTitle:@"Try Again!" otherButtonTitles: nil];
+        [alert show];
+    }
 }
 
 

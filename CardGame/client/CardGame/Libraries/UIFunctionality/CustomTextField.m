@@ -46,16 +46,6 @@ int originY;
     return self;
 }
 
-// Maybe remove this?
-/*
-- (id)initWithCoder:(NSCoder *)inCoder{
-    if (self = [super initWithCoder:inCoder]) {
-
-    }
-    return self;
-
-}
- */
 
 // Basic configure
 - (void)configureTextField: (NSString *) place color:(UIColor *) col
@@ -199,10 +189,7 @@ int originY;
         }
         
         self.frame = textRect;
-        
-        originX = 0;
-        originY = 0;
-        
+                
     }];
     
     if(shouldHide){

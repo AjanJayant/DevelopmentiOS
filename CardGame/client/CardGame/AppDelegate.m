@@ -61,6 +61,8 @@ NSTimer * autoTimer;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ascertainFirstController) name:@"serverLoaded" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToHome) name:@"goToHome" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToLoad) name:@"goToLoad" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToRoom) name:@"goToRoom" object:nil];
+
 
     autoTimer = [NSTimer scheduledTimerWithTimeInterval:(3.0)
                                                  target:self
@@ -115,6 +117,7 @@ NSTimer * autoTimer;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"serverLoaded" object:nil];
 
 }
+/*
 
 - (void)pubnubClient:(PubNub *)client didReceiveMessage:(PNMessage *)message {
     
@@ -358,6 +361,7 @@ NSTimer * autoTimer;
                                    userInfo:nil
                                     repeats:NO];
 }
+*/
 
 -(void) handleException: (NSDictionary *) dict {
     UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Server Exception Occoured" message: @"Game will exit shortly" delegate:self cancelButtonTitle:@"Return" otherButtonTitles: nil];
@@ -522,6 +526,13 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
         return nil;
 }
 
+-(ViewController *) goToRoom{
+    
+    roomViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"room"];
+    
+    [self.window addSubview:roomViewController.view];
+    return roomViewController;
+}
 
 -(ViewController *) goToHome: (ViewController *)viewController{
     

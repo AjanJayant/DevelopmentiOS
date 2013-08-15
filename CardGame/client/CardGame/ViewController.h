@@ -13,6 +13,7 @@
 #import "LoginModel.h"
 #import "HomeModel.h"
 #import "LoadModel.h"
+#import "RoomModel.h"
 
 @class AppDelegate;
 
@@ -26,6 +27,10 @@
 
 @property LoadModel *
     loadModel;
+
+@property RoomModel *
+    roomModel;
+
 ////////////////////////////
 // Login screen properties//
 ////////////////////////////
@@ -131,10 +136,6 @@
 
 - (IBAction)foldButton:(id)sender;
 
-@property BOOL isBlind;
-
-@property int minRaise;
-
 //////////////////
 // Server Error //
 
@@ -148,7 +149,7 @@
 
 -(void) setCards :(NSString *) card cardView:(UIImageView *) cardView;
 
-- (void)setLabels:(NSString *) pot lastAct:(NSString *) lastAct myFunds:(NSString *)myFunds currentBet:(NSString *)currentBet;
+- (void)setLabels;
 
 -(void) setInitialFunds:(NSString *) initialFunds;
 

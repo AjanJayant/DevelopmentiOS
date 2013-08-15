@@ -22,6 +22,14 @@
 
 @synthesize isCreator;
 
+@synthesize card1;
+
+@synthesize card2;
+
+@synthesize initialBlind;
+
+@synthesize initialFunds;
+
 +(Globals *)sharedInstance {
     static Globals *myInstance = nil;
     
@@ -58,6 +66,22 @@
 
 -(void)setCreator: (BOOL) flag {
     isCreator = flag;
+}
+
+-(void)setCard1: (NSString *) str {
+    card1 = [NSString stringWithString: str];
+}
+
+-(void)setCard2: (NSString *) str {
+    card2 = [NSString stringWithString: str];
+}
+
+-(void)setInitialBlind: (NSString *) str {
+    initialBlind = [NSString stringWithString: str];
+}
+
+-(void)setInitialFunds: (NSString *) str {
+    initialFunds = [NSString stringWithString: str];
 }
 
 -(void) loadVariables {
