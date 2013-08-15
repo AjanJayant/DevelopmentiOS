@@ -12,7 +12,7 @@
 #import "ServerErrorModel.h"
 #import "LoginModel.h"
 #import "HomeModel.h"
-
+#import "LoadModel.h"
 
 @class AppDelegate;
 
@@ -24,7 +24,8 @@
 
 @property HomeModel *homeModel;
 
-
+@property LoadModel *
+    loadModel;
 ////////////////////////////
 // Login screen properties//
 ////////////////////////////

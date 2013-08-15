@@ -21,11 +21,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "336"
-         endingLineNumber = "336"
+         startingLineNumber = "378"
+         endingLineNumber = "378"
          landmarkName = "@implementation ViewController"
          landmarkType = "3">
       </FileBreakpoint>
@@ -34,11 +34,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "353"
-         endingLineNumber = "353"
+         startingLineNumber = "395"
+         endingLineNumber = "395"
          landmarkName = "-genericLogin:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -47,22 +47,22 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "562"
-         endingLineNumber = "562">
+         startingLineNumber = "604"
+         endingLineNumber = "604">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "569"
-         endingLineNumber = "569">
+         startingLineNumber = "611"
+         endingLineNumber = "611">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
@@ -95,11 +95,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "390"
-         endingLineNumber = "390"
+         startingLineNumber = "432"
+         endingLineNumber = "432"
          landmarkName = "-setCards:cardView:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -108,11 +108,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "326"
-         endingLineNumber = "326"
+         startingLineNumber = "368"
+         endingLineNumber = "368"
          landmarkName = "-foldButton:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -121,11 +121,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "448"
-         endingLineNumber = "448"
+         startingLineNumber = "490"
+         endingLineNumber = "490"
          landmarkName = "-removeBlind"
          landmarkType = "5">
       </FileBreakpoint>
@@ -134,11 +134,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "271"
-         endingLineNumber = "271"
+         startingLineNumber = "313"
+         endingLineNumber = "313"
          landmarkName = "-raiseButton:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -147,22 +147,22 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "486"
-         endingLineNumber = "486">
+         startingLineNumber = "528"
+         endingLineNumber = "528">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "274"
-         endingLineNumber = "274"
+         startingLineNumber = "316"
+         endingLineNumber = "316"
          landmarkName = "-raiseButton:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -171,11 +171,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "276"
-         endingLineNumber = "276"
+         startingLineNumber = "318"
+         endingLineNumber = "318"
          landmarkName = "-raiseButton:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -184,11 +184,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "251"
-         endingLineNumber = "251"
+         startingLineNumber = "293"
+         endingLineNumber = "293"
          landmarkName = "-startButton:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -197,11 +197,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "260"
-         endingLineNumber = "260"
+         startingLineNumber = "302"
+         endingLineNumber = "302"
          landmarkName = "@implementation ViewController"
          landmarkType = "3">
       </FileBreakpoint>
@@ -210,22 +210,22 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "516"
-         endingLineNumber = "516">
+         startingLineNumber = "558"
+         endingLineNumber = "558">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "157"
-         endingLineNumber = "157"
+         startingLineNumber = "163"
+         endingLineNumber = "163"
          landmarkName = "-viewDidLoad"
          landmarkType = "5">
       </FileBreakpoint>
@@ -234,11 +234,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "158"
-         endingLineNumber = "158"
+         startingLineNumber = "164"
+         endingLineNumber = "164"
          landmarkName = "-viewDidLoad"
          landmarkType = "5">
       </FileBreakpoint>
@@ -247,11 +247,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "278"
-         endingLineNumber = "278"
+         startingLineNumber = "320"
+         endingLineNumber = "320"
          landmarkName = "-raiseButton:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -260,11 +260,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "116"
-         endingLineNumber = "116"
+         startingLineNumber = "118"
+         endingLineNumber = "118"
          landmarkName = "-viewDidLoad"
          landmarkType = "5">
       </FileBreakpoint>
@@ -273,7 +273,7 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/AppDelegate.m"
-         timestampString = "398287852.965336"
+         timestampString = "398291124.083019"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "230"
@@ -286,7 +286,7 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/AppDelegate.m"
-         timestampString = "398287852.965336"
+         timestampString = "398291124.083019"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "451"
@@ -299,11 +299,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "235"
-         endingLineNumber = "235"
+         startingLineNumber = "277"
+         endingLineNumber = "277"
          landmarkName = "-joinPrivateGameButton:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -312,11 +312,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "220"
-         endingLineNumber = "220"
+         startingLineNumber = "262"
+         endingLineNumber = "262"
          landmarkName = "-createGameButton:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -325,7 +325,7 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/AppDelegate.m"
-         timestampString = "398287852.965336"
+         timestampString = "398291124.083019"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "480"
@@ -338,7 +338,7 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/AppDelegate.m"
-         timestampString = "398287852.965336"
+         timestampString = "398291124.083019"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "501"
@@ -351,20 +351,7 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/AppDelegate.m"
-         timestampString = "398287852.965336"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "529"
-         endingLineNumber = "529"
-         landmarkName = "-goToHome:"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "CardGame/AppDelegate.m"
-         timestampString = "398287852.965336"
+         timestampString = "398291124.083019"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "342"
@@ -377,7 +364,7 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/AppDelegate.m"
-         timestampString = "398287852.965336"
+         timestampString = "398291124.083019"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "208"
@@ -390,7 +377,7 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/AppDelegate.m"
-         timestampString = "398287852.965336"
+         timestampString = "398291124.083019"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "463"
@@ -442,11 +429,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "433"
-         endingLineNumber = "433"
+         startingLineNumber = "475"
+         endingLineNumber = "475"
          landmarkName = "-setLabels:lastAct:myFunds:currentBet:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -455,7 +442,7 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/AppDelegate.m"
-         timestampString = "398287852.965336"
+         timestampString = "398291124.083019"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "489"
@@ -468,11 +455,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/AppDelegate.m"
-         timestampString = "398288129.46113"
+         timestampString = "398291124.083019"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "567"
-         endingLineNumber = "567"
+         startingLineNumber = "568"
+         endingLineNumber = "568"
          landmarkName = "-setInitialViewController:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -507,11 +494,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/AppDelegate.m"
-         timestampString = "398287852.965336"
+         timestampString = "398291124.083019"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "534"
-         endingLineNumber = "534"
+         startingLineNumber = "535"
+         endingLineNumber = "535"
          landmarkName = "-goToServerError"
          landmarkType = "5">
       </FileBreakpoint>
@@ -715,11 +702,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/ViewController.m"
-         timestampString = "398287965.763069"
+         timestampString = "398290025.411876"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "124"
-         endingLineNumber = "124"
+         startingLineNumber = "126"
+         endingLineNumber = "126"
          landmarkName = "-viewDidLoad"
          landmarkType = "5">
       </FileBreakpoint>
@@ -776,7 +763,7 @@
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
-         shouldBeEnabled = "Yes"
+         shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/AppDelegate.m"
@@ -793,7 +780,7 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/AppDelegate.m"
-         timestampString = "398287852.965336"
+         timestampString = "398291124.083019"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "526"
@@ -815,7 +802,7 @@
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
-         shouldBeEnabled = "Yes"
+         shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/HomeModel.m"
@@ -828,7 +815,7 @@
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
-         shouldBeEnabled = "Yes"
+         shouldBeEnabled = "No"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "CardGame/HomeModel.m"
@@ -838,6 +825,97 @@
          startingLineNumber = "21"
          endingLineNumber = "21"
          landmarkName = "-init"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "Yes"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "CardGame/LoginModel.m"
+         timestampString = "398288492.086378"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "34"
+         endingLineNumber = "34"
+         landmarkName = "-handleCreateUser:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "CardGame/HomeModel.m"
+         timestampString = "398288656.655707"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "54"
+         endingLineNumber = "54"
+         landmarkName = "-handleJoinable:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "Yes"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "CardGame/ViewController.m"
+         timestampString = "398289939.808485"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "201"
+         endingLineNumber = "201"
+         landmarkName = "-updateLabelNames"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "CardGame/LoadModel.m"
+         timestampString = "398291263.865834"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "78"
+         endingLineNumber = "78"
+         landmarkName = "-handleAuthResponse:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "CardGame/LoadModel.m"
+         timestampString = "398291263.865834"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "127"
+         endingLineNumber = "127"
+         landmarkName = "-alertView:clickedButtonAtIndex:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "CardGame/LoadModel.m"
+         timestampString = "398291263.865834"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "136"
+         endingLineNumber = "136"
+         landmarkName = "-alertView:clickedButtonAtIndex:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "CardGame/LoadModel.m"
+         timestampString = "398291248.870803"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "43"
+         endingLineNumber = "43"
+         landmarkName = "-handlePlayerJoin:"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

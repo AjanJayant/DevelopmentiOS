@@ -21,6 +21,8 @@
 
 @synthesize homeModel;
 
+@synthesize loadModel;
+
 @synthesize appLabel;
 
 @synthesize loginField;
@@ -138,7 +140,10 @@
     }
     // Make all labels hidden
     else if([[self title] isEqualToString: @"load"]){
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateLabelNames) name:@"updateLabelNames" object:nil];
 
+        
         firstNameLabel.hidden = YES;
         secondNameLabel.hidden = YES;
         thirdnameLabel.hidden = YES;
@@ -150,6 +155,7 @@
         startGameButton.hidden = YES;
         [startGameButton setTitle:@"Start!" forState:UIControlStateNormal];
         
+        loadModel = [[LoadModel alloc] init];
     }
     // For game setup
     else if([[self title] isEqualToString: @"room"]) {
@@ -190,6 +196,42 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(void) updateLabelNames {
+
+    switch(loadModel.numberOfNames)
+    {
+        case 8:
+            eightNameLabel.text = loadModel.playerNames[7];
+            eightNameLabel.hidden = NO;
+        case 7:
+            seventhNameLabel.text = loadModel.playerNames[6];
+            seventhNameLabel.hidden = NO;
+        case 6:
+            sixthNameLabel.text = loadModel.playerNames[5];
+            sixthNameLabel.hidden = NO;
+
+        case 5:
+            fifthNameLabel.text = loadModel.playerNames[4];
+            fifthNameLabel.hidden = NO;
+
+        case 4:
+            fourthNameLabel.text = loadModel.playerNames[3];
+            fourthNameLabel.hidden = NO;
+
+        case 3:
+            thirdnameLabel.text = loadModel.playerNames[2];
+            thirdnameLabel.hidden = NO;
+
+        case 2:
+            secondNameLabel.text = loadModel.playerNames[1];
+            secondNameLabel.hidden = NO;
+            [self setGameButton];
+        case 1:
+            firstNameLabel.text = loadModel.playerNames[0];
+            firstNameLabel.hidden = NO;
+    }
 }
 
 #pragma mark - Start screen buttons
@@ -409,18 +451,19 @@
 }
 
 -(void) setGameButton {
-
+    
     startGameButton.hidden = NO;
     startGameButton.enabled = YES;
 }
 
 -(void) saveVaraiables {
+    
     [[Globals sharedInstance] saveVariables];
 }
 
 
-- (void)setLabels:pot lastAct:(NSString *) lastAct myFunds:(NSString *)myFunds  currentBet:(NSString *)currentBet
-{
+- (void)setLabels:pot lastAct:(NSString *) lastAct myFunds:(NSString *)myFunds  currentBet:(NSString *)currentBet {
+    
     potLabel.text = pot;
     potLabel.hidden = NO;
     
@@ -437,6 +480,7 @@
 }
 
 - (void)removeBlind {
+    
     blindImage.hidden = YES;
     
     raiseButton.hidden = NO;
@@ -448,13 +492,13 @@
 }
 
 -(void) setUIDAndUserName:(NSMutableDictionary *) dict {
+    
     [dict setObject: [[Globals sharedInstance] udid] forKey: @"uuid"];
     [dict setObject: [[Globals sharedInstance] userName] forKey: @"username"];
 }
 
 - (void)alertView:(UIAlertView *)alertView
-clickedButtonAtIndex:(NSInteger) buttonIndex
-{
+clickedButtonAtIndex:(NSInteger) buttonIndex {
     if(alertView.tag == 1) {
         if(buttonIndex == 0){
             [self enableInteraction:YES arrayOfViews:[[NSArray alloc]initWithObjects: createGameButton, gameName, joinPrivateGameButton, raiseTextField, startGameButton, raiseButton, callButton, foldButton, nil]];

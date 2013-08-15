@@ -525,9 +525,10 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
 
 -(ViewController *) goToHome: (ViewController *)viewController{
     
-        [viewController.view removeFromSuperview];
-        [self.window addSubview:homeViewController.view];
-        return homeViewController;
+    homeViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"home"];
+    
+    [self.window addSubview:homeViewController.view];
+    return homeViewController;
 }
 
 -(ViewController *) goToServerError{

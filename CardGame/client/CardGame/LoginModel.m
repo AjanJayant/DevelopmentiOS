@@ -55,7 +55,7 @@
         NSString * userName = [dict objectForKey: @"username"];
         [[Globals sharedInstance] setUserName: userName];
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"goToHome" object:self];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateLabelNames" object:self];
     }
     else if([suc isEqualToString: @"False"]){
         NSString * mess = [dict objectForKey: @"message"];
