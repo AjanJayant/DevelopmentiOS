@@ -39,6 +39,10 @@
 
 @property BOOL isBlind;
 
- @property (strong, nonatomic) NSString * minRaise;
+@property (strong, nonatomic) NSString * minRaise;
+
+@property int maxRaise;
+
+@property BOOL shouldInvokeRoomFunctions;
 
 @end

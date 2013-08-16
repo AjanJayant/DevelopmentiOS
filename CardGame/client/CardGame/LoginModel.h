@@ -11,4 +11,8 @@
 
 @interface LoginModel : NSObject
 
+@property BOOL shouldInvokeLoginFunctions;
+
+-(void) setupUUIDIfNotPresent;
+
 @end

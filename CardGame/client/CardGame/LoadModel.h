@@ -16,4 +16,6 @@ playerNames;
 
 @property int numberOfNames;
 
+@property BOOL shouldInvokeLoadFunctions;
+
 @end

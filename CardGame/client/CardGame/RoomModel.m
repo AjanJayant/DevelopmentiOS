@@ -40,27 +40,33 @@
 
 @synthesize communityCard5;
 
+@synthesize maxRaise;
+
+@synthesize shouldInvokeRoomFunctions;
+
 BOOL shouldGoToHome;
 
 UIAlertView * endAlert;
 
--(id)init{
+-(id)init {
     self = [super init];
     
     if (self != nil)
     {
+        shouldInvokeRoomFunctions = YES;
         [[PNObservationCenter defaultCenter] addMessageReceiveObserver:self
                                                              withBlock:^(PNMessage *message) {
                                                                  
                                                                  NSString * type = [message.message objectForKey: @"type"];
                                                                  
-                                                                 if([type isEqualToString: @"update"])
-                                                                     [self handleUpdate: message.message];
-                                                                 else if([type isEqualToString: @"take-turn"])
-                                                                     [self handleTakeTurn: message.message];
-                                                                 else if([type isEqualToString: @"end"])
-                                                                     [self handleEnd: message.message];
-                                                                
+                                                                 if(shouldInvokeRoomFunctions == YES) {
+                                                                     if([type isEqualToString:  @"update"])
+                                                                         [self handleUpdate: message.message];
+                                                                     else if([type isEqualToString: @"take-turn"])
+                                                                         [self handleTakeTurn: message.message];
+                                                                     else if([type isEqualToString: @"end"])
+                                                                         [self handleEnd: message.message];
+                                                                 }
                                                              }];
         
         card1 = [NSString stringWithString: [[Globals sharedInstance] card1]];
@@ -73,13 +79,13 @@ UIAlertView * endAlert;
     return self;
 }
 
-
 -(void) handleUpdate: (NSDictionary *) dict {
     
     pot =     [dict objectForKey: @"pot"];
     currBet = [dict objectForKey: @"current-bet"];
     lastAct = [dict objectForKey: @"last-act"];
     myFunds = [dict objectForKey: @"my-funds" ];
+    maxRaise = [[myFunds substringWithRange:NSMakeRange(1, [myFunds length] - 1)] intValue];
     NSString * comm = [dict objectForKey: @"community" ];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"updateGameLabels" object:self];
@@ -123,10 +129,11 @@ UIAlertView * endAlert;
 }
 
 -(void) handleEnd: (NSDictionary *) dict {
+    
     NSString * msg = [dict objectForKey: @"message"];
     
     shouldGoToHome = YES;
-    endAlert = [[UIAlertView alloc] initWithTitle: msg message: @"Please choose wether to continue or weather to exit" delegate:self cancelButtonTitle:@"Exit" otherButtonTitles:@"Continue", nil];
+    endAlert = [[UIAlertView alloc] initWithTitle: msg message: @"Please choose whether to continue or whether to exit" delegate:self cancelButtonTitle:@"Exit" otherButtonTitles:@"Continue", nil];
     endAlert.tag = 6;
     [endAlert show];
     
@@ -143,6 +150,9 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
 
     if(alertView.tag == 6) {
         if(buttonIndex == 0){
+            
+            shouldGoToHome = NO;
+            
             NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
             
             [dict setObject:[[Globals sharedInstance] udid] forKey: @"uuid"];
@@ -151,7 +161,8 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
             [dict setObject:@"false" forKey:@"yes"];
             [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
             
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"goToHome" object:self];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"goToHomeFromRoom" object:self];
+        
         }
         else if(buttonIndex == 1) {
             
@@ -164,16 +175,26 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
             [dict setObject:@"play-again" forKey:@"type"];
             [dict setObject:@"true" forKey:@"yes"];
             [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
+            [[Globals sharedInstance] setWetherIsFirstGame: NO];
             
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"goToLoad" object:self];
-            
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"goToLoadFromRoom" object:self];
         }
     }
 }
 
 -(void) goToHome {
-    if(shouldGoToHome)
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"goToHome" object:self];
+    if(shouldGoToHome) {
+        
+        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+        
+        [dict setObject:[[Globals sharedInstance] udid] forKey: @"uuid"];
+        [dict setObject:[[Globals sharedInstance] userName] forKey: @"username"];
+        [dict setObject:@"play-again" forKey:@"type"];
+        [dict setObject:@"false" forKey:@"yes"];
+        [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"goToHomeFromRoom" object:self];
+    }
 }
 
 @end

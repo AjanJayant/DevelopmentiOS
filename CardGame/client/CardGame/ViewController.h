@@ -19,6 +19,10 @@
 
 @interface ViewController : UIViewController
 
+////////////////////////
+// Pointers to models //
+////////////////////////
+
 @property ServerErrorModel *serverErrModel;
 
 @property LoginModel *logModel;
@@ -58,7 +62,6 @@
 @property (weak, nonatomic) IBOutlet CustomTextField *gameName;
 
 @property (weak, nonatomic) IBOutlet UIButton *joinPrivateGameButton;
-
 
 @property (weak, nonatomic) IBOutlet UIImageView *bgImageView;
 
@@ -142,23 +145,5 @@
 //////////////////
 
 @property (weak, nonatomic) IBOutlet UILabel *messageNotifyingUser;
-
-// Aux functions
-
--(void) enableInteraction:(BOOL) shouldInteract arrayOfViews:(NSArray *)arrayOfViews;
-
--(void) setCards :(NSString *) card cardView:(UIImageView *) cardView;
-
-- (void)setLabels;
-
--(void) setInitialFunds:(NSString *) initialFunds;
-
--(void) setBlind: (NSString *) img;
-
--(void) setGameButton;
-
--(void) saveVaraiables;
- 
--(void) removeBlind;
 
 @end

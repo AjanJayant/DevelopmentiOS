@@ -11,4 +11,6 @@
 
 @interface HomeModel : NSObject
 
+@property BOOL shouldInvokeHomeFunctions;
+
 @end

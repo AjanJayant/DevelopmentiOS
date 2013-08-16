@@ -64,7 +64,6 @@
         [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] serverChannel]];
         
         [PubNub sendMessage:dict toChannel:[PNChannel channelWithName:@"PokerServer" shouldObservePresence:YES]];
-
         
         return @"unsure";
     }

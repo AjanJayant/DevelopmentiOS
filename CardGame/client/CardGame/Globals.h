@@ -28,6 +28,8 @@
 
 @property (strong, nonatomic) NSString * initialFunds;
 
+@property BOOL isFirstGame;
+
 @property BOOL isCreator;
 
 + (Globals *)sharedInstance;
@@ -39,6 +41,8 @@
 -(void)setGameChannel: (PNChannel *) chan;
 
 -(void) setCreator:(BOOL) flag;
+
+-(void)setWetherIsFirstGame:(BOOL) flag;
 
 -(void) saveVariables;
 

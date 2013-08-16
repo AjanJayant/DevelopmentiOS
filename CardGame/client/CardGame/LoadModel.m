@@ -14,27 +14,33 @@
 
 @synthesize numberOfNames;
 
+@synthesize shouldInvokeLoadFunctions;
+
 NSString * reqUUID;
 
--(id)init{
+-(id)init {
+    
     self = [super init];
     
     if (self != nil)
     {
+        shouldInvokeLoadFunctions = YES;
+        
         [[PNObservationCenter defaultCenter] addMessageReceiveObserver:self
                                                              withBlock:^(PNMessage *message) {
                                                                  
                                                                  NSString * type = [message.message objectForKey: @"type"];
-                                                                                                                                 
-                                                                 if([type isEqualToString: @"player-join"])
-                                                                     [self handlePlayerJoin: message.message];
-                                                                 else if([type isEqualToString: @"authrequest"])
-                                                                     [self handleAuthRequest: message.message];
-                                                                 else if([type isEqualToString: @"authresponse"])
-                                                                     [self handleAuthResponse: message.message];
-                                                                 else if([type isEqualToString: @"start"])
-                                                                     [self handleStart: message.message];
-
+                                                                 if(shouldInvokeLoadFunctions == YES) {
+                                                                     
+                                                                     if([type isEqualToString: @"player-join"])
+                                                                         [self handlePlayerJoin: message.message];
+                                                                     else if([type isEqualToString: @"authrequest"])
+                                                                         [self handleAuthRequest: message.message];
+                                                                     else if([type isEqualToString: @"authresponse"])
+                                                                         [self handleAuthResponse: message.message];
+                                                                     else if([type isEqualToString: @"start"])
+                                                                         [self handleStart: message.message];
+                                                                 }
                                                              }];
         playerNames = [[NSMutableArray alloc]init];
         [[Globals sharedInstance] checkIfHereNow];
@@ -86,6 +92,7 @@ NSString * reqUUID;
 }
 
 -(void) handleStart: (NSDictionary *) dict {
+    
     NSString * suc = [dict objectForKey: @"success"];
     NSString * card1 = [dict objectForKey: @"card1"];
     NSString * card2 = [dict objectForKey: @"card2"];
@@ -99,7 +106,7 @@ NSString * reqUUID;
         [[Globals sharedInstance] setInitialBlind: blind];
         [[Globals sharedInstance] setInitialFunds: initialFunds];
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"goToRoom" object:self];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"goToRoomFromLoad" object:self];
     }
     else if([suc isEqualToString: @"False"]){
         NSString * mess = [dict objectForKey: @"message"];
@@ -109,29 +116,12 @@ NSString * reqUUID;
     }
 }
 
-
 - (void)alertView:(UIAlertView *)alertView
 clickedButtonAtIndex:(NSInteger) buttonIndex
 {
-    if(alertView.tag == 1) {
-        if(buttonIndex == 0){
-            /*
-            [homeViewController enableInteraction:YES arrayOfViews:[[NSArray alloc]initWithObjects:
-                                                                    homeViewController.gameName,
-                                                                    homeViewController.joinPrivateGameButton,
-                                                                    homeViewController.createGameButton,
-                                                                    nil]];
-            
-            */
-            return;
-        }
-    }
-    else if(alertView.tag == 2) {
-        if(buttonIndex == 0){
-            return;
-        }
-    }
-    else if(alertView.tag == 3) {
+    
+    if(alertView.tag == 3) {
+        
         NSMutableDictionary * dict = [[NSMutableDictionary alloc] init];
         [dict setObject:@"" forKey: @"game"];
         [dict setObject:[[Globals sharedInstance] userName] forKey: @"creator"];
@@ -148,7 +138,7 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
     }
     else if(alertView.tag == 4) {
         if(buttonIndex == 0){
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"goToHome" object:self];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"goToHomeFromLoad" object:self];
         }
     }
     else if(alertView.tag == 5) {
@@ -159,7 +149,6 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
         [dict setObject:[[Globals sharedInstance] userName] forKey: @"username"];
         [dict setObject:@"join" forKey:@"type"];
         [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
-        
     }
 }
 

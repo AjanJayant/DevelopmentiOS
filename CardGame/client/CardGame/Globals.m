@@ -30,6 +30,8 @@
 
 @synthesize initialFunds;
 
+@synthesize isFirstGame;
+
 +(Globals *)sharedInstance {
     static Globals *myInstance = nil;
     
@@ -84,6 +86,10 @@
     initialFunds = [NSString stringWithString: str];
 }
 
+-(void)setWetherIsFirstGame: (BOOL) flag {
+    isFirstGame = flag;
+}
+
 -(void) loadVariables {
     
     NSMutableDictionary *dictionary;
@@ -129,9 +135,7 @@
     
     [PubNub requestParticipantsListForChannel:[[Globals sharedInstance] serverChannel]withCompletionBlock:^(NSArray *udids,
                                                                                                             PNChannel *channel,
-                                                                                                            PNError *error) {
-        if (error == nil) {
-            
+                                                                                                            PNError *error) {            
             if([udids count] == 0) {
                 
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"serverNotRunning" object:self];
@@ -144,12 +148,7 @@
                 
                 serverIsRunning = YES;
             }
-        }
-        else {
-            
-            // Handle participants request error
-        }
-    }];;
+        }];;
 }
 
 

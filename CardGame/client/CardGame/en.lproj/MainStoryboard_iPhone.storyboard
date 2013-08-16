@@ -91,6 +91,7 @@
                         <outlet property="loginField" destination="xpv-no-O9k" id="Q9y-um-TbQ"/>
                         <outlet property="loginProgress" destination="pMC-er-iNM" id="pih-4O-USA"/>
                         <outlet property="loginUser" destination="KVX-UQ-oIh" id="2ee-kc-tcz"/>
+                        <segue destination="2" kind="modal" identifier="loginToHome" modalTransitionStyle="crossDissolve" id="O5q-PU-l4N"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EaV-DM-h6F" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -164,6 +165,7 @@
                         <outlet property="createGameButton" destination="WCS-tU-F6k" id="dbQ-F0-Mz6"/>
                         <outlet property="gameName" destination="odk-LK-5Ff" id="dp0-Sx-n1L"/>
                         <outlet property="joinPrivateGameButton" destination="LRj-92-9mU" id="o1h-Zp-8VC"/>
+                        <segue destination="SYi-Io-b0m" kind="modal" identifier="homeToLoad" modalTransitionStyle="crossDissolve" id="Jpw-6n-aWe"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4" sceneMemberID="firstResponder"/>
@@ -303,11 +305,13 @@
                         <outlet property="sixthNameLabel" destination="CG7-uj-W8c" id="rTY-Df-6pR"/>
                         <outlet property="startGameButton" destination="9EL-zG-3GY" id="g1E-TC-aXL"/>
                         <outlet property="thirdnameLabel" destination="ZMS-x2-E8w" id="lWf-n5-UE7"/>
+                        <segue destination="Bqa-g1-5zz" kind="modal" identifier="loadToRoom" modalTransitionStyle="crossDissolve" id="jEe-0F-vwd"/>
+                        <segue destination="2" kind="modal" identifier="loadToHome" modalTransitionStyle="crossDissolve" id="QEl-U5-dqd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Js1-5z-98Z" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="361" y="-1"/>
+            <point key="canvasLocation" x="869" y="15"/>
         </scene>
         <!--View Controller - room-->
         <scene sceneID="wWV-nK-csN">
@@ -511,11 +515,13 @@
                         <outlet property="raiseButton" destination="h81-Nb-MKe" id="8No-jd-lwL"/>
                         <outlet property="raiseTextField" destination="hxu-1i-Pw9" id="Sm5-je-lTM"/>
                         <outlet property="recentBetLabel" destination="h8s-IO-F5p" id="Uri-at-9p9"/>
+                        <segue destination="2" kind="modal" identifier="roomToHome" modalTransitionStyle="crossDissolve" id="gZP-c0-udz"/>
+                        <segue destination="SYi-Io-b0m" kind="modal" identifier="roomToLoad" modalTransitionStyle="crossDissolve" id="vnf-SV-mIV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Kbe-ov-kq0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="833" y="15"/>
+            <point key="canvasLocation" x="485" y="-801"/>
         </scene>
         <!--View Controller - serverError-->
         <scene sceneID="gDA-6l-9Dx">
@@ -562,67 +568,13 @@
         <image name="load.png" width="320" height="480"/>
         <image name="mochaGrunge.png" width="320" height="480"/>
     </resources>
-    <classes>
-        <class className="CustomTextField" superclassName="UITextField">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/CustomTextField.h"/>
-        </class>
-        <class className="NSLayoutConstraint" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
-        </class>
-        <class className="ViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="addUser:"/>
-                <relationship kind="action" name="callButton:"/>
-                <relationship kind="action" name="createGameButton:"/>
-                <relationship kind="action" name="foldButton:"/>
-                <relationship kind="action" name="joinPrivateGameButton:"/>
-                <relationship kind="action" name="loginUser:"/>
-                <relationship kind="action" name="raiseButton:"/>
-                <relationship kind="action" name="startButton:"/>
-                <relationship kind="outlet" name="addUser" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="appLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="bankLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="bgImageView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="blindImage" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="callButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="createGameButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="deckCard2" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="deckCard3" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="deckCard4" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="deckCard5" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="deckCardOne" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="eightNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="fifthNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="firstNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="foldButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="fourthNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="gameName" candidateClass="CustomTextField"/>
-                <relationship kind="outlet" name="initialBankLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="joinPrivateGameButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="loginField" candidateClass="CustomTextField"/>
-                <relationship kind="outlet" name="loginProgress" candidateClass="UIActivityIndicatorView"/>
-                <relationship kind="outlet" name="loginUser" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="mainView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="messageNotifyingUser" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="ownCardOneView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="ownCardTwoView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="potImageView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="potLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="raiseButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="raiseTextField" candidateClass="CustomTextField"/>
-                <relationship kind="outlet" name="recentBetLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="secondNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="seventhNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="sixthNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="startGameButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="thirdnameLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
+    <inferredMetricsTieBreakers>
+        <segue reference="QEl-U5-dqd"/>
+        <segue reference="Jpw-6n-aWe"/>
+    </inferredMetricsTieBreakers>
 </document>

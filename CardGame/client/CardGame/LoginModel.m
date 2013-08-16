@@ -10,20 +10,26 @@
 
 @implementation LoginModel
 
+@synthesize shouldInvokeLoginFunctions;
+
 -(id)init{
+    
     self = [super init];
     
     if (self != nil)
     {
+        shouldInvokeLoginFunctions = YES;
+        
         [[PNObservationCenter defaultCenter] addMessageReceiveObserver:self
                                                              withBlock:^(PNMessage *message) {
                                                                  
                                                                  NSString * type = [message.message objectForKey: @"type"];
-                                                                 
-                                                                 if([type isEqualToString: @"create-user"])
-                                                                     [self handleCreateUser: message.message];
-                                                                 else if([type isEqualToString: @"login"])
-                                                                     [self handleLogin: message.message];
+                                                                 if(shouldInvokeLoginFunctions == YES) {
+                                                                     if([type isEqualToString: @"create-user"])
+                                                                         [self handleCreateUser: message.message];
+                                                                     else if([type isEqualToString: @"login"])
+                                                                         [self handleLogin: message.message];
+                                                                 }
                                                              }];
         [[Globals sharedInstance] checkIfHereNow];
     }
@@ -32,6 +38,7 @@
 }
 
 -(void) handleCreateUser: (NSDictionary *) dict {
+    
     NSString * suc = [dict objectForKey: @"success"];
     NSString * name = [dict objectForKey:@"username"];
     
@@ -43,6 +50,7 @@
 
 
 -(void) handleLogin: (NSDictionary *) dict {
+    
     [self handleGenericLogin: dict];
 }
 
@@ -50,12 +58,8 @@
     
     NSString * suc = [dict objectForKey: @"success"];
     
-    
     if([suc isEqualToString: @"True"]){
-        NSString * userName = [dict objectForKey: @"username"];
-        [[Globals sharedInstance] setUserName: userName];
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateLabelNames" object:self];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"goToHomeFromLogin" object:self];
     }
     else if([suc isEqualToString: @"False"]){
         NSString * mess = [dict objectForKey: @"message"];
@@ -65,5 +69,11 @@
     }
 }
 
+-(void) setupUUIDIfNotPresent {
+    
+    CFUUIDRef uuidObject = CFUUIDCreate(kCFAllocatorDefault);
+    NSString * uid = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuidObject) ;
+    [[Globals sharedInstance] setuDID: uid];
+}
 
 @end

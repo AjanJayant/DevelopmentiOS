@@ -19,10 +19,6 @@
 
 @property (nonatomic, strong) ViewController *homeViewController;
 
-@property (nonatomic, strong) ViewController *loadViewController;
-
-@property (nonatomic, strong) ViewController *roomViewController;
-
 @property (nonatomic, strong) ViewController *serverErrorController;
 
 @property (strong) StartupModel * startUp;
