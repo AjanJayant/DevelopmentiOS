@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		5E01110117AAF244007ACA23 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E01110017AAF244007ACA23 /* CFNetwork.framework */; };
 		5E01110317AAF252007ACA23 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E01110217AAF252007ACA23 /* SystemConfiguration.framework */; };
-		5E01139F17AB1359007ACA23 /* CardGame-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5E01129A17AB1358007ACA23 /* CardGame-Info.plist */; };
+		5E01139F17AB1359007ACA23 /* PubNubPoker-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5E01129A17AB1358007ACA23 /* PubNubPoker-Info.plist */; };
 		5E0113A017AB1359007ACA23 /* Data.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5E01129C17AB1359007ACA23 /* Data.plist */; };
 		5E0113A117AB1359007ACA23 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E01129D17AB1359007ACA23 /* Default-568h@2x.png */; };
 		5E0113A217AB1359007ACA23 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E01129E17AB1359007ACA23 /* Default.png */; };
@@ -105,6 +105,10 @@
 		5E7970FC17BE9FC80074763F /* RoomModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7970F317BE9FC80074763F /* RoomModel.m */; };
 		5E7970FD17BE9FC80074763F /* ServerErrorModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7970F517BE9FC80074763F /* ServerErrorModel.m */; };
 		5E7970FE17BE9FC80074763F /* StartupModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7970F717BE9FC80074763F /* StartupModel.m */; };
+		5E79710017BEA0030074763F /* home.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E7970FF17BEA0030074763F /* home.png */; };
+		5E79710A17BEA4650074763F /* 21_pro_ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E79710917BEA4650074763F /* 21_pro_ipad.png */; };
+		5E79711217BEA7390074763F /* 21_pro.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E79711117BEA7390074763F /* 21_pro.png */; };
+		5E79711417BEA7450074763F /* 21_pro_retina.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E79711317BEA7450074763F /* 21_pro_retina.png */; };
 		5E844A3D1796075800C30136 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E844A3C1796075800C30136 /* UIKit.framework */; };
 		5E844A3F1796075800C30136 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E844A3E1796075800C30136 /* Foundation.framework */; };
 		5E844A411796075800C30136 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E844A401796075800C30136 /* CoreGraphics.framework */; };
@@ -170,8 +174,8 @@
 /* Begin PBXFileReference section */
 		5E01110017AAF244007ACA23 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		5E01110217AAF252007ACA23 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		5E01129A17AB1358007ACA23 /* CardGame-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "CardGame-Info.plist"; sourceTree = "<group>"; };
-		5E01129B17AB1358007ACA23 /* CardGame-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CardGame-Prefix.pch"; sourceTree = "<group>"; };
+		5E01129A17AB1358007ACA23 /* PubNubPoker-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "PubNubPoker-Info.plist"; sourceTree = "<group>"; };
+		5E01129B17AB1358007ACA23 /* PubNubPoker-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PubNubPoker-Prefix.pch"; sourceTree = "<group>"; };
 		5E01129C17AB1359007ACA23 /* Data.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Data.plist; sourceTree = "<group>"; };
 		5E01129D17AB1359007ACA23 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		5E01129E17AB1359007ACA23 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
@@ -283,7 +287,13 @@
 		5E7970F517BE9FC80074763F /* ServerErrorModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerErrorModel.m; sourceTree = "<group>"; };
 		5E7970F617BE9FC80074763F /* StartupModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartupModel.h; sourceTree = "<group>"; };
 		5E7970F717BE9FC80074763F /* StartupModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StartupModel.m; sourceTree = "<group>"; };
-		5E844A391796075800C30136 /* CardGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CardGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5E7970FF17BEA0030074763F /* home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = home.png; sourceTree = "<group>"; };
+		5E79710517BEA40B0074763F /* 21_pro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 21_pro.png; sourceTree = "<group>"; };
+		5E79710917BEA4650074763F /* 21_pro_ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 21_pro_ipad.png; sourceTree = "<group>"; };
+		5E79710D17BEA4AD0074763F /* 21_pro_retina.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 21_pro_retina.png; sourceTree = "<group>"; };
+		5E79711117BEA7390074763F /* 21_pro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 21_pro.png; sourceTree = "<group>"; };
+		5E79711317BEA7450074763F /* 21_pro_retina.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 21_pro_retina.png; sourceTree = "<group>"; };
+		5E844A391796075800C30136 /* PubNubPoker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PubNubPoker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E844A3C1796075800C30136 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5E844A3E1796075800C30136 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5E844A401796075800C30136 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -470,6 +480,10 @@
 		5E0112A817AB1359007ACA23 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				5E79710D17BEA4AD0074763F /* 21_pro_retina.png */,
+				5E79710917BEA4650074763F /* 21_pro_ipad.png */,
+				5E79710517BEA40B0074763F /* 21_pro.png */,
+				5E7970FF17BEA0030074763F /* home.png */,
 				5EB9972217BAE89B00163BA1 /* mochaGrunge.png */,
 				5EC1ED0C17B45910001E579A /* game.png */,
 				5EC1ED0A17B45663001E579A /* load.png */,
@@ -607,8 +621,8 @@
 			isa = PBXGroup;
 			children = (
 				5E01139A17AB1359007ACA23 /* main.m */,
-				5E01129A17AB1358007ACA23 /* CardGame-Info.plist */,
-				5E01129B17AB1358007ACA23 /* CardGame-Prefix.pch */,
+				5E01129A17AB1358007ACA23 /* PubNubPoker-Info.plist */,
+				5E01129B17AB1358007ACA23 /* PubNubPoker-Prefix.pch */,
 				5E01129C17AB1359007ACA23 /* Data.plist */,
 				5E01129D17AB1359007ACA23 /* Default-568h@2x.png */,
 				5E01129E17AB1359007ACA23 /* Default.png */,
@@ -653,6 +667,8 @@
 		5E844A301796075800C30136 = {
 			isa = PBXGroup;
 			children = (
+				5E79711317BEA7450074763F /* 21_pro_retina.png */,
+				5E79711117BEA7390074763F /* 21_pro.png */,
 				5EC82CEA1797120600F42622 /* libz.dylib */,
 				5E01110217AAF252007ACA23 /* SystemConfiguration.framework */,
 				5E01110017AAF244007ACA23 /* CFNetwork.framework */,
@@ -665,7 +681,7 @@
 		5E844A3A1796075800C30136 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5E844A391796075800C30136 /* CardGame.app */,
+				5E844A391796075800C30136 /* PubNubPoker.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -946,9 +962,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		5E844A381796075800C30136 /* CardGame */ = {
+		5E844A381796075800C30136 /* PubNubPoker */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5E844A5F1796075800C30136 /* Build configuration list for PBXNativeTarget "CardGame" */;
+			buildConfigurationList = 5E844A5F1796075800C30136 /* Build configuration list for PBXNativeTarget "PubNubPoker" */;
 			buildPhases = (
 				5E844A351796075800C30136 /* Sources */,
 				5E844A361796075800C30136 /* Frameworks */,
@@ -958,9 +974,9 @@
 			);
 			dependencies = (
 			);
-			name = CardGame;
+			name = PubNubPoker;
 			productName = CardGame;
-			productReference = 5E844A391796075800C30136 /* CardGame.app */;
+			productReference = 5E844A391796075800C30136 /* PubNubPoker.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -972,7 +988,7 @@
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "Ajan Jayant";
 			};
-			buildConfigurationList = 5E844A341796075800C30136 /* Build configuration list for PBXProject "CardGame" */;
+			buildConfigurationList = 5E844A341796075800C30136 /* Build configuration list for PBXProject "PubNubPoker" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -984,7 +1000,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5E844A381796075800C30136 /* CardGame */,
+				5E844A381796075800C30136 /* PubNubPoker */,
 			);
 		};
 /* End PBXProject section */
@@ -994,7 +1010,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5E01139F17AB1359007ACA23 /* CardGame-Info.plist in Resources */,
+				5E01139F17AB1359007ACA23 /* PubNubPoker-Info.plist in Resources */,
 				5E0113A017AB1359007ACA23 /* Data.plist in Resources */,
 				5E0113A117AB1359007ACA23 /* Default-568h@2x.png in Resources */,
 				5E0113A217AB1359007ACA23 /* Default.png in Resources */,
@@ -1078,6 +1094,10 @@
 				5EC1ED0B17B45663001E579A /* load.png in Resources */,
 				5EC1ED0D17B45910001E579A /* game.png in Resources */,
 				5EB9972317BAE89B00163BA1 /* mochaGrunge.png in Resources */,
+				5E79710017BEA0030074763F /* home.png in Resources */,
+				5E79710A17BEA4650074763F /* 21_pro_ipad.png in Resources */,
+				5E79711217BEA7390074763F /* 21_pro.png in Resources */,
+				5E79711417BEA7450074763F /* 21_pro_retina.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1251,13 +1271,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CardGame/CardGame-Prefix.pch";
-				INFOPLIST_FILE = "CardGame/CardGame-Info.plist";
+				GCC_PREFIX_HEADER = "CardGame/PubNubPoker-Prefix.pch";
+				INFOPLIST_FILE = "CardGame/PubNubPoker-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/CardGame/Libraries/PubNub/iOS/3.4/pubnubTests/usr/lib\"",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PubNubPoker;
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1266,13 +1287,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CardGame/CardGame-Prefix.pch";
-				INFOPLIST_FILE = "CardGame/CardGame-Info.plist";
+				GCC_PREFIX_HEADER = "CardGame/PubNubPoker-Prefix.pch";
+				INFOPLIST_FILE = "CardGame/PubNubPoker-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/CardGame/Libraries/PubNub/iOS/3.4/pubnubTests/usr/lib\"",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = PubNubPoker;
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1280,7 +1302,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5E844A341796075800C30136 /* Build configuration list for PBXProject "CardGame" */ = {
+		5E844A341796075800C30136 /* Build configuration list for PBXProject "PubNubPoker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5E844A5D1796075800C30136 /* Debug */,
@@ -1289,7 +1311,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5E844A5F1796075800C30136 /* Build configuration list for PBXNativeTarget "CardGame" */ = {
+		5E844A5F1796075800C30136 /* Build configuration list for PBXNativeTarget "PubNubPoker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5E844A601796075800C30136 /* Debug */,
