@@ -119,6 +119,7 @@
 
             [logModel setupUUIDIfNotPresent];
         }
+                
         loginProgress.hidden = YES;
     }
     else if([[self title] isEqualToString: @"home"]){
@@ -233,8 +234,7 @@
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Game could not be joined" message: @"Please type a game name" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
         [alert show];
     }
-    else
-    {
+    else {
         
         [[Globals sharedInstance] setWetherIsFirstGame: YES];
         [[Globals sharedInstance] setCreator: YES];
@@ -284,6 +284,7 @@
 - (IBAction)raiseButton:(id)sender {
     
     if([raiseTextField.text isEqualToString: @""]) {
+        
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"You must raise a value" message: @"Type a value in the field" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
         [alert show];
         return;
@@ -292,17 +293,20 @@
     int raise = [raiseTextField.text intValue];
     
     if(raise == 0) {
+        
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Invalid raise amount" message: @"Please type a number" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
         [alert show];
         return;
     }
     else if(raise < [roomModel.minRaise intValue]) {
+        
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Invalid raise amount" message: @"The value is less than the minimum raise" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
         [alert show];
         return;
         
     }
-    else if(raise > roomModel.maxRaise){
+    else if(raise > roomModel.maxRaise) {
+        
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Invalid raise amount" message: @"The value is greater than the money you have" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
         [alert show];
         return;
@@ -313,7 +317,6 @@
     [dict setObject:@"raise" forKey:@"type"];
     [dict setObject:raiseTextField.text forKey:@"amount"];
     [self setUIDAndUserName:dict];
-    
     [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
     
     [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: raiseTextField, raiseButton, callButton, foldButton, nil]];
@@ -335,7 +338,6 @@
     [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: raiseTextField, raiseButton, callButton, foldButton, nil]];
 
     [[Globals sharedInstance] checkIfHereNow];
-
 }
 
 - (IBAction)foldButton:(id)sender {
@@ -354,7 +356,8 @@
 
 #pragma mark - Notification-triggered functions
 
--(void)enableHomeScreenButtons{
+-(void)enableHomeScreenButtons {
+    
     [self enableInteraction:YES arrayOfViews:[[NSArray alloc]initWithObjects:
                                               createGameButton,
                                               gameName,
@@ -363,7 +366,8 @@
                                               nil]];
 }
 
--(void)enableInteractionForTurn{
+-(void)enableInteractionForTurn {
+    
     [self enableInteraction:YES arrayOfViews:[[NSArray alloc]initWithObjects:
                                               raiseTextField,
                                               raiseButton,
@@ -375,8 +379,8 @@
 
 -(void) updateLabelNames {
     
-    switch(loadModel.numberOfNames)
-    {
+    switch(loadModel.numberOfNames) {
+            
         case 8:
             eightNameLabel.text = loadModel.playerNames[7];
             eightNameLabel.hidden = NO;
@@ -398,7 +402,9 @@
         case 2:
             secondNameLabel.text = loadModel.playerNames[1];
             secondNameLabel.hidden = NO;
-            [self setGameButton];
+            if([[Globals sharedInstance] isFirstGame] == YES && [[Globals sharedInstance] isCreator] == YES) {
+                [self setGameButton];
+            }
         case 1:
             firstNameLabel.text = loadModel.playerNames[0];
             firstNameLabel.hidden = NO;
@@ -429,7 +435,7 @@
 
 -(void)updateMinRaise {
     
-    raiseTextField.placeholder = roomModel.minRaise;
+    raiseTextField.placeholder = [@"Min-raise:" stringByAppendingString: roomModel.minRaise];
 }
 
 - (void)setLabels {
@@ -483,7 +489,7 @@
 
 #pragma mark - Auxilliary Functions
 
--(void) enableInteraction:(BOOL) shouldInteract arrayOfViews:(NSArray *)arrayOfViews{
+-(void) enableInteraction:(BOOL) shouldInteract arrayOfViews:(NSArray *)arrayOfViews {
     
     for(UIView * view in arrayOfViews){
         
@@ -514,7 +520,7 @@
     }
 }
 
--(void) doGameSetup:(NSString *)type game:(NSString * ) game{
+-(void) doGameSetup:(NSString *)type game:(NSString * ) game {
         
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     

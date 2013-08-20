@@ -54,7 +54,7 @@
         return @"login";
     }
     else
-    {        
+    {
         NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
         
         [dict setObject: [[Globals sharedInstance] userName] forKey: @"username"];
@@ -62,9 +62,7 @@
         [dict setObject: @"login" forKey:@"type"];
         
         [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] serverChannel]];
-        
-        [PubNub sendMessage:dict toChannel:[PNChannel channelWithName:@"PokerServer" shouldObservePresence:YES]];
-        
+                
         return @"unsure";
     }
 }

@@ -40,6 +40,9 @@ NSString * reqUUID;
                                                                          [self handleAuthResponse: message.message];
                                                                      else if([type isEqualToString: @"start"])
                                                                          [self handleStart: message.message];
+                                                                     else if([type isEqualToString: @"disband"])
+                                                                         [self handleDisband: message.message];
+
                                                                  }
                                                              }];
         playerNames = [[NSMutableArray alloc]init];
@@ -80,14 +83,25 @@ NSString * reqUUID;
     
     UIAlertView * alert;
     if([auth isEqualToString: @"deny"]) {
+        
         alert = [[UIAlertView alloc] initWithTitle: [creat stringByAppendingString: @" has denied you access"] message: @"Click below to escape" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
         alert.tag = 4;
         
     }
     else if([auth isEqualToString: @"allow"]) {
+        
         alert = [[UIAlertView alloc] initWithTitle: @"You succesfully joined!" message: @"Your game will start shortly"delegate:self cancelButtonTitle:@"Awesome!" otherButtonTitles: nil];
         alert.tag = 5;
     }
+    [alert show];
+}
+
+-(void) handleDisband: (NSDictionary *) dict {
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"goToHomeFromLoad" object:self];
+
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"There are no players left" message: @"You will be returned to the home sceren" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
+    alert.tag = 6;
     [alert show];
 }
 
@@ -116,6 +130,13 @@ NSString * reqUUID;
     }
 }
 
+-(void) handleDisband {
+    
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"There are no players left" message: @"You will be returned to the home sceren" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
+    alert.tag = 6;
+    [alert show];
+
+}
 - (void)alertView:(UIAlertView *)alertView
 clickedButtonAtIndex:(NSInteger) buttonIndex
 {

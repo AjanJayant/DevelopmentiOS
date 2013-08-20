@@ -13,6 +13,6 @@
 
 @property BOOL serverIsRunning;
 
--(NSString*) findFirstController;
+-(NSString *) findFirstController;
 
 @end

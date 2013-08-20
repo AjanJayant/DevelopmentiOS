@@ -29,11 +29,9 @@
 
 @property HomeModel *homeModel;
 
-@property LoadModel *
-    loadModel;
+@property LoadModel *loadModel;
 
-@property RoomModel *
-    roomModel;
+@property RoomModel *roomModel;
 
 ////////////////////////////
 // Login screen properties//
@@ -141,7 +139,6 @@
 
 //////////////////
 // Server Error //
-
 //////////////////
 
 @property (weak, nonatomic) IBOutlet UILabel *messageNotifyingUser;

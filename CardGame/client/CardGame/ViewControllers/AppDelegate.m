@@ -32,17 +32,18 @@ NSTimer * autoTimer;
 {
     // Override point for customization after application launch.
     
-    // AppDelegate setup
-    
-    self.window=[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    
     // Variables, storyboard Loading Setup
     
-    [[Globals sharedInstance] loadVariables];
+    //[[Globals sharedInstance] loadVariables];
+    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
     mainStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle: nil];
-
-    // pubNub Setup
     
+    if([[[Globals sharedInstance] udid] isEqualToString: @""]) {
+        
+        [self loadLoginAsInitialController];
+    }
+    
+    // pubNub Setup
     [PubNub setConfiguration:[PNConfiguration configurationForOrigin:@"pubsub.pubnub.com" publishKey:@"demo" subscribeKey:@"demo" secretKey:@"mySecret"]];
     [PubNub connect];
     [PubNub setClientIdentifier: [[Globals sharedInstance] udid]];
@@ -62,7 +63,7 @@ NSTimer * autoTimer;
                                                 repeats:YES];
 
     startUp = [[StartupModel alloc] init];
-
+    
     return YES;
 }
 
@@ -90,11 +91,10 @@ NSTimer * autoTimer;
     loginViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"login"];
     self.window.rootViewController = loginViewController;
     
-    [self.window addSubview:loginViewController.view];
+    [self.window makeKeyAndVisible];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"loadLoginAsInitialController" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"serverLoaded" object:nil];
-
 }
 
 - (void) loadHomeAsInitialController{
@@ -102,11 +102,10 @@ NSTimer * autoTimer;
     homeViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"home"];
     self.window.rootViewController = homeViewController;
     
-    [self.window addSubview:loginViewController.view];
+    [self.window makeKeyAndVisible];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"loadHomeAsInitialController" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"serverLoaded" object:nil];
-
 }
 
 -(void) handleException: (NSDictionary *) dict {
@@ -143,12 +142,11 @@ NSTimer * autoTimer;
 
 // Auxilliary Functions
 
--(ViewController *) goToServerError{
+-(void) goToServerError{
     
     serverErrorController = [mainStoryboard instantiateViewControllerWithIdentifier:@"serverError"];
 
     [self.window addSubview:serverErrorController.view];
-    return serverErrorController;
 }
 
 @end

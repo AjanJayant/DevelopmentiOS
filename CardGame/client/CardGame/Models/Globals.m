@@ -33,6 +33,7 @@
 @synthesize isFirstGame;
 
 +(Globals *)sharedInstance {
+    
     static Globals *myInstance = nil;
     
     // check to see if an instance already exists
@@ -44,8 +45,10 @@
 }
 
 -(id)init {
+    
     if (self = [super init]) {
         
+        // Initialise to default values
         self.udid = [[NSString alloc] init];
         self.userName = @"";
         self.serverChannel = [PNChannel channelWithName:@"PokerServer" shouldObservePresence:YES];
@@ -54,41 +57,60 @@
     return self;
 }
 
--(void)setuDID: (NSString *) uid{
+
+/*
+ * The following functions are mutators. They are used to change the global variables, which 
+ *  can not be accessed directly.
+ */
+
+-(void)setuDID: (NSString *) uid {
+    
     udid = [NSString stringWithString: uid];
 }
 
 -(void)setUserName: (NSString *) str {
+    
     userName = [NSString stringWithString: str];
 }
 
 -(void)setGameChannel: (PNChannel *) chan {
+    
     gameChannel = chan;
 }
 
 -(void)setCreator: (BOOL) flag {
+    
     isCreator = flag;
 }
 
 -(void)setCard1: (NSString *) str {
+    
     card1 = [NSString stringWithString: str];
 }
 
 -(void)setCard2: (NSString *) str {
+    
     card2 = [NSString stringWithString: str];
 }
 
 -(void)setInitialBlind: (NSString *) str {
+    
     initialBlind = [NSString stringWithString: str];
 }
 
 -(void)setInitialFunds: (NSString *) str {
+    
     initialFunds = [NSString stringWithString: str];
 }
 
 -(void)setWetherIsFirstGame: (BOOL) flag {
+    
     isFirstGame = flag;
 }
+
+/*
+ * The following function loads variables from a plist named Data.plist
+ */
 
 -(void) loadVariables {
     
@@ -98,6 +120,7 @@
     NSString *rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
                                                               NSUserDomainMask, YES) objectAtIndex:0];
     plistPath = [rootPath stringByAppendingPathComponent:@"Data.plist"];
+    
     if (![[NSFileManager defaultManager] fileExistsAtPath:plistPath]) {
         plistPath = [[NSBundle mainBundle] pathForResource:@"Data" ofType:@"plist"];
     }
@@ -105,10 +128,13 @@
     
     [[Globals sharedInstance] setuDID:[dictionary objectForKey:@"udid"]];
     [[Globals sharedInstance] setUserName:[dictionary objectForKey:@"userName"]];
-
 }
 
+/*
+ * The following function saves variables to a plist named Data.plist
+ */
 -(void) saveVariables {
+    
     NSString *error;
     NSString *rootPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString *plistPath = [rootPath stringByAppendingPathComponent:@"Data.plist"];
@@ -124,14 +150,16 @@
     NSData *plistData = [NSPropertyListSerialization dataFromPropertyList:plistDict
                                                                    format:NSPropertyListXMLFormat_v1_0
                                                          errorDescription:&error];
-    //[plistData writeToFile:@"/Users/ajanjayant/Code/DevelopmentiOS/CardGame/CardGame/Data.plist"  atomically:YES];
     if(plistData) {
         [plistData writeToFile:plistPath atomically:YES];
     }
-    
 }
 
--(void) checkIfHereNow{
+/*
+ * The following function checks if the server is running by seeing if its connected
+ * to the PokerServer Channel
+ */
+-(void) checkIfHereNow {
     
     [PubNub requestParticipantsListForChannel:[[Globals sharedInstance] serverChannel]withCompletionBlock:^(NSArray *udids,
                                                                                                             PNChannel *channel,
@@ -150,6 +178,5 @@
             }
         }];;
 }
-
 
 @end

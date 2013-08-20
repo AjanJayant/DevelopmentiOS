@@ -48,6 +48,7 @@
             PNChannel * chan = [PNChannel channelWithName:chanString shouldObservePresence:YES];
             [[Globals sharedInstance] setGameChannel: chan];
             [[Globals sharedInstance] setWetherIsFirstGame: YES];
+            [[Globals sharedInstance] setIsCreator: YES];
             [[NSNotificationCenter defaultCenter] postNotificationName:@"goToLoadFromHome" object:self];
         }
         else if([suc isEqualToString: @"False"]){

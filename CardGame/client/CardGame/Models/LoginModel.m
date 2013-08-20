@@ -70,7 +70,7 @@
 }
 
 -(void) setupUUIDIfNotPresent {
-    
+
     CFUUIDRef uuidObject = CFUUIDCreate(kCFAllocatorDefault);
     NSString * uid = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuidObject) ;
     [[Globals sharedInstance] setuDID: uid];

@@ -32,17 +32,17 @@
 
 @property BOOL isCreator;
 
-+ (Globals *)sharedInstance;
++(Globals *)sharedInstance;
 
--(void)setuDID: (NSString *) str;
+-(void) setuDID:(NSString *) str;
 
--(void)setUserName: (NSString *) str;
+-(void) setUserName:(NSString *) str;
 
--(void)setGameChannel: (PNChannel *) chan;
+-(void) setGameChannel:(PNChannel *) chan;
 
 -(void) setCreator:(BOOL) flag;
 
--(void)setWetherIsFirstGame:(BOOL) flag;
+-(void) setWetherIsFirstGame:(BOOL) flag;
 
 -(void) saveVariables;
 

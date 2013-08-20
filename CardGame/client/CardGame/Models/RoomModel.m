@@ -119,7 +119,7 @@ UIAlertView * endAlert;
     [alert show];
     
     minRaise = [[NSString alloc] init];
-    minRaise = [@"Min-raise:" stringByAppendingString: [dict objectForKey: @"min-raise"]];
+    minRaise = [dict objectForKey: @"min-raise"];
     
     isBlind = NO;
     

@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5E844A381796075800C30136"
-               BuildableName = "CardGame.app"
+               BuildableName = "PubNubPoker.app"
                BlueprintName = "PubNubPoker"
                ReferencedContainer = "container:PubNubPoker.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5E844A381796075800C30136"
-            BuildableName = "CardGame.app"
+            BuildableName = "PubNubPoker.app"
             BlueprintName = "PubNubPoker"
             ReferencedContainer = "container:PubNubPoker.xcodeproj">
          </BuildableReference>
@@ -52,7 +52,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5E844A381796075800C30136"
-            BuildableName = "CardGame.app"
+            BuildableName = "PubNubPoker.app"
             BlueprintName = "PubNubPoker"
             ReferencedContainer = "container:PubNubPoker.xcodeproj">
          </BuildableReference>
@@ -70,7 +70,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5E844A381796075800C30136"
-            BuildableName = "CardGame.app"
+            BuildableName = "PubNubPoker.app"
             BlueprintName = "PubNubPoker"
             ReferencedContainer = "container:PubNubPoker.xcodeproj">
          </BuildableReference>
