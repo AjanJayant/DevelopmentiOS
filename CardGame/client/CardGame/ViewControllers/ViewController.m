@@ -436,8 +436,6 @@
     
     serverErrModel = [[ServerErrorModel alloc] init];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToLoginFromServerError) name:@"serverRestarted" object:nil];
-    
     messageNotifyingUser.text = @"Server not running :( \n There seems to be a error in the space time continuum; we're doing everything we can to rectify it";
 
 }
@@ -692,12 +690,6 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
  * controller transitions
  **********************************************************/
 #pragma mark - View Controller Navigation
-
--(void)goToLoginFromServerError
-{
- 
-    [self performSegueWithIdentifier:@"errorToLogin" sender:self];
-}
 
 -(void)goToServerError
 {
