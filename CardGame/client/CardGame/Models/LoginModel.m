@@ -12,12 +12,19 @@
 
 @synthesize shouldInvokeLoginFunctions;
 
--(id)init{
+/**********************************************************
+ * The init function initialises the model and adds a
+ * PubNub messageObserver to it. This model will handle
+ * messages of the type create-user and login.
+ * Server exceptions are also handled.
+ **********************************************************/
+-(id)init
+{
     
     self = [super init];
     
-    if (self != nil)
-    {
+    if (self != nil) {
+        
         shouldInvokeLoginFunctions = YES;
         
         [[PNObservationCenter defaultCenter] addMessageReceiveObserver:self
@@ -29,6 +36,9 @@
                                                                          [self handleCreateUser: message.message];
                                                                      else if([type isEqualToString: @"login"])
                                                                          [self handleLogin: message.message];
+                                                                     else if([type isEqualToString:@"exception"]){
+                                                                         [self handleException:message.message];
+                                                                     }
                                                                  }
                                                              }];
         [[Globals sharedInstance] checkIfHereNow];
@@ -37,7 +47,12 @@
     return self;
 }
 
--(void) handleCreateUser: (NSDictionary *) dict {
+/**********************************************************
+ * handleCreateUser checks if the attempt to create the user 
+ * was succesful, and if it was, sets the user name.
+ **********************************************************/
+-(void) handleCreateUser: (NSDictionary *) dict
+{
     
     NSString * suc = [dict objectForKey: @"success"];
     NSString * name = [dict objectForKey:@"username"];
@@ -48,13 +63,21 @@
     [self handleGenericLogin: dict];
 }
 
-
--(void) handleLogin: (NSDictionary *) dict {
+/**********************************************************
+ * handleLogin calls handleGernicLogin.
+ **********************************************************/
+-(void) handleLogin: (NSDictionary *) dict
+{
     
     [self handleGenericLogin: dict];
 }
 
--(void) handleGenericLogin: (NSDictionary *) dict{
+/**********************************************************
+ * handleGenericLogin handles whether the attempt was 
+ * succesful or not, showing alerts if so.
+ **********************************************************/
+-(void) handleGenericLogin: (NSDictionary *) dict
+{
     
     NSString * suc = [dict objectForKey: @"success"];
     
@@ -66,10 +89,25 @@
         
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"User unreachable :(" message: mess delegate:self cancelButtonTitle:@"Try Again!" otherButtonTitles: nil];
         [alert show];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"hideLoginProgress" object:self];
     }
 }
 
--(void) setupUUIDIfNotPresent {
+/**********************************************************
+ * handleException handles server exceptions.
+ **********************************************************/
+-(void) handleException: (NSDictionary *) dict
+{
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Server Exception Occoured" message: @"Maybe try login instead" delegate:self cancelButtonTitle:@"Return" otherButtonTitles: nil];
+    [alert show];
+}
+
+/**********************************************************
+ * setupUUIDIfNotPresent sets a unique uuid if not already
+ * present.
+ **********************************************************/
+-(void) setupUUIDIfNotPresent
+{
 
     CFUUIDRef uuidObject = CFUUIDCreate(kCFAllocatorDefault);
     NSString * uid = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuidObject) ;

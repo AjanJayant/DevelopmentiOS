@@ -99,6 +99,10 @@
 
 @synthesize messageNotifyingUser;
 
+/**********************************************************
+ * viewDidLoad calls various functions to load initial 
+ * conditions based on the title of the controller
+ **********************************************************/
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -107,127 +111,63 @@
     
     if([[self title] isEqualToString: @"login"]){
         
-        logModel = [[LoginModel alloc] init];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToHomeFromLogin) name:@"goToHomeFromLogin" object:nil];
-        
-        appLabel.text = @"PubNub Poker";
-        [loginField configureTextField: @"Type user name here" color:[UIColor blackColor] hideSelf:YES];
-        [addUser setTitle:@"Add" forState:UIControlStateNormal];
-        [loginUser setTitle:@"Login" forState:UIControlStateNormal];
-        if([[[Globals sharedInstance] udid] isEqualToString: @""]) {
-
-            [logModel setupUUIDIfNotPresent];
-        }
-                
-        loginProgress.hidden = YES;
+        [self loadInitalLoginConditions];
     }
     else if([[self title] isEqualToString: @"home"]){
         
-        homeModel = [[HomeModel alloc] init];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enableHomeScreenButtons) name:@"enableHomeScreenButtons" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToLoadFromHome) name:@"goToLoadFromHome" object:nil];
-        
-        [createGameButton setTitle: @"Create a game" forState: UIControlStateNormal];
-        [joinPrivateGameButton setTitle: @"Join private" forState:
-         UIControlStateNormal];
-        [gameName configureTextField: @"Type game name here" color:[UIColor whiteColor]returnHidesKB:YES movesLeft:NO hideOthers:[NSArray arrayWithObjects:createGameButton, joinPrivateGameButton, nil]];
+        [self loadInitalHomeConditions];
     }
     else if([[self title] isEqualToString: @"load"]){
-        
-        loadModel = [[LoadModel alloc] init];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateLabelNames) name:@"updateLabelNames" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToRoomFromLoad) name:@"goToRoomFromLoad" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToHomeFromLoad) name:@"goToHomeFromLoad" object:nil];
 
-        firstNameLabel.hidden = YES;
-        secondNameLabel.hidden = YES;
-        thirdnameLabel.hidden = YES;
-        fourthNameLabel.hidden = YES;;
-        fifthNameLabel.hidden = YES;
-        sixthNameLabel.hidden = YES;
-        seventhNameLabel.hidden = YES;
-        eightNameLabel.hidden = YES;
-        startGameButton.hidden = YES;
-        [startGameButton setTitle:@"Start!" forState:UIControlStateNormal];
+        [self loadInitalLoadConditions];
     }
     else if([[self title] isEqualToString: @"room"]) {
-        
-        roomModel = [[RoomModel alloc] init];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setLabels) name:@"updateGameLabels" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateFlopCards) name:@"updateFlopCards" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTurnCard) name:@"updateTurnCard" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateRiverCard) name:@"updateRiverCard" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeBlind) name:@"removeBlind" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateMinRaise) name:@"updateMinRaise" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enableInteractionForTurn) name:@"enableInteractionForTurn" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToLoadFromRoom) name:@"goToLoadFromRoom" object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToHomeFromRoom) name:@"goToHomeFromRoom" object:nil];
-        
-        deckCardOne.hidden = YES;
-        deckCard2.hidden = YES;
-        deckCard3.hidden = YES;
-        deckCard4.hidden = YES;
-        deckCard5.hidden = YES;
-        potLabel.hidden = YES;
-        bankLabel.hidden = YES;
-        recentBetLabel.hidden = YES;
-        raiseTextField.hidden = YES;
-        raiseButton.hidden = YES;
-        callButton.hidden = YES;
-        foldButton.hidden = YES;
-        blindImage.hidden = YES;
-        [raiseButton setTitle:@"Raise" forState:UIControlStateNormal];
-        [callButton setTitle:@"Call" forState:UIControlStateNormal];
-        [foldButton setTitle:@"Fold" forState:UIControlStateNormal];
-        // Own card setup done here
-        [self setCards: roomModel.card1 cardView:ownCardOneView];
-        [self setCards: roomModel.card2 cardView:ownCardTwoView];
-        // Blind setup done here
-        if([roomModel.blind isEqualToString: @"smallblind"] || [roomModel.blind isEqualToString: @"bigblind"]){
-            [self setBlind: roomModel.blind];
-            roomModel.isBlind = YES;
-        }
-        initialBankLabel.text = roomModel.initialFunds;
-        // Raise text field setup here; the array of views contains views hidden when the field is being used
-        [raiseTextField configureTextField: @"Current Bet: $0" color:[UIColor blackColor] returnHidesKB: YES movesLeft:NO hideOthers:[NSArray arrayWithObjects:potLabel, ownCardOneView, ownCardTwoView, ownCardTwoView, deckCardOne, deckCard2, deckCard3, deckCard4, deckCard5, potImageView, recentBetLabel, potImageView, initialBankLabel, bankLabel, raiseButton, callButton, foldButton,  nil]];
-        // No Buttons hould be allowed to interact initially
-        [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: raiseTextField, raiseButton, callButton, foldButton, nil]];
+
+        [self loadInitalRoomConditions];
     }
     else if([[self title] isEqualToString: @"serverError"]) {
         
-        serverErrModel = [[ServerErrorModel alloc] init];
-
-        messageNotifyingUser.text = @"Server not running :( \n There seems to be a error in the space time continuum; we're doing everything we can to rectify it";
+        [self loadInitalServerErrorConditions];
     }
         
     [NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(saveVaraiables) userInfo:nil repeats:YES];
 }
 
+/**********************************************************
+ * didReceiveMemoryWarning should be used to release
+ * unnecessary data.
+ **********************************************************/
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
+/**********************************************************
+ * Following start screen buttons respond to user interaction
+ **********************************************************/
 #pragma mark - Start screen buttons
 
-- (IBAction)addUser:(id)sender {
+-(IBAction)addUser:(id)sender
+{
+    
+    [[Globals sharedInstance] checkIfHereNow];
     [self genericLogin:@"create-user"];
 }
 
-- (IBAction)loginUser:(id)sender {
+-(IBAction)loginUser:(id)sender
+{
     
-    
+    [[Globals sharedInstance] checkIfHereNow];
     [self genericLogin:@"login"];
 }
-
+/**********************************************************
+ * Following home screen buttons respond to user interaction
+ **********************************************************/
 #pragma mark - Home screen buttons
 
-- (IBAction)createGameButton:(id)sender {
+-(IBAction)createGameButton:(id)sender
+{
     
     if([gameName.text isEqualToString:@""]) {
         
@@ -244,7 +184,8 @@
     }
 }
 
-- (IBAction)joinPrivateGameButton:(id)sender {
+-(IBAction)joinPrivateGameButton:(id)sender
+{
     
     if([gameName.text isEqualToString:@""]) {
         
@@ -258,11 +199,16 @@
         [[Globals sharedInstance] checkIfHereNow];
     }
 }
-
+/**********************************************************
+ * Following load screen buttons respond to user interaction
+ **********************************************************/
 #pragma mark - Load screen buttons
 
-- (IBAction)startButton:(id)sender {
+-(IBAction)startButton:(id)sender
+{
     
+    // When start button is hit, a message is sient to the server saying that
+    // the creator is ready to start the game
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
 
     NSString * user =  [[Globals sharedInstance] userName];
@@ -279,9 +225,19 @@
     [[Globals sharedInstance] checkIfHereNow];
 }
 
+/**********************************************************
+ * Following room screen buttons respond to user interaction
+ **********************************************************/
+
 #pragma mark- Room screen buttons
 
-- (IBAction)raiseButton:(id)sender {
+/**********************************************************
+ * raiseButton checks whether the raise amount is permissible
+ * it checks if the amount input is less than minimum, not a 
+ * a string, or greater than bank.
+ **********************************************************/
+-(IBAction)raiseButton:(id)sender
+{
     
     if([raiseTextField.text isEqualToString: @""]) {
         
@@ -326,7 +282,8 @@
     [[Globals sharedInstance] checkIfHereNow];
 }
 
-- (IBAction)callButton:(id)sender {
+-(IBAction)callButton:(id)sender
+{
     
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     
@@ -340,7 +297,8 @@
     [[Globals sharedInstance] checkIfHereNow];
 }
 
-- (IBAction)foldButton:(id)sender {
+-(IBAction)foldButton:(id)sender
+{
     
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     
@@ -354,9 +312,150 @@
     [[Globals sharedInstance] checkIfHereNow];
 }
 
+/**********************************************************
+ * Following functions load the inital conditons for each
+ * view controller
+ **********************************************************/
+#pragma mark - Initial load conditions for each sepecific view controller
+
+-(void)loadInitalLoginConditions
+{
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToServerError) name:@"serverNotRunning" object:nil];
+    
+    logModel = [[LoginModel alloc] init];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToHomeFromLogin) name:@"goToHomeFromLogin" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideLoginProgress) name:@"hideLoginProgress" object:nil];
+    
+    
+    appLabel.text = @"PubNub Poker";
+    [loginField configureTextField: @"Type user name here" color:[UIColor blackColor] hideSelf:YES];
+    [addUser setTitle:@"Add" forState:UIControlStateNormal];
+    [loginUser setTitle:@"Login" forState:UIControlStateNormal];
+    if([[[Globals sharedInstance] udid] isEqualToString: @""]) {
+        
+        [logModel setupUUIDIfNotPresent];
+    }
+    
+    loginProgress.hidden = YES;
+  
+}
+
+-(void)loadInitalHomeConditions
+{
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToServerError) name:@"serverNotRunning" object:nil];
+    
+    homeModel = [[HomeModel alloc] init];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enableHomeScreenButtons) name:@"enableHomeScreenButtons" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToLoadFromHome) name:@"goToLoadFromHome" object:nil];
+    
+    [createGameButton setTitle: @"Create a game" forState: UIControlStateNormal];
+    [joinPrivateGameButton setTitle: @"Join private" forState:
+     UIControlStateNormal];
+    [gameName configureTextField: @"Type game name here" color:[UIColor whiteColor]returnHidesKB:YES movesLeft:NO hideOthers:[NSArray arrayWithObjects:createGameButton, joinPrivateGameButton, nil]];
+
+}
+
+-(void)loadInitalLoadConditions
+{
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToServerError) name:@"serverNotRunning" object:nil];
+    
+    loadModel = [[LoadModel alloc] init];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateLabelNames) name:@"updateLabelNames" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToRoomFromLoad) name:@"goToRoomFromLoad" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToHomeFromLoad) name:@"goToHomeFromLoad" object:nil];
+    
+    firstNameLabel.hidden = YES;
+    secondNameLabel.hidden = YES;
+    thirdnameLabel.hidden = YES;
+    fourthNameLabel.hidden = YES;;
+    fifthNameLabel.hidden = YES;
+    sixthNameLabel.hidden = YES;
+    seventhNameLabel.hidden = YES;
+    eightNameLabel.hidden = YES;
+    startGameButton.hidden = YES;
+    [startGameButton setTitle:@"Start!" forState:UIControlStateNormal];
+
+}
+
+-(void)loadInitalRoomConditions
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToServerError) name:@"serverNotRunning" object:nil];
+    
+    roomModel = [[RoomModel alloc] init];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setLabels) name:@"updateGameLabels" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateFlopCards) name:@"updateFlopCards" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTurnCard) name:@"updateTurnCard" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateRiverCard) name:@"updateRiverCard" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeBlind) name:@"removeBlind" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateMinRaise) name:@"updateMinRaise" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enableInteractionForTurn) name:@"enableInteractionForTurn" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToLoadFromRoom) name:@"goToLoadFromRoom" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToHomeFromRoom) name:@"goToHomeFromRoom" object:nil];
+    
+    deckCardOne.hidden = YES;
+    deckCard2.hidden = YES;
+    deckCard3.hidden = YES;
+    deckCard4.hidden = YES;
+    deckCard5.hidden = YES;
+    potLabel.hidden = YES;
+    bankLabel.hidden = YES;
+    recentBetLabel.hidden = YES;
+    raiseTextField.hidden = YES;
+    raiseButton.hidden = YES;
+    callButton.hidden = YES;
+    foldButton.hidden = YES;
+    blindImage.hidden = YES;
+    [raiseButton setTitle:@"Raise" forState:UIControlStateNormal];
+    [callButton setTitle:@"Call" forState:UIControlStateNormal];
+    [foldButton setTitle:@"Fold" forState:UIControlStateNormal];
+    // Own card setup done here
+    [self setCards: roomModel.card1 cardView:ownCardOneView];
+    [self setCards: roomModel.card2 cardView:ownCardTwoView];
+    // Blind setup done here
+    if([roomModel.blind isEqualToString: @"smallblind"] || [roomModel.blind isEqualToString: @"bigblind"]){
+        [self setBlind: roomModel.blind];
+        roomModel.isBlind = YES;
+    }
+    initialBankLabel.text = roomModel.initialFunds;
+    // Raise text field setup here; the array of views contains views hidden when the field is being used
+    [raiseTextField configureTextField: @"Current Bet: $0" color:[UIColor blackColor] returnHidesKB: YES movesLeft:NO hideOthers:[NSArray arrayWithObjects:potLabel, ownCardOneView, ownCardTwoView, ownCardTwoView, deckCardOne, deckCard2, deckCard3, deckCard4, deckCard5, potImageView, recentBetLabel, potImageView, initialBankLabel, bankLabel, raiseButton, callButton, foldButton,  nil]];
+    // No Buttons hould be allowed to interact initially
+    [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: raiseTextField, raiseButton, callButton, foldButton, nil]];
+
+}
+
+-(void)loadInitalServerErrorConditions
+{
+    
+    serverErrModel = [[ServerErrorModel alloc] init];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToLoginFromServerError) name:@"serverRestarted" object:nil];
+    
+    messageNotifyingUser.text = @"Server not running :( \n There seems to be a error in the space time continuum; we're doing everything we can to rectify it";
+
+}
+
+/**********************************************************
+ * Following functions are triggered by notifications. They 
+ * mainly update view controller values to ones specified by 
+ * respective models
+ **********************************************************/
 #pragma mark - Notification-triggered functions
 
--(void)enableHomeScreenButtons {
+-(void)hideLoginProgress
+{
+    loginProgress.hidden = YES;
+}
+
+-(void)enableHomeScreenButtons
+{
     
     [self enableInteraction:YES arrayOfViews:[[NSArray alloc]initWithObjects:
                                               createGameButton,
@@ -366,7 +465,8 @@
                                               nil]];
 }
 
--(void)enableInteractionForTurn {
+-(void)enableInteractionForTurn
+{
     
     [self enableInteraction:YES arrayOfViews:[[NSArray alloc]initWithObjects:
                                               raiseTextField,
@@ -377,7 +477,8 @@
     
 }
 
--(void) updateLabelNames {
+-(void)updateLabelNames
+{
     
     switch(loadModel.numberOfNames) {
             
@@ -411,7 +512,8 @@
     }
 }
 
--(void)updateFlopCards {
+-(void)updateFlopCards
+{
     
     [self setCards:roomModel.communityCard1 cardView:deckCardOne];
     deckCardOne.hidden = NO;
@@ -421,24 +523,28 @@
     deckCard3.hidden = NO;
 }
 
--(void)updateTurnCard {
+-(void)updateTurnCard
+{
     
     [self setCards:roomModel.communityCard4 cardView:deckCard4];
     deckCard4.hidden = NO;
 }
 
--(void)updateRiverCard {
+-(void)updateRiverCard
+{
     
     [self setCards:roomModel.communityCard5 cardView:deckCard5];
     deckCard5.hidden = NO;
 }
 
--(void)updateMinRaise {
+-(void)updateMinRaise
+{
     
-    raiseTextField.placeholder = [@"Min-raise:" stringByAppendingString: roomModel.minRaise];
+    raiseTextField.placeholder = [@"Min:" stringByAppendingString: roomModel.minRaise];
 }
 
-- (void)setLabels {
+- (void)setLabels
+{
     
     potLabel.text = roomModel.pot;
     potLabel.hidden = NO;
@@ -454,7 +560,8 @@
     raiseTextField.hidden = NO;
 }
 
-- (void)removeBlind {
+- (void)removeBlind
+{
     
     blindImage.hidden = YES;
     
@@ -465,14 +572,16 @@
     foldButton.hidden = NO;
 }
 
--(void) setCards :(NSString *) card cardView:(UIImageView *) cardView{
+-(void)setCards:(NSString *)card cardView:(UIImageView *)cardView
+{
     
     card = [card stringByAppendingString: @".png"];
     
     [cardView setImage:[UIImage imageNamed:card]];
 }
 
--(void) setBlind: (NSString *) img {
+-(void)setBlind:(NSString *)img
+{
     
     blindImage.hidden = NO;
     img = [img stringByAppendingString: @".png"];
@@ -482,14 +591,20 @@
     [blindImage setImage:image1];
 }
 
--(void) saveVaraiables {
+-(void)saveVaraiables
+{
     
     [[Globals sharedInstance] saveVariables];
 }
 
 #pragma mark - Auxilliary Functions
 
--(void) enableInteraction:(BOOL) shouldInteract arrayOfViews:(NSArray *)arrayOfViews {
+/**********************************************************
+ * Following functions enables interaction for a set
+ * of views defined by an array
+ **********************************************************/
+-(void)enableInteraction:(BOOL)shouldInteract arrayOfViews:(NSArray *)arrayOfViews
+{
     
     for(UIView * view in arrayOfViews){
         
@@ -497,7 +612,12 @@
     }
 }
 
--(void) genericLogin:(NSString *) type {
+/**********************************************************
+ * genericLogin handles a login button being clicked, 
+ * sending a message and handling error cases (no input etc.)
+ **********************************************************/
+-(void)genericLogin:(NSString *)type
+{
     
     [loginField resignFirstResponder];
     
@@ -520,7 +640,13 @@
     }
 }
 
--(void) doGameSetup:(NSString *)type game:(NSString * ) game {
+/**********************************************************
+ * doGameSetup handles attempts to create a game, subscribing 
+ * to the game channel and setting the sharedInstance singleton 
+ * variable
+ **********************************************************/
+-(void)doGameSetup:(NSString *)type game:(NSString *)game
+{
         
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
     
@@ -534,20 +660,26 @@
     [[Globals sharedInstance] setGameChannel: chan];
 }
 
--(void) setGameButton {
+-(void)setGameButton
+{
     
     startGameButton.hidden = NO;
     startGameButton.enabled = YES;
 }
 
--(void) setUIDAndUserName:(NSMutableDictionary *) dict {
+/**********************************************************
+ * setUIDAndUserName sets singleton variable fields
+ **********************************************************/
+-(void)setUIDAndUserName:(NSMutableDictionary *)dict
+{
     
     [dict setObject: [[Globals sharedInstance] udid] forKey: @"uuid"];
     [dict setObject: [[Globals sharedInstance] userName] forKey: @"username"];
 }
 
 - (void)alertView:(UIAlertView *)alertView
-clickedButtonAtIndex:(NSInteger) buttonIndex {
+clickedButtonAtIndex:(NSInteger) buttonIndex
+{
     if(alertView.tag == 1) {
         if(buttonIndex == 0){
             [self enableInteraction:YES arrayOfViews:[[NSArray alloc]initWithObjects: createGameButton, gameName, joinPrivateGameButton, raiseTextField, startGameButton, raiseButton, callButton, foldButton, nil]];
@@ -555,39 +687,61 @@ clickedButtonAtIndex:(NSInteger) buttonIndex {
     }
 }
 
+/**********************************************************
+ * Following functions trigger segues to allow for view
+ * controller transitions
+ **********************************************************/
 #pragma mark - View Controller Navigation
 
--(void) goToHomeFromLogin {
+-(void)goToLoginFromServerError
+{
+ 
+    [self performSegueWithIdentifier:@"errorToLogin" sender:self];
+}
+
+-(void)goToServerError
+{
+    
+    [self performSegueWithIdentifier:[[self title] stringByAppendingString:@"ToServerError" ] sender:self];
+}
+
+-(void)goToHomeFromLogin
+{
     
     logModel.shouldInvokeLoginFunctions = NO;
     [self performSegueWithIdentifier:@"loginToHome" sender:self];
 }
 
--(void) goToLoadFromHome {
+-(void)goToLoadFromHome
+{
     
     homeModel.shouldInvokeHomeFunctions = NO;
     [self performSegueWithIdentifier:@"homeToLoad" sender:self];
 }
 
--(void) goToRoomFromLoad {
+-(void)goToRoomFromLoad
+{
     
     loadModel.shouldInvokeLoadFunctions = NO;
     [self performSegueWithIdentifier:@"loadToRoom" sender:self];
 }
 
--(void) goToHomeFromLoad {
+-(void)goToHomeFromLoad
+{
     
     loadModel.shouldInvokeLoadFunctions = NO;
     [self performSegueWithIdentifier:@"loadToHome" sender:self];    
 }
 
--(void) goToHomeFromRoom {
+-(void)goToHomeFromRoom
+{
     
     roomModel.shouldInvokeRoomFunctions = NO;
     [self performSegueWithIdentifier:@"roomToHome" sender:self];
 }
 
--(void) goToLoadFromRoom {
+-(void)goToLoadFromRoom
+{
 
     roomModel.shouldInvokeRoomFunctions = NO;
     [self performSegueWithIdentifier:@"roomToLoad" sender:self];

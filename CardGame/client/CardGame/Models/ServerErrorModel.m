@@ -12,11 +12,16 @@
 
 @synthesize autoTimer;
 
--(id)init{
+/**********************************************************
+ * The init function initialises the model and adds a
+ * initialises an autotimer. This timer checks every 3 seconds, 
+ * if the server is reconnected.
+ **********************************************************/
+-(id)init
+{
     self = [super init];
     
-    if (self != nil)
-    {
+    if (self != nil) {
         autoTimer = [NSTimer scheduledTimerWithTimeInterval:(3.0)
                                                      target:self
                                                    selector:@selector(checkIfServerRunning)
@@ -29,20 +34,29 @@
     return self;
 }
 
--(void)checkIfServerRunning {
+/**********************************************************
+ * checkIfServerRunning checks if the server is runninf by 
+ * calling th function defined in Globals.
+ **********************************************************/
+-(void)checkIfServerRunning
+{
     
     if([[Globals sharedInstance] serverIsRunning] == NO){
         [[Globals sharedInstance] checkIfHereNow];
     }
 }
 
--(void) setupWhenServerHasStarted{
+/**********************************************************
+ * setupWhenServerHasStarted invalidates the autoTimer when
+ * the server restarts. It also removes the observers.
+ **********************************************************/
+-(void) setupWhenServerHasStarted
+{
     
     [autoTimer invalidate];
     autoTimer = nil;
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"serverRestarted" object:self];
-    
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"serverIsRunning" object:nil];
 
 }

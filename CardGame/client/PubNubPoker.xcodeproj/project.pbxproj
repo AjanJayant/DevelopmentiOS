@@ -15,7 +15,6 @@
 		5E0113A217AB1359007ACA23 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E01129E17AB1359007ACA23 /* Default.png */; };
 		5E0113A317AB1359007ACA23 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E01129F17AB1359007ACA23 /* Default@2x.png */; };
 		5E0113A417AB1359007ACA23 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5E0112A017AB1359007ACA23 /* InfoPlist.strings */; };
-		5E0113A517AB1359007ACA23 /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E0112A217AB1359007ACA23 /* MainStoryboard_iPad.storyboard */; };
 		5E0113A617AB1359007ACA23 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E0112A417AB1359007ACA23 /* MainStoryboard_iPhone.storyboard */; };
 		5E0113A817AB1359007ACA23 /* awesome_poker.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E0112A917AB1359007ACA23 /* awesome_poker.png */; };
 		5E0113A917AB1359007ACA23 /* awesome_poker.xcf in Resources */ = {isa = PBXBuildFile; fileRef = 5E0112AA17AB1359007ACA23 /* awesome_poker.xcf */; };
@@ -181,7 +180,6 @@
 		5E01129E17AB1359007ACA23 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		5E01129F17AB1359007ACA23 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		5E0112A117AB1359007ACA23 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		5E0112A317AB1359007ACA23 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		5E0112A517AB1359007ACA23 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		5E0112A917AB1359007ACA23 /* awesome_poker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = awesome_poker.png; sourceTree = "<group>"; };
 		5E0112AA17AB1359007ACA23 /* awesome_poker.xcf */ = {isa = PBXFileReference; lastKnownFileType = file; path = awesome_poker.xcf; sourceTree = "<group>"; };
@@ -953,7 +951,6 @@
 		5EB9A25E17BD88D100163BA1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				5E0112A217AB1359007ACA23 /* MainStoryboard_iPad.storyboard */,
 				5E0112A417AB1359007ACA23 /* MainStoryboard_iPhone.storyboard */,
 			);
 			name = Views;
@@ -1016,7 +1013,6 @@
 				5E0113A217AB1359007ACA23 /* Default.png in Resources */,
 				5E0113A317AB1359007ACA23 /* Default@2x.png in Resources */,
 				5E0113A417AB1359007ACA23 /* InfoPlist.strings in Resources */,
-				5E0113A517AB1359007ACA23 /* MainStoryboard_iPad.storyboard in Resources */,
 				5E0113A617AB1359007ACA23 /* MainStoryboard_iPhone.storyboard in Resources */,
 				5E0113A817AB1359007ACA23 /* awesome_poker.png in Resources */,
 				5E0113A917AB1359007ACA23 /* awesome_poker.xcf in Resources */,
@@ -1188,14 +1184,6 @@
 				5E0112A117AB1359007ACA23 /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		5E0112A217AB1359007ACA23 /* MainStoryboard_iPad.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5E0112A317AB1359007ACA23 /* en */,
-			);
-			name = MainStoryboard_iPad.storyboard;
 			sourceTree = "<group>";
 		};
 		5E0112A417AB1359007ACA23 /* MainStoryboard_iPhone.storyboard */ = {

@@ -12,12 +12,18 @@
 
 @synthesize shouldInvokeHomeFunctions;
 
--(id)init {
+/**********************************************************
+ * The init function initialises the model and adds a 
+ * PubNub messageObserver to it. This model will handle
+ * messages of the type create and joinable.
+ * Server exceptions are also handled. 
+ **********************************************************/
+-(id)init
+{
     
     self = [super init];
     
-    if (self != nil)
-    {
+    if (self != nil) {
         shouldInvokeHomeFunctions = YES;
         
         [[PNObservationCenter defaultCenter] addMessageReceiveObserver:self
@@ -30,6 +36,9 @@
                                                                          [self handleCreate: message.message];
                                                                      else if([type isEqualToString: @"joinable"])
                                                                          [self handleJoinable: message.message];
+                                                                     else if([type isEqualToString:@"exception"])
+                                                                         [self handleException:message.message];
+
                                                                  }
                                                              }];
     }
@@ -37,7 +46,13 @@
     return self;
 }
 
--(void) handleCreate: (NSDictionary *) dict {
+/**********************************************************
+ * handleCreate checks if the the user was succesfully able
+ * to create a game, and loads the loading page if he was
+ * Otherwise, an error alert is shown.  
+ **********************************************************/
+-(void) handleCreate:(NSDictionary *)dict
+{
              
         NSString * suc = [dict objectForKey: @"success"];
         NSString * mess = [dict objectForKey: @"message"];
@@ -59,8 +74,14 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:@"enableHomeScreenButtons" object:self];
         }
 }
-         
--(void) handleJoinable: (NSDictionary *) dict {
+
+/**********************************************************
+ * handleJoinable checks if the user tried to join a 
+ * joinable game. If he was, it loads the loading page
+ * Otherwise, an error alert is shown.
+ **********************************************************/
+-(void) handleJoinable:(NSDictionary *)dict
+{
              
         NSString * suc = [dict objectForKey: @"success"];
         NSString * mess = [dict objectForKey: @"message"];
@@ -84,19 +105,24 @@
         }
 }
 
+/**********************************************************
+ * handleException handles server exceptions.
+ **********************************************************/
+-(void) handleException: (NSDictionary *) dict
+{
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Server Exception Occoured" message: @"Please wait while we try to recover" delegate:self cancelButtonTitle:@"Return" otherButtonTitles: nil];
+    [alert show];
+}
+
+/**********************************************************
+ * The following function handles input to alertViews.
+ **********************************************************/
 - (void)alertView:(UIAlertView *)alertView
 clickedButtonAtIndex:(NSInteger) buttonIndex
 {
     if(alertView.tag == 1) {
         if(buttonIndex == 0){
-            /*
-             [homeViewController enableInteraction:YES arrayOfViews:[[NSArray alloc]initWithObjects:
-             homeViewController.gameName,
-             homeViewController.joinPrivateGameButton,
-             homeViewController.createGameButton,
-             nil]];
-             
-             */
+            
             return;
         }
     }

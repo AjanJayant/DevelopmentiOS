@@ -18,12 +18,20 @@
 
 NSString * reqUUID;
 
--(id)init {
+/**********************************************************
+ * The init function initialises the model and adds a
+ * PubNub messageObserver to it. This model will handle
+ * messages of the type player-join, authrequest, 
+ * authresponse, start and disband.
+ * Server exceptions are also handled.
+ **********************************************************/
+-(id)init
+{
     
     self = [super init];
     
-    if (self != nil)
-    {
+    if (self != nil) {
+        
         shouldInvokeLoadFunctions = YES;
         
         [[PNObservationCenter defaultCenter] addMessageReceiveObserver:self
@@ -42,6 +50,8 @@ NSString * reqUUID;
                                                                          [self handleStart: message.message];
                                                                      else if([type isEqualToString: @"disband"])
                                                                          [self handleDisband: message.message];
+                                                                     else if([type isEqualToString:@"exception"])
+                                                                         [self handleException:message.message];
 
                                                                  }
                                                              }];
@@ -52,7 +62,13 @@ NSString * reqUUID;
     return self;
 }
 
--(void) handlePlayerJoin: (NSDictionary *) dict {
+/**********************************************************
+ * handlePlayerJoin takes a string of names, separates them 
+ * based on commmas, and then posts a notification telling 
+ * the view controller to update the label names. 
+ **********************************************************/
+-(void) handlePlayerJoin:(NSDictionary *)dict
+{
     
     NSString * name = [dict objectForKey: @"usernames"];
     NSArray * list = [name componentsSeparatedByString:@","];
@@ -66,7 +82,13 @@ NSString * reqUUID;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"updateLabelNames" object:self];
 }
 
--(void) handleAuthRequest: (NSDictionary *) dict {
+/**********************************************************
+ * handleAuthRequest gives the game creator the option of 
+ * whether or not a player should be alllowed to join the
+ * game.
+ **********************************************************/
+-(void) handleAuthRequest:(NSDictionary *)dict
+{
     
     NSString * reqName = [dict objectForKey: @"requester-name"];
     reqUUID = [dict objectForKey: @"requester-uuid"];
@@ -76,7 +98,13 @@ NSString * reqUUID;
     [alert show];
 }
 
--(void) handleAuthResponse: (NSDictionary *) dict {
+/**********************************************************
+ * handleAuthResponse handles whether a person was able to 
+ * join the game or not. Based on the response, an alert
+ * is shown.
+ **********************************************************/
+-(void) handleAuthResponse:(NSDictionary *)dict
+{
     
     NSString * auth = [dict objectForKey: @"auth"];
     NSString * creat = [dict objectForKey: @"creator"];
@@ -96,7 +124,13 @@ NSString * reqUUID;
     [alert show];
 }
 
--(void) handleDisband: (NSDictionary *) dict {
+/**********************************************************
+ * handleDisband handles when only one player is left in the 
+ * game. The game is discontinued, and the player exits the 
+ * loading screen.
+ **********************************************************/
+-(void) handleDisband: (NSDictionary *) dict
+{
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"goToHomeFromLoad" object:self];
 
@@ -105,7 +139,12 @@ NSString * reqUUID;
     [alert show];
 }
 
--(void) handleStart: (NSDictionary *) dict {
+/**********************************************************
+ * handleStart handles when the game is started. The inital 
+ * game conditions are set, and the screen transitions.
+ **********************************************************/
+-(void) handleStart: (NSDictionary *) dict
+{
     
     NSString * suc = [dict objectForKey: @"success"];
     NSString * card1 = [dict objectForKey: @"card1"];
@@ -130,13 +169,24 @@ NSString * reqUUID;
     }
 }
 
--(void) handleDisband {
-    
-    UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"There are no players left" message: @"You will be returned to the home sceren" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
-    alert.tag = 6;
+/**********************************************************
+ * handleException handles server exceptions.
+ **********************************************************/
+-(void) handleException: (NSDictionary *) dict
+{
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Server Exception Occoured" message: @"Please wait while we try to recover" delegate:self cancelButtonTitle:@"Return" otherButtonTitles: nil];
     [alert show];
-
 }
+
+/**********************************************************
+ * The following function handles input to alertViews.
+ * If the user allows a player to join the game, a message 
+ * is sent to the requester.
+ * If he denies the request, the user gets sent back to the 
+ * home screen.
+ * If a user has been allowed to join the game, a message 
+ * saying such is added to the server.
+ **********************************************************/
 - (void)alertView:(UIAlertView *)alertView
 clickedButtonAtIndex:(NSInteger) buttonIndex
 {
