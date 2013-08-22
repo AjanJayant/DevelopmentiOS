@@ -131,12 +131,8 @@ NSString * reqUUID;
  **********************************************************/
 - (void)handleDisband:(NSDictionary *)dict
 {
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"goToHomeFromLoad" object:self];
-
-    UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"There are no players left" message: @"You will be returned to the home sceren" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
-    alert.tag = 6;
-    [alert show];
+ 
+    [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(goToHomeScreenAfterWaitingForLoadtoLoad) userInfo:nil repeats:NO];
 }
 
 /**********************************************************
@@ -167,6 +163,8 @@ NSString * reqUUID;
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Game did not initialise :(" message: mess delegate:self cancelButtonTitle:@"Try Again!" otherButtonTitles: nil];
         [alert show];
     }
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 /**********************************************************
@@ -176,6 +174,21 @@ NSString * reqUUID;
 {
     UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Server Exception Occoured" message: @"Please wait while we try to recover" delegate:self cancelButtonTitle:@"Return" otherButtonTitles: nil];
     [alert show];
+}
+
+/**********************************************************
+ * We execute this function after waiting for the screen to 
+ * load; otherwise we get this error: Wait for viewDidAppear/
+ * viewDidDisappear to know the current transition has completed
+ **********************************************************/
+- (void)goToHomeScreenAfterWaitingForLoadtoLoad
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"goToHomeFromLoad" object:self];
+    
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"There are no players left" message: @"You will be returned to the home sceren" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
+    alert.tag = 6;
+    [alert show];
+
 }
 
 /**********************************************************

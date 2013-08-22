@@ -160,6 +160,7 @@
     
     [self genericLogin:@"login"];
 }
+
 /**********************************************************
  * Following home screen buttons respond to user interaction
  **********************************************************/
@@ -202,9 +203,11 @@
         [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: createGameButton, gameName, joinPrivateGameButton, nil]];
     }
 }
+
 /**********************************************************
  * Following load screen buttons respond to user interaction
  **********************************************************/
+
 #pragma mark - Load screen buttons
 
 - (IBAction)startButton:(id)sender
@@ -711,7 +714,10 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"serverNotRunning" object:nil];
     logModel.shouldInvokeLoginFunctions = NO;
-    
+    homeModel.shouldInvokeHomeFunctions = NO;
+    loadModel.shouldInvokeLoadFunctions = NO;
+    roomModel.shouldInvokeRoomFunctions = NO;
+
     [self performSegueWithIdentifier:[[self title] stringByAppendingString:@"ToServerError" ] sender:self];
 }
 
@@ -738,7 +744,6 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
 
 - (void)goToHomeFromLoad
 {
-    
     loadModel.shouldInvokeLoadFunctions = NO;
     [self performSegueWithIdentifier:@"loadToHome" sender:self];    
 }
