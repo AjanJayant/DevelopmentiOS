@@ -575,64 +575,6 @@
         <image name="load.png" width="320" height="480"/>
         <image name="mochaGrunge.png" width="320" height="480"/>
     </resources>
-    <classes>
-        <class className="CustomTextField" superclassName="UITextField">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/CustomTextField.h"/>
-        </class>
-        <class className="NSLayoutConstraint" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
-        </class>
-        <class className="ViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="addUser:"/>
-                <relationship kind="action" name="callButton:"/>
-                <relationship kind="action" name="createGameButton:"/>
-                <relationship kind="action" name="foldButton:"/>
-                <relationship kind="action" name="joinPrivateGameButton:"/>
-                <relationship kind="action" name="loginUser:"/>
-                <relationship kind="action" name="raiseButton:"/>
-                <relationship kind="action" name="startButton:"/>
-                <relationship kind="outlet" name="addUser" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="appLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="bankLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="bgImageView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="blindImage" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="callButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="createGameButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="deckCard2" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="deckCard3" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="deckCard4" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="deckCard5" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="deckCardOne" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="eightNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="fifthNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="firstNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="foldButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="fourthNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="gameName" candidateClass="CustomTextField"/>
-                <relationship kind="outlet" name="initialBankLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="joinPrivateGameButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="loginField" candidateClass="CustomTextField"/>
-                <relationship kind="outlet" name="loginProgress" candidateClass="UIActivityIndicatorView"/>
-                <relationship kind="outlet" name="loginUser" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="mainView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="messageNotifyingUser" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="ownCardOneView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="ownCardTwoView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="potImageView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="potLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="raiseButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="raiseTextField" candidateClass="CustomTextField"/>
-                <relationship kind="outlet" name="recentBetLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="secondNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="seventhNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="sixthNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="startGameButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="thirdnameLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

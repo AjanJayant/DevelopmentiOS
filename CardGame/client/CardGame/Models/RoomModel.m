@@ -46,6 +46,8 @@
 
 BOOL shouldGoToHome;
 
+BOOL shouldInvokeEndFunctionality;
+
 UIAlertView * endAlert;
 
 /**********************************************************
@@ -55,11 +57,12 @@ UIAlertView * endAlert;
  * Server exceptions are also handled.
  * Inital conditons are also set.
  **********************************************************/
--(id)init
+- (id)init
 {
     self = [super init];
     
     if (self != nil) {
+        shouldInvokeEndFunctionality = YES;
         shouldInvokeRoomFunctions = YES;
         [[PNObservationCenter defaultCenter] addMessageReceiveObserver:self
                                                              withBlock:^(PNMessage *message) {
@@ -73,6 +76,8 @@ UIAlertView * endAlert;
                                                                          [self handleTakeTurn: message.message];
                                                                      else if([type isEqualToString: @"end"])
                                                                          [self handleEnd: message.message];
+                                                                     else if([type isEqualToString: @"disband"])
+                                                                         [self handleDisband];
                                                                  }
                                                              }];
         
@@ -90,7 +95,7 @@ UIAlertView * endAlert;
  * handleUpdate updates the pot, currrent bet, last act, your 
  * own funds maximum raise possible and community cards.
  **********************************************************/
--(void) handleUpdate: (NSDictionary *) dict
+- (void)handleUpdate:(NSDictionary *)dict
 {
     
     pot =     [dict objectForKey: @"pot"];
@@ -129,7 +134,7 @@ UIAlertView * endAlert;
  * handleTakeTurn allows the user to take a turn,
  * enabling user buttons through notifications
  **********************************************************/
--(void) handleTakeTurn: (NSDictionary *) dict
+- (void)handleTakeTurn:(NSDictionary *)dict
 {
     
     UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Your turn playa" message: @"It's now or never" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
@@ -151,30 +156,92 @@ UIAlertView * endAlert;
  * doesn't respond in 15 seconds, it automatically forces the 
  * user to quit the game.
  **********************************************************/
--(void) handleEnd: (NSDictionary *) dict
+- (void)handleEnd:(NSDictionary *)dict
 {
+    if(shouldInvokeEndFunctionality == YES) {
+        // Insuffeciency of funds is checked in the following lines
+        NSString *currentBank = [myFunds substringWithRange:NSMakeRange(1, [myFunds length] - 1)];
+        //If the user has won, then there is no need to check the balance
+        if ([currentBank rangeOfString:[[Globals sharedInstance] userName]].location == NSNotFound)
+        {
+            if([currentBank intValue]  < 4 ) {
+                
+                [[Globals sharedInstance]setCanPlayGame:NO];
+                [self returnToHomeScreenIfOutOfFunds];
+                return;
+            }
+        }
     
-    NSString * msg = [dict objectForKey: @"message"];
+        NSString * msg = [dict objectForKey: @"message"];
     
-    shouldGoToHome = YES;
-    endAlert = [[UIAlertView alloc] initWithTitle: msg message: @"Please choose whether to continue or exit within 15 sec" delegate:self cancelButtonTitle:@"Exit" otherButtonTitles:@"Continue", nil];
-    endAlert.tag = 6;
-    [endAlert show];
+        shouldGoToHome = YES;
+        endAlert = [[UIAlertView alloc] initWithTitle: msg message: @"Please choose whether to continue or exit within 15 sec" delegate:self cancelButtonTitle:@"Exit" otherButtonTitles:@"Continue", nil];
+        endAlert.tag = 6;
+        [endAlert show];
     
-    [NSTimer scheduledTimerWithTimeInterval:15.0
-                                     target:self
-                                   selector:@selector(goToHome)
-                                   userInfo:nil
-                                    repeats:NO];
+        [NSTimer scheduledTimerWithTimeInterval:15.0
+                                         target:self
+                                       selector:@selector(goToHome)
+                                       userInfo:nil
+                                        repeats:NO];
+    }
+}
+
+/**********************************************************
+ * handleDisband handles the case when all other players 
+ * exit due to an error.
+ **********************************************************/
+- (void)handleDisband
+{
+        
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"There are no players left" message: @"You will be returned to the home sceren" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
+    alert.tag = 8;
+    [alert show];
 }
 
 /**********************************************************
  * handleException handles server exceptions.
  **********************************************************/
--(void) handleException: (NSDictionary *) dict
+- (void)handleException:(NSDictionary *)dict
 {
+    
     UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Server Exception Occoured" message: @"Please wait while we try to recover" delegate:self cancelButtonTitle:@"Return" otherButtonTitles: nil];
     [alert show];
+}
+
+/**********************************************************
+ * returnToHomeScreenIfOutOfFunds handles the case when
+ * the user has no funds. It directly takes the user to the 
+ * home screen without giving the user an option
+ **********************************************************/
+- (void)returnToHomeScreenIfOutOfFunds
+{
+    endAlert = [[UIAlertView alloc] initWithTitle: @"Sorry, you're out of funds!"  message: @"You will be taken to the home screen" delegate:self cancelButtonTitle:@"Exit" otherButtonTitles:nil];
+    endAlert.tag = 7;
+    [endAlert show];
+}
+
+/**********************************************************
+ * The following function causes the user to exit the game,
+ * sending a message to the server, and saying thus.
+ **********************************************************/
+- (void)goToHome
+{
+    if(shouldGoToHome) {
+        
+        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+        
+        [dict setObject:[[Globals sharedInstance] udid] forKey: @"uuid"];
+        [dict setObject:[[Globals sharedInstance] userName] forKey: @"username"];
+        [dict setObject:@"play-again" forKey:@"type"];
+        [dict setObject:@"false" forKey:@"yes"];
+        [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
+        
+        // To automatically exit alert view
+        [endAlert dismissWithClickedButtonIndex:0 animated:YES];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"goToHomeFromRoom" object:self];
+    }
 }
 
 /**********************************************************
@@ -188,6 +255,7 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
 {
 
     if(alertView.tag == 6) {
+        
         if(buttonIndex == 0){
             
             shouldGoToHome = NO;
@@ -219,28 +287,30 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
             [[NSNotificationCenter defaultCenter] postNotificationName:@"goToLoadFromRoom" object:self];
         }
     }
-}
+    else if(alertView.tag == 7) {
+        
+        if(buttonIndex == 0) {
+            
+            NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
 
-/**********************************************************
- * The following function causes the user to exit the game, 
- * sending a message to the server, and saying thus.
- **********************************************************/
--(void) goToHome
-{
-    if(shouldGoToHome) {
+            shouldGoToHome = NO;
+            
+            [dict setObject:[[Globals sharedInstance] udid] forKey: @"uuid"];
+            [dict setObject:[[Globals sharedInstance] userName] forKey: @"username"];
+            [dict setObject:@"play-again" forKey:@"type"];
+            [dict setObject:@"false" forKey:@"yes"];
+            [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"goToHomeFromRoom" object:self];
+        }
+    }
+    else if(alertView.tag == 8) {
         
-        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-        
-        [dict setObject:[[Globals sharedInstance] udid] forKey: @"uuid"];
-        [dict setObject:[[Globals sharedInstance] userName] forKey: @"username"];
-        [dict setObject:@"play-again" forKey:@"type"];
-        [dict setObject:@"false" forKey:@"yes"];
-        [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
-        
-        // To automatically exit alert view
-        [endAlert dismissWithClickedButtonIndex:0 animated:YES];
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"goToHomeFromRoom" object:self];
+        if(buttonIndex == 0) {
+
+            shouldInvokeEndFunctionality = NO;
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"goToHomeFromRoom" object:self];
+        }
     }
 }
 

@@ -32,7 +32,7 @@
 
 @synthesize isFirstGame;
 
-+(Globals *)sharedInstance
++ (Globals *)sharedInstance
 {
     
     static Globals *myInstance = nil;
@@ -45,7 +45,7 @@
     return myInstance;
 }
 
--(id)init
+- (id)init
 {
     
     if (self = [super init]) {
@@ -55,6 +55,7 @@
         self.userName = @"";
         self.serverChannel = [PNChannel channelWithName:@"PokerServer" shouldObservePresence:YES];
         self.isCreator = NO;
+        self.canPlayGame = YES;
     }
     return self;
 }
@@ -65,65 +66,69 @@
  *  can not be accessed directly.
  */
 
--(void)setuDID:(NSString *)uid
+- (void)setuDID:(NSString *)uid
 {
     
     udid = [NSString stringWithString: uid];
 }
 
--(void)setUserName:(NSString *)str
+- (void)setUserName:(NSString *)str
 {
     
     userName = [NSString stringWithString: str];
 }
 
--(void)setGameChannel:(PNChannel *)chan
+- (void)setGameChannel:(PNChannel *)chan
 {
     
     gameChannel = chan;
 }
 
--(void)setCreator:(BOOL)flag
+- (void)setCreator:(BOOL)flag
 {
     
     isCreator = flag;
 }
 
--(void)setCard1:(NSString *)str
+- (void)setCard1:(NSString *)str
 {
     
     card1 = [NSString stringWithString: str];
 }
 
--(void)setCard2:(NSString *)str
+- (void)setCard2:(NSString *)str
 {
     
     card2 = [NSString stringWithString: str];
 }
 
--(void)setInitialBlind:(NSString *)str
+- (void)setInitialBlind:(NSString *)str
 {
     
     initialBlind = [NSString stringWithString: str];
 }
 
--(void)setInitialFunds:(NSString *)str
+- (void)setInitialFunds:(NSString *)str
 {
     
     initialFunds = [NSString stringWithString: str];
 }
 
--(void)setWetherIsFirstGame:(BOOL)flag
+- (void)setWetherIsFirstGame:(BOOL)flag
 {
     
     isFirstGame = flag;
 }
 
+- (void)setCanPlayGame:(BOOL)flag
+{
+    _canPlayGame = flag;
+}
+
 /*
  * The following function loads variables from a plist named Data.plist
  */
-
--(void) loadVariables
+- (void)loadVariables
 {
     
     NSMutableDictionary *dictionary;
@@ -145,7 +150,7 @@
 /*
  * The following function saves variables to a plist named Data.plist
  */
--(void) saveVariables
+- (void)saveVariables
 {
     
     NSString *error;
@@ -172,7 +177,7 @@
  * The following function checks if the server is running by seeing if its connected
  * to the PokerServer Channel
  */
--(void) checkIfHereNow
+- (void)checkIfHereNow
 {
     
     [PubNub requestParticipantsListForChannel:[[Globals sharedInstance] serverChannel]withCompletionBlock:^(NSArray *udids,

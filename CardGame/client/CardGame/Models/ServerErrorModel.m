@@ -17,7 +17,7 @@
  * initialises an autotimer. This timer checks every 3 seconds, 
  * if the server is reconnected.
  **********************************************************/
--(id)init
+- (id)init
 {
     self = [super init];
     
@@ -38,7 +38,7 @@
  * checkIfServerRunning checks if the server is runninf by 
  * calling th function defined in Globals.
  **********************************************************/
--(void)checkIfServerRunning
+- (void)checkIfServerRunning
 {
     
     if([[Globals sharedInstance] serverIsRunning] == NO){
@@ -50,7 +50,7 @@
  * setupWhenServerHasStarted invalidates the autoTimer when
  * the server restarts. It also removes the observers.
  **********************************************************/
--(void) setupWhenServerHasStarted
+- (void)setupWhenServerHasStarted
 {
     
     [autoTimer invalidate];
@@ -58,7 +58,6 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"serverRestarted" object:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"serverIsRunning" object:nil];
-
 }
 
 @end

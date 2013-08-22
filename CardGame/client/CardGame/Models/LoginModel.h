@@ -13,6 +13,6 @@
 
 @property BOOL shouldInvokeLoginFunctions;
 
--(void) setupUUIDIfNotPresent;
+- (void)setupUUIDIfNotPresent;
 
 @end

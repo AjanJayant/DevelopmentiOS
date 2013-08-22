@@ -94,6 +94,8 @@
 		5E01142517AB1359007ACA23 /* CustomTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E01139617AB1359007ACA23 /* CustomTextField.m */; };
 		5E01142617AB1359007ACA23 /* CustomTextFieldDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E01139817AB1359007ACA23 /* CustomTextFieldDelegate.m */; };
 		5E01142717AB1359007ACA23 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E01139A17AB1359007ACA23 /* main.m */; };
+		5E3A1D1017C542DE009BE6C3 /* poker-chips.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E3A1D0F17C542DE009BE6C3 /* poker-chips.png */; };
+		5E3A1D1217C542E3009BE6C3 /* poker-chips-retina.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E3A1D1117C542E3009BE6C3 /* poker-chips-retina.png */; };
 		5E618C2617B03EFD005B2B0B /* poker_stats.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E618C2517B03EFD005B2B0B /* poker_stats.png */; };
 		5E7970E717BE9F470074763F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7970E417BE9F470074763F /* AppDelegate.m */; };
 		5E7970E817BE9F470074763F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7970E617BE9F470074763F /* ViewController.m */; };
@@ -106,8 +108,6 @@
 		5E7970FE17BE9FC80074763F /* StartupModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E7970F717BE9FC80074763F /* StartupModel.m */; };
 		5E79710017BEA0030074763F /* home.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E7970FF17BEA0030074763F /* home.png */; };
 		5E79710A17BEA4650074763F /* 21_pro_ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E79710917BEA4650074763F /* 21_pro_ipad.png */; };
-		5E79711217BEA7390074763F /* 21_pro.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E79711117BEA7390074763F /* 21_pro.png */; };
-		5E79711417BEA7450074763F /* 21_pro_retina.png in Resources */ = {isa = PBXBuildFile; fileRef = 5E79711317BEA7450074763F /* 21_pro_retina.png */; };
 		5E844A3D1796075800C30136 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E844A3C1796075800C30136 /* UIKit.framework */; };
 		5E844A3F1796075800C30136 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E844A3E1796075800C30136 /* Foundation.framework */; };
 		5E844A411796075800C30136 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E844A401796075800C30136 /* CoreGraphics.framework */; };
@@ -266,6 +266,8 @@
 		5E01139817AB1359007ACA23 /* CustomTextFieldDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomTextFieldDelegate.m; sourceTree = "<group>"; };
 		5E01139917AB1359007ACA23 /* UIFunctionality.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIFunctionality.h; sourceTree = "<group>"; };
 		5E01139A17AB1359007ACA23 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5E3A1D0F17C542DE009BE6C3 /* poker-chips.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "poker-chips.png"; sourceTree = "<group>"; };
+		5E3A1D1117C542E3009BE6C3 /* poker-chips-retina.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "poker-chips-retina.png"; sourceTree = "<group>"; };
 		5E618C2517B03EFD005B2B0B /* poker_stats.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = poker_stats.png; sourceTree = "<group>"; };
 		5E7970E317BE9F470074763F /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		5E7970E417BE9F470074763F /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -289,8 +291,6 @@
 		5E79710517BEA40B0074763F /* 21_pro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 21_pro.png; sourceTree = "<group>"; };
 		5E79710917BEA4650074763F /* 21_pro_ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 21_pro_ipad.png; sourceTree = "<group>"; };
 		5E79710D17BEA4AD0074763F /* 21_pro_retina.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 21_pro_retina.png; sourceTree = "<group>"; };
-		5E79711117BEA7390074763F /* 21_pro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 21_pro.png; sourceTree = "<group>"; };
-		5E79711317BEA7450074763F /* 21_pro_retina.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 21_pro_retina.png; sourceTree = "<group>"; };
 		5E844A391796075800C30136 /* PubNubPoker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PubNubPoker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E844A3C1796075800C30136 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5E844A3E1796075800C30136 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -665,8 +665,8 @@
 		5E844A301796075800C30136 = {
 			isa = PBXGroup;
 			children = (
-				5E79711317BEA7450074763F /* 21_pro_retina.png */,
-				5E79711117BEA7390074763F /* 21_pro.png */,
+				5E3A1D1117C542E3009BE6C3 /* poker-chips-retina.png */,
+				5E3A1D0F17C542DE009BE6C3 /* poker-chips.png */,
 				5EC82CEA1797120600F42622 /* libz.dylib */,
 				5E01110217AAF252007ACA23 /* SystemConfiguration.framework */,
 				5E01110017AAF244007ACA23 /* CFNetwork.framework */,
@@ -1092,8 +1092,8 @@
 				5EB9972317BAE89B00163BA1 /* mochaGrunge.png in Resources */,
 				5E79710017BEA0030074763F /* home.png in Resources */,
 				5E79710A17BEA4650074763F /* 21_pro_ipad.png in Resources */,
-				5E79711217BEA7390074763F /* 21_pro.png in Resources */,
-				5E79711417BEA7450074763F /* 21_pro_retina.png in Resources */,
+				5E3A1D1017C542DE009BE6C3 /* poker-chips.png in Resources */,
+				5E3A1D1217C542E3009BE6C3 /* poker-chips-retina.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1258,6 +1258,7 @@
 		5E844A601796075800C30136 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: Stephen Blum (4G3RZ3V94T)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CardGame/PubNubPoker-Prefix.pch";
 				INFOPLIST_FILE = "CardGame/PubNubPoker-Info.plist";
@@ -1266,6 +1267,7 @@
 					"\"$(SRCROOT)/CardGame/Libraries/PubNub/iOS/3.4/pubnubTests/usr/lib\"",
 				);
 				PRODUCT_NAME = PubNubPoker;
+				PROVISIONING_PROFILE = "F0282822-B8D0-46C7-B8BB-A73EBCC80DF1";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1274,6 +1276,7 @@
 		5E844A611796075800C30136 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: Stephen Blum (4G3RZ3V94T)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CardGame/PubNubPoker-Prefix.pch";
 				INFOPLIST_FILE = "CardGame/PubNubPoker-Info.plist";
@@ -1282,6 +1285,7 @@
 					"\"$(SRCROOT)/CardGame/Libraries/PubNub/iOS/3.4/pubnubTests/usr/lib\"",
 				);
 				PRODUCT_NAME = PubNubPoker;
+				PROVISIONING_PROFILE = "F0282822-B8D0-46C7-B8BB-A73EBCC80DF1";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};

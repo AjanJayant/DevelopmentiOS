@@ -32,22 +32,26 @@
 
 @property BOOL isCreator;
 
-+(Globals *)sharedInstance;
+@property (nonatomic) BOOL canPlayGame;
 
--(void) setuDID:(NSString *) str;
++ (Globals *)sharedInstance;
 
--(void) setUserName:(NSString *) str;
+- (void)setuDID:(NSString *)str;
 
--(void) setGameChannel:(PNChannel *) chan;
+- (void)setUserName:(NSString *)str;
 
--(void) setCreator:(BOOL) flag;
+- (void)setGameChannel:(PNChannel *)chan;
 
--(void) setWetherIsFirstGame:(BOOL) flag;
+- (void)setCreator:(BOOL)flag;
 
--(void) saveVariables;
+- (void)setWetherIsFirstGame:(BOOL)flag;
 
--(void) loadVariables;
+- (void)setCanPlayGame:(BOOL)flag;
 
--(void) checkIfHereNow;
+- (void)saveVariables;
+
+- (void)loadVariables;
+
+- (void)checkIfHereNow;
 
 @end

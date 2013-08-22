@@ -14,9 +14,8 @@
 		<dict>
 			<key>CFBundleIconFiles</key>
 			<array>
-				<string>21_pro_ipad.png</string>
-				<string>21_pro.png</string>
-				<string>21_pro_retina.png</string>
+				<string>poker-chips.png</string>
+				<string>poker-chips-retina.png</string>
 			</array>
 			<key>UIPrerenderedIcon</key>
 			<true/>

@@ -48,7 +48,7 @@ int originY;
 
 
 // Basic configure
-- (void)configureTextField: (NSString *) place color:(UIColor *) col
+- (void)configureTextField:(NSString *)place color:(UIColor *)col
 {
     [self setProperties: place color: col];
     hideIfEmpty = NO;
@@ -56,7 +56,7 @@ int originY;
     self.delegate = c;
 }
 
-- (void)configureTextField: (NSString *) place color:(UIColor *) col hideSelf: (BOOL) hideSelf
+- (void)configureTextField:(NSString *)place color:(UIColor *)col hideSelf:(BOOL)hideSelf
 {
     [self configureTextField: place color: col];
     hideIfEmpty = hideSelf;
@@ -65,7 +65,7 @@ int originY;
 
 
 // Configure with options
-- (void)configureTextField: (NSString *) place color:(UIColor *) col moveWithKB:(BOOL) move 
+- (void)configureTextField:(NSString *)place color:(UIColor *)col moveWithKB:(BOOL)move 
 {
     [self configureTextField: place color:col];
     
@@ -75,20 +75,20 @@ int originY;
 }
 
 // Configure and set left
-- (void)configureTextField:(NSString *) place color:(UIColor *) col returnHidesKB:(BOOL)ret movesLeft:(BOOL) moveLeft {
+- (void)configureTextField:(NSString *) place color:(UIColor *)col returnHidesKB:(BOOL)ret movesLeft:(BOOL)moveLeft {
     [self configureTextField: place color:col moveWithKB: YES];
     setLeft = moveLeft;
 }
 
 // Configure and hide Others
-- (void)configureTextField:(NSString *) place color:(UIColor *) col returnHidesKB:(BOOL)ret movesLeft:(BOOL) moveLeft hideOthers:(NSArray *)arr {
+- (void)configureTextField:(NSString *) place color:(UIColor *) col returnHidesKB:(BOOL)ret movesLeft:(BOOL)moveLeft hideOthers:(NSArray *)arr {
     [self configureTextField: place color:col returnHidesKB: ret movesLeft: moveLeft];
     otherViews = arr;
     shouldHide = true;
 }
 
 // Configure and set other to state if desired
-- (void)configureTextField:(NSString *) place view:(UIButton *) view state:(NSString *) state hideOthers:(NSArray *)arr{
+- (void)configureTextField:(NSString *)place view:(UIButton *)view state:(NSString *)state hideOthers:(NSArray *)arr{
     [self configureTextField:place  color:[UIColor blackColor] returnHidesKB: YES movesLeft: NO];
     modOther = YES;
     viewString = [NSString stringWithString: state];
@@ -96,20 +96,20 @@ int originY;
 }
 
 // Configure and auto load keyboard
-- (void)configureTextField:(NSString *) place color:(UIColor *) col autoLoadKeyboard:(BOOL)autoLoad  hideOthers:(NSArray *) arr{
+- (void)configureTextField:(NSString *)place color:(UIColor *)col autoLoadKeyboard:(BOOL)autoLoad  hideOthers:(NSArray *) arr{
     [self configureTextField: place color:col returnHidesKB: YES movesLeft: NO hideOthers: arr];
     if(autoLoad)
         [self becomeFirstResponder];
 }
 
 // Configure, load keyboard and hide self if empty
-- (void)configureTextField:(NSString *) place color:(UIColor *) col hideOthers:(NSArray *) arr hideSelf: (BOOL) hideSelf {
+- (void)configureTextField:(NSString *)place color:(UIColor *)col hideOthers:(NSArray *)arr hideSelf:(BOOL)hideSelf {
     [self configureTextField: place color:col autoLoadKeyboard:YES hideOthers: arr];
     hideIfEmpty = hideSelf;
 }
 
 // Configure, setText of other object
-- (void)configureTextField:(NSString *) place hideOthers:(NSArray *) arr setOther:(UIView *) other setText:(NSString *) text;
+- (void)configureTextField:(NSString *)place hideOthers:(NSArray *)arr setOther:(UIView *)other setText:(NSString *) text;
 {
     [self configureTextField: place color: [UIColor blackColor] autoLoadKeyboard:YES  hideOthers: arr];
     if([other isKindOfClass:[UIButton class]]){
@@ -127,7 +127,7 @@ int originY;
 
 
 //Set properties
--(void) setProperties: (NSString *) place color:(UIColor *) col {
+-(void) setProperties:(NSString *)place color:(UIColor *)col {
     
     // Set properties
     self.placeholder = [NSString stringWithString: place];
@@ -138,7 +138,7 @@ int originY;
 }
 
 // Set observes so that if keyboard is shown, function is triggered
--(void)setObservers{
+-(void)setObservers {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWasShown:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillBeHidden:) name:UIKeyboardWillHideNotification object:nil];
 }
@@ -207,14 +207,14 @@ int originY;
     }
 }
 
-- (void) setOrigin:(int) x y:(int)y {
+- (void)setOrigin:(int)x y:(int)y {
     CGRect textRect = self.frame;
     textRect.origin.y = y;
     textRect.origin.x = x;
 
 }
 
-- (void) drawPlaceholderInRect:(CGRect)rect {
+- (void)drawPlaceholderInRect:(CGRect)rect {
     [[UIColor darkGrayColor] setFill];
     [[self placeholder] drawInRect:rect withFont:[UIFont systemFontOfSize:16]];
 }

@@ -25,7 +25,7 @@ NSString * reqUUID;
  * authresponse, start and disband.
  * Server exceptions are also handled.
  **********************************************************/
--(id)init
+- (id)init
 {
     
     self = [super init];
@@ -67,7 +67,7 @@ NSString * reqUUID;
  * based on commmas, and then posts a notification telling 
  * the view controller to update the label names. 
  **********************************************************/
--(void) handlePlayerJoin:(NSDictionary *)dict
+- (void)handlePlayerJoin:(NSDictionary *)dict
 {
     
     NSString * name = [dict objectForKey: @"usernames"];
@@ -87,7 +87,7 @@ NSString * reqUUID;
  * whether or not a player should be alllowed to join the
  * game.
  **********************************************************/
--(void) handleAuthRequest:(NSDictionary *)dict
+- (void)handleAuthRequest:(NSDictionary *)dict
 {
     
     NSString * reqName = [dict objectForKey: @"requester-name"];
@@ -103,7 +103,7 @@ NSString * reqUUID;
  * join the game or not. Based on the response, an alert
  * is shown.
  **********************************************************/
--(void) handleAuthResponse:(NSDictionary *)dict
+- (void)handleAuthResponse:(NSDictionary *)dict
 {
     
     NSString * auth = [dict objectForKey: @"auth"];
@@ -129,7 +129,7 @@ NSString * reqUUID;
  * game. The game is discontinued, and the player exits the 
  * loading screen.
  **********************************************************/
--(void) handleDisband: (NSDictionary *) dict
+- (void)handleDisband:(NSDictionary *)dict
 {
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"goToHomeFromLoad" object:self];
@@ -143,7 +143,7 @@ NSString * reqUUID;
  * handleStart handles when the game is started. The inital 
  * game conditions are set, and the screen transitions.
  **********************************************************/
--(void) handleStart: (NSDictionary *) dict
+- (void)handleStart: (NSDictionary *)dict
 {
     
     NSString * suc = [dict objectForKey: @"success"];
@@ -172,7 +172,7 @@ NSString * reqUUID;
 /**********************************************************
  * handleException handles server exceptions.
  **********************************************************/
--(void) handleException: (NSDictionary *) dict
+- (void)handleException:(NSDictionary *)dict
 {
     UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Server Exception Occoured" message: @"Please wait while we try to recover" delegate:self cancelButtonTitle:@"Return" otherButtonTitles: nil];
     [alert show];

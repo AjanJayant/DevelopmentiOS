@@ -23,7 +23,7 @@ BOOL shouldInvokeStartupFunctions;
  * user name loaded in the plists check out with the ones 
  * in the server.
  **********************************************************/
--(id)init
+- (id)init
 {
     self = [super init];
     
@@ -53,7 +53,7 @@ BOOL shouldInvokeStartupFunctions;
  * goToServerError posts a notification triggering the 
  * creation of a server error controller.
  **********************************************************/
--(void)goToServerError
+- (void)goToServerError
 {
     
     serverIsRunning = NO;
@@ -64,7 +64,7 @@ BOOL shouldInvokeStartupFunctions;
  * checkIfNamesLoaded posts a notification that informs the
  * AppDelegate that the sercer is loaded.
  **********************************************************/
--(void)checkIfNamesLoaded
+- (void)checkIfNamesLoaded
 {
     
     serverIsRunning = YES;
@@ -77,7 +77,7 @@ BOOL shouldInvokeStartupFunctions;
  * If this is loaded, a message is sent tot he server asking
  * if the names are correct.
  **********************************************************/
--(NSString *)findFirstController
+- (NSString *)findFirstController
 {
     
     if([[[Globals sharedInstance] userName] isEqualToString: @""] || [[[Globals sharedInstance] udid] isEqualToString: @""]) {
@@ -102,7 +102,7 @@ BOOL shouldInvokeStartupFunctions;
  * succesful. If it is, then home is loaded, otherwise 
  * login is loaded.
  **********************************************************/
--(void)processLoginFromServer:(NSDictionary *)dict
+- (void)processLoginFromServer:(NSDictionary *)dict
 {
     
     NSString * suc = [dict objectForKey: @"success"];

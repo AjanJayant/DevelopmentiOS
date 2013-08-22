@@ -18,7 +18,7 @@
  * messages of the type create-user and login.
  * Server exceptions are also handled.
  **********************************************************/
--(id)init
+- (id)init
 {
     
     self = [super init];
@@ -51,7 +51,7 @@
  * handleCreateUser checks if the attempt to create the user 
  * was succesful, and if it was, sets the user name.
  **********************************************************/
--(void) handleCreateUser: (NSDictionary *) dict
+- (void)handleCreateUser:(NSDictionary *)dict
 {
     
     NSString * suc = [dict objectForKey: @"success"];
@@ -66,7 +66,7 @@
 /**********************************************************
  * handleLogin calls handleGernicLogin.
  **********************************************************/
--(void) handleLogin: (NSDictionary *) dict
+- (void)handleLogin:(NSDictionary *)dict
 {
     
     [self handleGenericLogin: dict];
@@ -76,7 +76,7 @@
  * handleGenericLogin handles whether the attempt was 
  * succesful or not, showing alerts if so.
  **********************************************************/
--(void) handleGenericLogin: (NSDictionary *) dict
+- (void)handleGenericLogin:(NSDictionary *)dict
 {
     
     NSString * suc = [dict objectForKey: @"success"];
@@ -96,7 +96,7 @@
 /**********************************************************
  * handleException handles server exceptions.
  **********************************************************/
--(void) handleException: (NSDictionary *) dict
+- (void)handleException:(NSDictionary *)dict
 {
     UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Server Exception Occoured" message: @"Maybe try login instead" delegate:self cancelButtonTitle:@"Return" otherButtonTitles: nil];
     [alert show];
@@ -106,7 +106,7 @@
  * setupUUIDIfNotPresent sets a unique uuid if not already
  * present.
  **********************************************************/
--(void) setupUUIDIfNotPresent
+- (void)setupUUIDIfNotPresent
 {
 
     CFUUIDRef uuidObject = CFUUIDCreate(kCFAllocatorDefault);

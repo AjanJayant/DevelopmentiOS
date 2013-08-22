@@ -131,6 +131,7 @@
     }
         
     [NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(saveVaraiables) userInfo:nil repeats:YES];
+    [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(checkIfServerRunning) userInfo:nil repeats:YES];
 }
 
 /**********************************************************
@@ -148,17 +149,15 @@
  **********************************************************/
 #pragma mark - Start screen buttons
 
--(IBAction)addUser:(id)sender
+- (IBAction)addUser:(id)sender
 {
     
-    [[Globals sharedInstance] checkIfHereNow];
     [self genericLogin:@"create-user"];
 }
 
--(IBAction)loginUser:(id)sender
+- (IBAction)loginUser:(id)sender
 {
     
-    [[Globals sharedInstance] checkIfHereNow];
     [self genericLogin:@"login"];
 }
 /**********************************************************
@@ -166,10 +165,13 @@
  **********************************************************/
 #pragma mark - Home screen buttons
 
--(IBAction)createGameButton:(id)sender
+- (IBAction)createGameButton:(id)sender
 {
-    
-    if([gameName.text isEqualToString:@""]) {
+    if([[Globals sharedInstance] canPlayGame] == NO){
+        
+        [self handleCaseWhereThereAreNoFunds];
+    }
+    else if([gameName.text isEqualToString:@""]) {
         
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Game could not be joined" message: @"Please type a game name" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
         [alert show];
@@ -180,14 +182,16 @@
         [[Globals sharedInstance] setCreator: YES];
         [self doGameSetup:@"create" game:gameName.text];
         [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: createGameButton, gameName, joinPrivateGameButton, nil]] ;
-        [[Globals sharedInstance] checkIfHereNow];
     }
 }
 
--(IBAction)joinPrivateGameButton:(id)sender
+- (IBAction)joinPrivateGameButton:(id)sender
 {
-    
-    if([gameName.text isEqualToString:@""]) {
+    if([[Globals sharedInstance] canPlayGame] == NO){
+        
+        [self handleCaseWhereThereAreNoFunds];
+    }
+    else if([gameName.text isEqualToString:@""]) {
         
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Game could not be joined" message: @"Please type a game name" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
         [alert show];
@@ -196,7 +200,6 @@
         
         [self doGameSetup:@"joinable" game:gameName.text];
         [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: createGameButton, gameName, joinPrivateGameButton, nil]];
-        [[Globals sharedInstance] checkIfHereNow];
     }
 }
 /**********************************************************
@@ -204,7 +207,7 @@
  **********************************************************/
 #pragma mark - Load screen buttons
 
--(IBAction)startButton:(id)sender
+- (IBAction)startButton:(id)sender
 {
     
     // When start button is hit, a message is sient to the server saying that
@@ -221,8 +224,6 @@
     [PubNub sendMessage:dict toChannel:[[Globals sharedInstance] gameChannel]];
     
     [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects:startGameButton, nil]];
-    
-    [[Globals sharedInstance] checkIfHereNow];
 }
 
 /**********************************************************
@@ -236,7 +237,7 @@
  * it checks if the amount input is less than minimum, not a 
  * a string, or greater than bank.
  **********************************************************/
--(IBAction)raiseButton:(id)sender
+- (IBAction)raiseButton:(id)sender
 {
     
     if([raiseTextField.text isEqualToString: @""]) {
@@ -278,11 +279,9 @@
     [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: raiseTextField, raiseButton, callButton, foldButton, nil]];
     
     raiseTextField.text = @"";
-    
-    [[Globals sharedInstance] checkIfHereNow];
 }
 
--(IBAction)callButton:(id)sender
+- (IBAction)callButton:(id)sender
 {
     
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
@@ -294,10 +293,9 @@
     
     [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: raiseTextField, raiseButton, callButton, foldButton, nil]];
 
-    [[Globals sharedInstance] checkIfHereNow];
 }
 
--(IBAction)foldButton:(id)sender
+- (IBAction)foldButton:(id)sender
 {
     
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
@@ -309,7 +307,6 @@
     
     [self enableInteraction:NO arrayOfViews:[[NSArray alloc]initWithObjects: raiseTextField, raiseButton, callButton, foldButton, nil]];
     
-    [[Globals sharedInstance] checkIfHereNow];
 }
 
 /**********************************************************
@@ -318,11 +315,12 @@
  **********************************************************/
 #pragma mark - Initial load conditions for each sepecific view controller
 
--(void)loadInitalLoginConditions
+- (void)loadInitalLoginConditions
 {
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToServerError) name:@"serverNotRunning" object:nil];
-    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"startObservingForServerErrorsAgain" object:self];
+
     logModel = [[LoginModel alloc] init];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToHomeFromLogin) name:@"goToHomeFromLogin" object:nil];
@@ -342,7 +340,7 @@
   
 }
 
--(void)loadInitalHomeConditions
+- (void)loadInitalHomeConditions
 {
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToServerError) name:@"serverNotRunning" object:nil];
@@ -359,7 +357,7 @@
 
 }
 
--(void)loadInitalLoadConditions
+- (void)loadInitalLoadConditions
 {
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToServerError) name:@"serverNotRunning" object:nil];
@@ -383,7 +381,7 @@
 
 }
 
--(void)loadInitalRoomConditions
+- (void)loadInitalRoomConditions
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToServerError) name:@"serverNotRunning" object:nil];
     
@@ -431,7 +429,7 @@
 
 }
 
--(void)loadInitalServerErrorConditions
+- (void)loadInitalServerErrorConditions
 {
     
     serverErrModel = [[ServerErrorModel alloc] init];
@@ -447,12 +445,18 @@
  **********************************************************/
 #pragma mark - Notification-triggered functions
 
--(void)hideLoginProgress
+- (void)checkIfServerRunning
+{
+    
+    [[Globals sharedInstance] checkIfHereNow];
+}
+
+- (void)hideLoginProgress
 {
     loginProgress.hidden = YES;
 }
 
--(void)enableHomeScreenButtons
+- (void)enableHomeScreenButtons
 {
     
     [self enableInteraction:YES arrayOfViews:[[NSArray alloc]initWithObjects:
@@ -463,7 +467,7 @@
                                               nil]];
 }
 
--(void)enableInteractionForTurn
+- (void)enableInteractionForTurn
 {
     
     [self enableInteraction:YES arrayOfViews:[[NSArray alloc]initWithObjects:
@@ -475,7 +479,7 @@
     
 }
 
--(void)updateLabelNames
+- (void)updateLabelNames
 {
     
     switch(loadModel.numberOfNames) {
@@ -510,7 +514,7 @@
     }
 }
 
--(void)updateFlopCards
+- (void)updateFlopCards
 {
     
     [self setCards:roomModel.communityCard1 cardView:deckCardOne];
@@ -521,21 +525,21 @@
     deckCard3.hidden = NO;
 }
 
--(void)updateTurnCard
+- (void)updateTurnCard
 {
     
     [self setCards:roomModel.communityCard4 cardView:deckCard4];
     deckCard4.hidden = NO;
 }
 
--(void)updateRiverCard
+- (void)updateRiverCard
 {
     
     [self setCards:roomModel.communityCard5 cardView:deckCard5];
     deckCard5.hidden = NO;
 }
 
--(void)updateMinRaise
+- (void)updateMinRaise
 {
     
     raiseTextField.placeholder = [@"Min:" stringByAppendingString: roomModel.minRaise];
@@ -570,7 +574,7 @@
     foldButton.hidden = NO;
 }
 
--(void)setCards:(NSString *)card cardView:(UIImageView *)cardView
+- (void)setCards:(NSString *)card cardView:(UIImageView *)cardView
 {
     
     card = [card stringByAppendingString: @".png"];
@@ -578,7 +582,7 @@
     [cardView setImage:[UIImage imageNamed:card]];
 }
 
--(void)setBlind:(NSString *)img
+- (void)setBlind:(NSString *)img
 {
     
     blindImage.hidden = NO;
@@ -589,7 +593,7 @@
     [blindImage setImage:image1];
 }
 
--(void)saveVaraiables
+- (void)saveVaraiables
 {
     
     [[Globals sharedInstance] saveVariables];
@@ -601,7 +605,7 @@
  * Following functions enables interaction for a set
  * of views defined by an array
  **********************************************************/
--(void)enableInteraction:(BOOL)shouldInteract arrayOfViews:(NSArray *)arrayOfViews
+- (void)enableInteraction:(BOOL)shouldInteract arrayOfViews:(NSArray *)arrayOfViews
 {
     
     for(UIView * view in arrayOfViews){
@@ -611,10 +615,22 @@
 }
 
 /**********************************************************
- * genericLogin handles a login button being clicked, 
- * sending a message and handling error cases (no input etc.)
+ * handleCaseWhereThereAreNoFunds gerates an alert, 
+ * preventing the player from continuing
  **********************************************************/
--(void)genericLogin:(NSString *)type
+- (void)handleCaseWhereThereAreNoFunds
+{
+    
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Sorry, you don't have any funds!" message: @"Gotta reinstall the app to play again :(" delegate:self cancelButtonTitle:@"Just sayin'" otherButtonTitles: nil];
+    [alert show];
+}
+
+/**********************************************************
+ * genericLogin handles an add user or login button being 
+ * clicked, sending a message and handling error cases 
+ * (no input etc.)
+ **********************************************************/
+- (void)genericLogin:(NSString *)type
 {
     
     [loginField resignFirstResponder];
@@ -643,7 +659,7 @@
  * to the game channel and setting the sharedInstance singleton 
  * variable
  **********************************************************/
--(void)doGameSetup:(NSString *)type game:(NSString *)game
+- (void)doGameSetup:(NSString *)type game:(NSString *)game
 {
         
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
@@ -658,7 +674,7 @@
     [[Globals sharedInstance] setGameChannel: chan];
 }
 
--(void)setGameButton
+- (void)setGameButton
 {
     
     startGameButton.hidden = NO;
@@ -668,7 +684,7 @@
 /**********************************************************
  * setUIDAndUserName sets singleton variable fields
  **********************************************************/
--(void)setUIDAndUserName:(NSMutableDictionary *)dict
+- (void)setUIDAndUserName:(NSMutableDictionary *)dict
 {
     
     [dict setObject: [[Globals sharedInstance] udid] forKey: @"uuid"];
@@ -691,48 +707,50 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
  **********************************************************/
 #pragma mark - View Controller Navigation
 
--(void)goToServerError
+- (void)goToServerError
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"serverNotRunning" object:nil];
+    logModel.shouldInvokeLoginFunctions = NO;
     
     [self performSegueWithIdentifier:[[self title] stringByAppendingString:@"ToServerError" ] sender:self];
 }
 
--(void)goToHomeFromLogin
+- (void)goToHomeFromLogin
 {
     
     logModel.shouldInvokeLoginFunctions = NO;
     [self performSegueWithIdentifier:@"loginToHome" sender:self];
 }
 
--(void)goToLoadFromHome
+- (void)goToLoadFromHome
 {
     
     homeModel.shouldInvokeHomeFunctions = NO;
     [self performSegueWithIdentifier:@"homeToLoad" sender:self];
 }
 
--(void)goToRoomFromLoad
+- (void)goToRoomFromLoad
 {
     
     loadModel.shouldInvokeLoadFunctions = NO;
     [self performSegueWithIdentifier:@"loadToRoom" sender:self];
 }
 
--(void)goToHomeFromLoad
+- (void)goToHomeFromLoad
 {
     
     loadModel.shouldInvokeLoadFunctions = NO;
     [self performSegueWithIdentifier:@"loadToHome" sender:self];    
 }
 
--(void)goToHomeFromRoom
+- (void)goToHomeFromRoom
 {
     
     roomModel.shouldInvokeRoomFunctions = NO;
     [self performSegueWithIdentifier:@"roomToHome" sender:self];
 }
 
--(void)goToLoadFromRoom
+- (void)goToLoadFromRoom
 {
 
     roomModel.shouldInvokeRoomFunctions = NO;

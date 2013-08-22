@@ -57,7 +57,7 @@ NSTimer * autoTimer;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToServerError) name:@"serverNotLoaded" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ascertainFirstController) name:@"serverRestarted" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ascertainFirstController) name:@"serverLoaded" object:nil];
-
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(startObservingForServerErrorsAgain) name:@"startObservingForServerErrorsAgain" object:nil];
         autoTimer = [NSTimer scheduledTimerWithTimeInterval:(10.0)
                                                  target:self
                                                selector:@selector(checkIfServerRunning)
@@ -73,7 +73,7 @@ NSTimer * autoTimer;
 /**********************************************************
  * checkIfServerRunning checks if the server is running
  ***********************************************************/
--(void) checkIfServerRunning
+- (void)checkIfServerRunning
 {
     
     [[Globals sharedInstance] checkIfHereNow];
@@ -83,7 +83,7 @@ NSTimer * autoTimer;
  * ascertainFirstController loads a view controller if it 
  * easily distinguishable, otherwise login or home are loaded.
  ***********************************************************/
--(void) ascertainFirstController
+- (void)ascertainFirstController
 {
     
     NSString * first = [startUp findFirstController];
@@ -103,7 +103,7 @@ NSTimer * autoTimer;
  * loadLoginAsInitialController loads login as the first view 
  * controller.
  ***********************************************************/
-- (void) loadLoginAsInitialController
+- (void)loadLoginAsInitialController
 {
 
     loginViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"login"];
@@ -113,13 +113,14 @@ NSTimer * autoTimer;
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"loadLoginAsInitialController" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"serverLoaded" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"serverNotLoaded" object:nil];
 }
 
 /**********************************************************
  * loadHomeAsInitialController loads home as the first view
  * controller.
  ***********************************************************/
-- (void) loadHomeAsInitialController
+- (void)loadHomeAsInitialController
 {
     
     homeViewController = [mainStoryboard instantiateViewControllerWithIdentifier:@"home"];
@@ -129,6 +130,7 @@ NSTimer * autoTimer;
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"loadHomeAsInitialController" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"serverLoaded" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"serverNotLoaded" object:nil];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -163,12 +165,19 @@ NSTimer * autoTimer;
 /**********************************************************
  * goToServerError loads server eror as the first view controller
  ***********************************************************/
--(void) goToServerError
+- (void)goToServerError
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"serverNotLoaded" object:nil];
     
     serverErrorController = [mainStoryboard instantiateViewControllerWithIdentifier:@"serverError"];
 
     [self.window addSubview:serverErrorController.view];
+}
+- (void)startObservingForServerErrorsAgain
+{
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(goToServerError) name:@"serverNotLoaded" object:nil];
+
 }
 
 @end

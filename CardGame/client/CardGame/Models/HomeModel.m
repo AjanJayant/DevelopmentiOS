@@ -18,7 +18,7 @@
  * messages of the type create and joinable.
  * Server exceptions are also handled. 
  **********************************************************/
--(id)init
+- (id)init
 {
     
     self = [super init];
@@ -51,7 +51,7 @@
  * to create a game, and loads the loading page if he was
  * Otherwise, an error alert is shown.  
  **********************************************************/
--(void) handleCreate:(NSDictionary *)dict
+- (void)handleCreate:(NSDictionary *)dict
 {
              
         NSString * suc = [dict objectForKey: @"success"];
@@ -80,7 +80,7 @@
  * joinable game. If he was, it loads the loading page
  * Otherwise, an error alert is shown.
  **********************************************************/
--(void) handleJoinable:(NSDictionary *)dict
+- (void)handleJoinable:(NSDictionary *)dict
 {
              
         NSString * suc = [dict objectForKey: @"success"];
@@ -108,7 +108,7 @@
 /**********************************************************
  * handleException handles server exceptions.
  **********************************************************/
--(void) handleException: (NSDictionary *) dict
+- (void)handleException:(NSDictionary *)dict
 {
     UIAlertView * alert = [[UIAlertView alloc] initWithTitle: @"Server Exception Occoured" message: @"Please wait while we try to recover" delegate:self cancelButtonTitle:@"Return" otherButtonTitles: nil];
     [alert show];
