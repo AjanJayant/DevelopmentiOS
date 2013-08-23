@@ -158,11 +158,14 @@ UIAlertView * endAlert;
  **********************************************************/
 - (void)handleEnd:(NSDictionary *)dict
 {
+    
+    NSString * msg = [dict objectForKey: @"message"];
+
     if(shouldInvokeEndFunctionality == YES) {
         // Insuffeciency of funds is checked in the following lines
         NSString *currentBank = [myFunds substringWithRange:NSMakeRange(1, [myFunds length] - 1)];
         //If the user has won, then there is no need to check the balance
-        if ([currentBank rangeOfString:[[Globals sharedInstance] userName]].location == NSNotFound)
+        if ([msg rangeOfString:[[Globals sharedInstance] userName]].location == NSNotFound)
         {
             if([currentBank intValue]  < 4 ) {
                 
@@ -171,8 +174,6 @@ UIAlertView * endAlert;
                 return;
             }
         }
-    
-        NSString * msg = [dict objectForKey: @"message"];
     
         shouldGoToHome = YES;
         endAlert = [[UIAlertView alloc] initWithTitle: msg message: @"Please choose whether to continue or exit within 15 sec" delegate:self cancelButtonTitle:@"Exit" otherButtonTitles:@"Continue", nil];

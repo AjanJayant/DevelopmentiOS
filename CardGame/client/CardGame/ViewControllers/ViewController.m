@@ -707,17 +707,18 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
 /**********************************************************
  * Following functions trigger segues to allow for view
  * controller transitions
+ * Form: Make sure PNObservation centre functions not 
+ * triggered, remove observers from self, perform segue
  **********************************************************/
 #pragma mark - View Controller Navigation
 
 - (void)goToServerError
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"serverNotRunning" object:nil];
     logModel.shouldInvokeLoginFunctions = NO;
     homeModel.shouldInvokeHomeFunctions = NO;
     loadModel.shouldInvokeLoadFunctions = NO;
     roomModel.shouldInvokeRoomFunctions = NO;
-
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"serverNotRunning" object:nil];
     [self performSegueWithIdentifier:[[self title] stringByAppendingString:@"ToServerError" ] sender:self];
 }
 
@@ -725,6 +726,8 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
 {
     
     logModel.shouldInvokeLoginFunctions = NO;
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"hideLoginProgress" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"goToHomeFromLogin" object:nil];
     [self performSegueWithIdentifier:@"loginToHome" sender:self];
 }
 
@@ -732,6 +735,8 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
 {
     
     homeModel.shouldInvokeHomeFunctions = NO;
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"enableHomeScreenButtons" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"goToLoadFromHome" object:nil];
     [self performSegueWithIdentifier:@"homeToLoad" sender:self];
 }
 
@@ -739,19 +744,28 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
 {
     
     loadModel.shouldInvokeLoadFunctions = NO;
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updateLabelNames" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"goToRoomFromLoad" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"goToHomeFromLoad" object:nil];
     [self performSegueWithIdentifier:@"loadToRoom" sender:self];
 }
 
 - (void)goToHomeFromLoad
 {
     loadModel.shouldInvokeLoadFunctions = NO;
-    [self performSegueWithIdentifier:@"loadToHome" sender:self];    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updateLabelNames" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"goToRoomFromLoad" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"goToHomeFromLoad" object:nil];
+    [self performSegueWithIdentifier:@"loadToHome" sender:self];
 }
 
 - (void)goToHomeFromRoom
 {
     
     roomModel.shouldInvokeRoomFunctions = NO;
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"removeBlind" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updateMinRaise" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"enableInteractionForTurn" object:nil];
     [self performSegueWithIdentifier:@"roomToHome" sender:self];
 }
 
@@ -759,6 +773,9 @@ clickedButtonAtIndex:(NSInteger) buttonIndex
 {
 
     roomModel.shouldInvokeRoomFunctions = NO;
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"removeBlind" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"updateMinRaise" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"enableInteractionForTurn" object:nil];
     [self performSegueWithIdentifier:@"roomToLoad" sender:self];
 }
 
