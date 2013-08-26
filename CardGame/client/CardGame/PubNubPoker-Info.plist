@@ -22,7 +22,7 @@
 		</dict>
 	</dict>
 	<key>CFBundleIdentifier</key>
-	<string>Testing-Ref1.${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>com.pubnub.apnsdemo</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

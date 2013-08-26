@@ -1209,7 +1209,8 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Stephen Blum (Y9X42V6EK7)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Stephen Blum (Y9X42V6EK7)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1224,6 +1225,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE = "075A74A2-D781-4D0C-A9C0-C6AE857657A3";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "075A74A2-D781-4D0C-A9C0-C6AE857657A3";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1241,7 +1244,8 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Stephen Blum (Y9X42V6EK7)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Stephen Blum (Y9X42V6EK7)";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -1249,6 +1253,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PROVISIONING_PROFILE = "075A74A2-D781-4D0C-A9C0-C6AE857657A3";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "075A74A2-D781-4D0C-A9C0-C6AE857657A3";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -1258,7 +1264,8 @@
 		5E844A601796075800C30136 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer: Stephen Blum (4G3RZ3V94T)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Stephen Blum (Y9X42V6EK7)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Stephen Blum (Y9X42V6EK7)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CardGame/PubNubPoker-Prefix.pch";
 				INFOPLIST_FILE = "CardGame/PubNubPoker-Info.plist";
@@ -1267,7 +1274,8 @@
 					"\"$(SRCROOT)/CardGame/Libraries/PubNub/iOS/3.4/pubnubTests/usr/lib\"",
 				);
 				PRODUCT_NAME = PubNubPoker;
-				PROVISIONING_PROFILE = "F0282822-B8D0-46C7-B8BB-A73EBCC80DF1";
+				PROVISIONING_PROFILE = "27A6D2B7-655B-4648-93C2-6FF848D93971";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "075A74A2-D781-4D0C-A9C0-C6AE857657A3";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1276,7 +1284,8 @@
 		5E844A611796075800C30136 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer: Stephen Blum (4G3RZ3V94T)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Stephen Blum (Y9X42V6EK7)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Stephen Blum (Y9X42V6EK7)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CardGame/PubNubPoker-Prefix.pch";
 				INFOPLIST_FILE = "CardGame/PubNubPoker-Info.plist";
@@ -1285,7 +1294,8 @@
 					"\"$(SRCROOT)/CardGame/Libraries/PubNub/iOS/3.4/pubnubTests/usr/lib\"",
 				);
 				PRODUCT_NAME = PubNubPoker;
-				PROVISIONING_PROFILE = "F0282822-B8D0-46C7-B8BB-A73EBCC80DF1";
+				PROVISIONING_PROFILE = "27A6D2B7-655B-4648-93C2-6FF848D93971";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "075A74A2-D781-4D0C-A9C0-C6AE857657A3";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
